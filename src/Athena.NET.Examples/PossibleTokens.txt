@@ -1,0 +1,14 @@
+void Main() =>		[method] [type] [variableName] [params:]
+	int x = 15;	[type] [variableName] [eql] [value] [es]
+	int y = 25;	[type] [variableName] [eql] [value] [es]
+	
+	int signedValue = CalculateSignedValue(x, y);
+	Write(signedValue);>
+
+void CalcuteSignedValue(int firstValue, int secondValue) =>
+	int difference = firstValue - secondValue;
+	if(difference > 0)
+		return 1;
+	if(difference < 0)
+		return -1;
+	return 0;>
