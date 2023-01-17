@@ -33,5 +33,9 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords
     {
         public static readonly LiteralKeyword Digit =
             new(0, new LiteralOption('0', '9'));
+
+        //This is here, just for testing
+        public static readonly LiteralKeyword Character =
+            new(1, new LiteralOption('a', 'z'));
     }
 }
