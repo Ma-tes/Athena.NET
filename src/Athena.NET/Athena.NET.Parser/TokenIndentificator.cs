@@ -35,5 +35,6 @@
         CloseParenthsis = 17,
         OpenBrace = 18,
         CloseBrace = 19,
+        BlankLine = 20
     }
 }

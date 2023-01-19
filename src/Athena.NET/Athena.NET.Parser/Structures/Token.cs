@@ -3,9 +3,9 @@
     internal readonly struct Token
     {
         public TokenIndentificator TokenId { get; }
-        public ReadOnlyMemory<byte> Data { get; }
+        public ReadOnlyMemory<char> Data { get; }
 
-        public Token(TokenIndentificator tokenId, ReadOnlyMemory<byte> data) 
+        public Token(TokenIndentificator tokenId, ReadOnlyMemory<char> data)
         {
             TokenId = tokenId;
             Data = data;

@@ -5,16 +5,13 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer
 {
     internal abstract class LexicalTokenReader : IDisposable
     {
-        private static readonly string blankLine = "\0";
         private static readonly Encoding defaultEncoding =
             Encoding.UTF8;
-
         private StreamReader streamReader;
 
         public Memory<char> ReaderData { get; }
-
         public long ReaderLength { get; }
-        public long ReaderPosition { get; private set; }
+        public int ReaderPosition { get; private set; }
 
         public LexicalTokenReader(Stream stream)
         {
@@ -26,10 +23,21 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer
 
         public async Task<ReadOnlyMemory<Token>> ReadLexicalTokensAsync() 
         {
+            var returnTokens = new List<Token>();
+
             await streamReader.ReadAsync(ReaderData);
             while (ReaderPosition != ReaderLength) 
             {
+                var currentData = ReaderData[ReaderPosition..];
+                var currentToken = GetToken(currentData);
+
+                if (currentToken.TokenId != TokenIndentificator.BlankLine) 
+                {
+                    returnTokens.Add(currentToken);
+                    ReaderPosition += currentToken.Data.Length;
+                }
             }
+            return returnTokens.ToArray();
         }
 
         protected abstract Token GetToken(ReadOnlyMemory<char> data);
