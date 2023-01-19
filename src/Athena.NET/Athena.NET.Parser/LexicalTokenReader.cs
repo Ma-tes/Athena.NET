@@ -1,7 +1,7 @@
 ﻿using Athena.NET.Athena.NET.Parser.Structures;
 using System.Text;
 
-namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer
+namespace Athena.NET.Athena.NET.Parser
 {
     internal abstract class LexicalTokenReader : IDisposable
     {
