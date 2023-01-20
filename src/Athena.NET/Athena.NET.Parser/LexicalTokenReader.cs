@@ -1,4 +1,6 @@
-﻿using Athena.NET.Athena.NET.Parser.Structures;
+﻿using Athena.NET.Athena.NET.Parser.LexicalAnalyzer;
+using Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords;
+using Athena.NET.Athena.NET.Parser.Structures;
 using System.Text;
 
 namespace Athena.NET.Athena.NET.Parser

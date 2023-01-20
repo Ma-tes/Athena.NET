@@ -40,11 +40,11 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords
 
     internal static partial class KeywordsHolder
     {
-        public static readonly LiteralKeyword Digit =
+        public static LiteralKeyword Digit { get; } =
             new(TokenIndentificator.Int, new LiteralOption('0', '9'));
 
         //This is here, just for testing
-        public static readonly LiteralKeyword Character =
+        public static LiteralKeyword Character { get; } = 
             new(TokenIndentificator.Char, new LiteralOption('a', 'z'));
     }
 }
