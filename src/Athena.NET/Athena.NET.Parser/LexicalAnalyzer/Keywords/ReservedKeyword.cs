@@ -5,6 +5,8 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords
 {
     internal sealed class ReservedKeyword : IKeyword<ReadOnlyMemory<char>, ReadOnlyMemory<char>, ReservedKeyword>
     {
+        public Func<ReadOnlyMemory<char>, char[]> ParseFunction { get; init; } = null!;
+
         public TokenIndentificator Identificator { get; }
         public ReadOnlyMemory<char> KeywordData { get; }
 
@@ -19,17 +21,25 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords
         //this as soon as possible
         public bool TryGetKeyword([NotNullWhen(true)] out ReservedKeyword returnData, ReadOnlyMemory<char> source)
         {
+            if (ParseFunction is not null) 
+                source = ParseFunction.Invoke(source);
+
             returnData = null!;
             if (IsEqual(source)) 
             {
-                int keywordLength = KeywordData.Length;
-                char nextSourceCharacter = source.Span[(keywordLength + 1)];
-
-                if (KeywordsHolder.Character.IsEqual(nextSourceCharacter) ||
-                    KeywordsHolder.Character.IsEqual(nextSourceCharacter)) 
-                    return false;
-
                 returnData = this;
+                int keywordLength = KeywordData.Length;
+
+                if (source.Length == 1 || keywordLength == source.Length) 
+                    return true;
+                char nextSourceCharacter = source.Span[keywordLength];
+
+                if ((KeywordsHolder.Character.IsEqual(nextSourceCharacter) ||
+                    KeywordsHolder.Character.IsEqual(nextSourceCharacter)) && keywordLength > 1) 
+                {
+                    returnData = null!;
+                    return false;
+                }
                 return true;
             }
             return false;
@@ -41,9 +51,9 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords
                 return false;
 
             int keywordLength = KeywordData.Length;
-            var currentData = KeywordData[0..keywordLength];
+            var currentData = source[0..keywordLength];
 
-            return currentData.Span == source.Span;
+            return currentData.Span.SequenceEqual(KeywordData.Span); 
         }
     }
 
@@ -53,11 +63,21 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords
         //better storing system for overall keywords
         public static ReadOnlyMemory<ReservedKeyword> ReservedKeywords =
             new ReservedKeyword[]
-            { 
+            {
                 new (TokenIndentificator.Int, "int"),
                 new (TokenIndentificator.Char, "char"),
                 new (TokenIndentificator.IF, "if"),
                 new (TokenIndentificator.EqualLogical, "=="),
+
+                //I know this implementation is actually
+                //horrible, but for now is somehow acceptable
+                new (TokenIndentificator.EndLine, "@rn")
+                {
+                    ParseFunction = (ReadOnlyMemory<char> data) =>
+                         (data.ToString()
+                              .Replace("\r\n", "@rn")
+                              .ToCharArray())
+                },
 
                 new (TokenIndentificator.Whitespace, " "),
                 new (TokenIndentificator.Semicolon, ";"),

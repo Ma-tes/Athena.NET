@@ -3,7 +3,7 @@ using Athena.NET.Athena.NET.Parser.Structures;
 
 namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer
 {
-    internal sealed class TokenReader : LexicalTokenReader 
+    internal sealed class TokenReader<T> : LexicalTokenReader where T : Stream
     {
         private static ReservedKeyword unknownKeyword =
             new(TokenIndentificator.Unknown, "\0u");
@@ -12,7 +12,7 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer
             KeywordsHolder.ReservedKeywords;
         public int TabSize { get; }
 
-        public TokenReader(Stream stream, int tabSize = 4) : base(stream)
+        public TokenReader(T stream, int tabSize = 4) : base(stream)
         {
         }
 
@@ -21,15 +21,8 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer
         protected override Token GetToken(ReadOnlyMemory<char> data)
         {
             var reservedKeyword = FindReservedKeyword(data);
-            if (reservedKeyword == unknownKeyword)
-            {
-                int currentIndex = reservedKeyword.KeywordData.Length - 1;
-                if (IsReservedSymbol(data.Span[(currentIndex + 1)]))
-                    return new(reservedKeyword.Identificator, reservedKeyword.KeywordData);
-
-                int indetifierIndex = GetFirstReservedSymbolIndex(data[(currentIndex + 2)..]);
-                return new(TokenIndentificator.Identifier, data[0..(indetifierIndex)]);
-            }
+            if (reservedKeyword != unknownKeyword)
+                return new(reservedKeyword.Identificator, reservedKeyword.KeywordData);
 
             //TODO: Create handleing for types such as
             //int, float, string and much more
@@ -52,11 +45,11 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer
         private bool IsReservedSymbol(char character)
         {
             if (KeywordsHolder.Character.IsEqual(character) ||
-                KeywordsHolder.Character.IsEqual(character))
+                KeywordsHolder.Digit.IsEqual(character))
                 return false;
 
             var arrayHolder = new ReadOnlyMemory<char>(new[] { character });
-            return FindReservedKeyword(arrayHolder) is not null;
+            return FindReservedKeyword(arrayHolder) != unknownKeyword;
         }
 
         private ReservedKeyword FindReservedKeyword(ReadOnlyMemory<char> data)

@@ -1,14 +1,1 @@
-void Main() =>
-	int x = 15;
-	int y = 25;
-	
-	int signedValue = CalculateSignedValue(x, y);
-	Write(signedValue);>
-
-void CalcuteSignedValue(int firstValue, int secondValue) =>
-	int difference = firstValue - secondValue;
-	if(difference > 0)
-		return 1;
-	if(difference < 0)
-		return -1;
-	return 0;>
+int x = 15; int y = 25; int z = x + y;

@@ -28,7 +28,7 @@ namespace Athena.NET.Athena.NET.Parser
             var returnTokens = new List<Token>();
 
             await streamReader.ReadAsync(ReaderData);
-            while (ReaderPosition != ReaderLength) 
+            while (ReaderPosition < ReaderLength)
             {
                 var currentData = ReaderData[ReaderPosition..];
                 var currentToken = GetToken(currentData);
