@@ -80,12 +80,14 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords
                               .Replace("\r\n", "\0n")
                               .ToCharArray())
                 },
-
+                new (TokenIndentificator.Tabulator, "\t", true),
                 new (TokenIndentificator.Whitespace, " ", true),
                 new (TokenIndentificator.Semicolon, ";", true),
                 new (TokenIndentificator.Add, "+", true),
                 new (TokenIndentificator.Sub, "-", true),
-                new (TokenIndentificator.EqualAsigment, "=", true)
+                new (TokenIndentificator.EqualAsigment, "=", true),
+                new (TokenIndentificator.OpenBrace, "(", true),
+                new (TokenIndentificator.CloseBrace, ")", true)
              };
     }
 }

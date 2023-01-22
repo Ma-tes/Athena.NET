@@ -15,7 +15,13 @@ static void WriteTokens(ReadOnlyMemory<Token> tokens)
     for (int i = 0; i < tokensLength; i++)
     {
         var currentToken = tokens.Span[i];
-        Console.WriteLine($"Id: {currentToken.TokenId} Data: {currentToken.Data}");
+        if(currentToken.TokenId == Athena.NET.Athena.NET.Parser.TokenIndentificator.EndLine)
+            Console.WriteLine($"{currentToken.TokenId} ");
+        else
+            Console.Write($"{currentToken.TokenId} ");
+
+        if(currentToken.TokenId == Athena.NET.Athena.NET.Parser.TokenIndentificator.Identifier)
+            Console.Write($"[{currentToken.Data}] ");
     }
 }
 

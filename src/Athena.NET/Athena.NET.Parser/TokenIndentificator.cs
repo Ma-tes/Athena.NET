@@ -36,9 +36,9 @@
         OpenBrace = 18,
         CloseBrace = 19,
 
-        BlankLine = 20,
-        EndLine = 21,
-        Unknown = 22,
-        Identifier = 23 
+        EndLine = 20,
+        Unknown = 21,
+        Identifier = 22,
+        Tabulator = 23 
     }
 }

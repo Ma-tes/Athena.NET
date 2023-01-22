@@ -33,11 +33,8 @@ namespace Athena.NET.Athena.NET.Parser
                 var currentData = ReaderData[ReaderPosition..];
                 var currentToken = GetToken(currentData);
 
-                if (currentToken.TokenId != TokenIndentificator.BlankLine) 
-                {
-                    returnTokens.Add(currentToken);
-                    ReaderPosition += currentToken.Data.Length;
-                }
+                returnTokens.Add(currentToken);
+                ReaderPosition += currentToken.Data.Length;
             }
             return returnTokens.ToArray();
         }
