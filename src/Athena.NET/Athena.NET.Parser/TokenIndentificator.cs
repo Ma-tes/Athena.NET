@@ -1,4 +1,6 @@
-﻿namespace Athena.NET.Athena.NET.Parser
+﻿using Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Attributes;
+
+namespace Athena.NET.Athena.NET.Parser
 {
     //TODO: There are a lot of missing,
     //identificators, but it's just for
@@ -26,19 +28,26 @@
         //results
 
         //Possible types
+        [PrimitiveType(typeof(int))]
         Int = 12,
-        Char = 13,
+        [PrimitiveType(typeof(float))]
+        Float = 13,
+        [PrimitiveType(typeof(byte))]
+        Byte = 14,
+        [PrimitiveType(typeof(char))]
+        Char = 15,
+        String = 16,
         //Possible syntax keywords
-        Semicolon = 14,
-        If = 15,
-        OpenParenthsis = 16,
-        CloseParenthsis = 17,
-        OpenBrace = 18,
-        CloseBrace = 19,
+        Semicolon = 17,
+        If = 18,
+        OpenParenthsis = 19,
+        CloseParenthsis = 20,
+        OpenBrace = 21,
+        CloseBrace = 22,
 
-        EndLine = 20,
-        Unknown = 21,
-        Identifier = 22,
-        Tabulator = 23
+        EndLine = 23,
+        Unknown = 24,
+        Identifier = 25,
+        Tabulator = 26
     }
 }

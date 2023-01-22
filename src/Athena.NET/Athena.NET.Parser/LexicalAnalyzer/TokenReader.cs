@@ -1,12 +1,19 @@
-﻿using Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords;
+﻿using Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Attributes;
+using Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords;
 using Athena.NET.Athena.NET.Parser.Structures;
+using System.ComponentModel;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer
 {
     internal sealed class TokenReader<T> : LexicalTokenReader where T : Stream
     {
-        private static ReservedKeyword unknownKeyword =
+        private static ReadOnlyMemory<PrimitiveType> primitiveTypes { get; } =
+            GetPrimitiveType().ToArray();
+        private static readonly ReservedKeyword unknownKeyword =
             new(TokenIndentificator.Unknown, "\0u");
+
         public ReadOnlyMemory<ReservedKeyword> ReservedKeywords { get; } =
             KeywordsHolder.ReservedKeywords;
 
@@ -25,7 +32,26 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer
             //TODO: Create handleing for types such as
             //int, float, string and much more
             int symbolIndex = GetFirstReservedSymbolIndex(data);
-            return new(TokenIndentificator.Identifier, data[0..(symbolIndex)]);
+            var resultData = data[0..(symbolIndex)];
+            return new(GetPrimitiveToken(resultData, primitiveTypes), resultData);
+        }
+
+        //TODO: Create a better implementation
+        //with reflection and without any exception
+        private TokenIndentificator GetPrimitiveToken(ReadOnlyMemory<char> data, ReadOnlyMemory<PrimitiveType> primitiveTypes) 
+        {
+            string dataString = data.ToString();
+            int typesLenght = primitiveTypes.Length;
+            for (int i = 0; i < typesLenght; i++)
+            {
+                var currentType = primitiveTypes.Span[i];
+
+                var typeConvertor = TypeDescriptor.GetConverter(currentType.Type);
+                var convertResult = typeConvertor.ConvertFrom(dataString);
+                if (convertResult is not null)
+                    return currentType.TokenType;
+            }
+            return TokenIndentificator.Identifier;
         }
 
         private int GetFirstReservedSymbolIndex(ReadOnlyMemory<char> data)
@@ -60,6 +86,21 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer
                     return returnKeyword;
             }
             return unknownKeyword;
+        }
+
+        private static IEnumerable<PrimitiveType> GetPrimitiveType()
+        {
+            var enumNames = Enum.GetNames<TokenIndentificator>();
+            var enumValues = Enum.GetValues<TokenIndentificator>();
+
+            int namesLength = enumNames.Length;
+            for (int i = 0; i < namesLength; i++) 
+            {
+                var typeAttribute = typeof(TokenIndentificator).GetField(enumNames[i])!
+                    .GetCustomAttribute<PrimitiveTypeAttribute>();
+                if(typeAttribute is not null)
+                    yield return new(enumValues[i], typeAttribute!.Type);
+            }
         }
     }
 }

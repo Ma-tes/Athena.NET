@@ -14,6 +14,7 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer
 
         //TODO: I would really like to have a
         //better storing system for overall keywords
+       
         public static ReadOnlyMemory<ReservedKeyword> ReservedKeywords =
             new ReservedKeyword[]
             {
