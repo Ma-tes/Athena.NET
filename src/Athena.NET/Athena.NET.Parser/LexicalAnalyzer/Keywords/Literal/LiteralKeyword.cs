@@ -1,20 +1,8 @@
 ﻿using Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Interfaces;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords
+namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords.Literal
 {
-    internal readonly struct LiteralOption 
-    {
-        public byte Start { get; }
-        public byte End { get; }
-
-        public LiteralOption(char start, char end) 
-        {
-            Start = (byte)start;
-            End = (byte)end;
-        }
-    }
-
     internal sealed class LiteralKeyword : IKeyword<LiteralOption, char, LiteralKeyword>
     {
         public TokenIndentificator Identificator { get; }
@@ -36,15 +24,5 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords
 
         public bool IsEqual(char source) =>
             (source >= KeywordData.Start && source <= KeywordData.End);
-    }
-
-    internal static partial class KeywordsHolder
-    {
-        public static LiteralKeyword Digit { get; } =
-            new(TokenIndentificator.Int, new LiteralOption('0', '9'));
-
-        //This is here, just for testing
-        public static LiteralKeyword Character { get; } = 
-            new(TokenIndentificator.Char, new LiteralOption('a', 'z'));
     }
 }

@@ -37,7 +37,7 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords
                 char nextSourceCharacter = source.Span[keywordLength];
 
                 if ((KeywordsHolder.Character.IsEqual(nextSourceCharacter) ||
-                    KeywordsHolder.Character.IsEqual(nextSourceCharacter)) && keywordLength > 1) 
+                    KeywordsHolder.Digit.IsEqual(nextSourceCharacter)) && keywordLength > 1) 
                 {
                     returnData = null!;
                     return false;
@@ -57,37 +57,5 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords
 
             return currentData.Span.SequenceEqual(KeywordData.Span); 
         }
-    }
-
-    internal static partial class KeywordsHolder
-    {
-        //TODO: I would really like to have a
-        //better storing system for overall keywords
-        public static ReadOnlyMemory<ReservedKeyword> ReservedKeywords =
-            new ReservedKeyword[]
-            {
-                new (TokenIndentificator.Int, "int"),
-                new (TokenIndentificator.Char, "char"),
-                new (TokenIndentificator.IF, "if"),
-                new (TokenIndentificator.EqualLogical, "=="),
-
-                //I know this implementation is actually
-                //horrible, but for now is somehow acceptable
-                new (TokenIndentificator.EndLine, "\0n", true)
-                {
-                    ParseFunction = (ReadOnlyMemory<char> data) =>
-                         (data.ToString()
-                              .Replace("\r\n", "\0n")
-                              .ToCharArray())
-                },
-                new (TokenIndentificator.Tabulator, "\t", true),
-                new (TokenIndentificator.Whitespace, " ", true),
-                new (TokenIndentificator.Semicolon, ";", true),
-                new (TokenIndentificator.Add, "+", true),
-                new (TokenIndentificator.Sub, "-", true),
-                new (TokenIndentificator.EqualAsigment, "=", true),
-                new (TokenIndentificator.OpenBrace, "(", true),
-                new (TokenIndentificator.CloseBrace, ")", true)
-             };
     }
 }
