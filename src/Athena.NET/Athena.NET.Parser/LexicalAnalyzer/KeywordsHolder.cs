@@ -9,7 +9,7 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer
             new(TokenIndentificator.Int, new LiteralOption('0', '9'));
 
         //This is here, just for testing
-        public static LiteralKeyword Character { get; } = 
+        public static LiteralKeyword Character { get; } =
             new(TokenIndentificator.Char, new LiteralOption('a', 'z'));
 
         //TODO: I would really like to have a
@@ -19,7 +19,7 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer
             {
                 new (TokenIndentificator.Int, "int"),
                 new (TokenIndentificator.Char, "char"),
-                new (TokenIndentificator.IF, "if"),
+                new (TokenIndentificator.If, "if"),
                 new (TokenIndentificator.EqualLogical, "=="),
 
                 //I know this implementation is actually

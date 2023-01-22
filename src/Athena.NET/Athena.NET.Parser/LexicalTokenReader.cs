@@ -1,6 +1,4 @@
-﻿using Athena.NET.Athena.NET.Parser.LexicalAnalyzer;
-using Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords;
-using Athena.NET.Athena.NET.Parser.Structures;
+﻿using Athena.NET.Athena.NET.Parser.Structures;
 using System.Text;
 
 namespace Athena.NET.Athena.NET.Parser
@@ -23,7 +21,7 @@ namespace Athena.NET.Athena.NET.Parser
             ReaderData = new char[ReaderLength];
         }
 
-        public async Task<ReadOnlyMemory<Token>> ReadLexicalTokensAsync() 
+        public async Task<ReadOnlyMemory<Token>> ReadLexicalTokensAsync()
         {
             var returnTokens = new List<Token>();
 
@@ -41,7 +39,7 @@ namespace Athena.NET.Athena.NET.Parser
 
         protected abstract Token GetToken(ReadOnlyMemory<char> data);
 
-        public void Dispose() 
+        public void Dispose()
         {
             streamReader.Dispose();
         }

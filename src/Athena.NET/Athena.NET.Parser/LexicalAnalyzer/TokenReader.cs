@@ -7,12 +7,10 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer
     {
         private static ReservedKeyword unknownKeyword =
             new(TokenIndentificator.Unknown, "\0u");
-
         public ReadOnlyMemory<ReservedKeyword> ReservedKeywords { get; } =
             KeywordsHolder.ReservedKeywords;
-        public int TabSize { get; }
 
-        public TokenReader(T stream, int tabSize = 4) : base(stream)
+        public TokenReader(T stream) : base(stream)
         {
         }
 
@@ -30,7 +28,7 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer
             return new(TokenIndentificator.Identifier, data[0..(symbolIndex)]);
         }
 
-        private int GetFirstReservedSymbolIndex(ReadOnlyMemory<char> data) 
+        private int GetFirstReservedSymbolIndex(ReadOnlyMemory<char> data)
         {
             int dataLength = data.Length;
             for (int i = 0; i < dataLength; i++)

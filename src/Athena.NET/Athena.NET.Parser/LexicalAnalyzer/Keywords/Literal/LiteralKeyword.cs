@@ -8,13 +8,13 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords.Literal
         public TokenIndentificator Identificator { get; }
         public LiteralOption KeywordData { get; }
 
-        public LiteralKeyword(TokenIndentificator id, LiteralOption data) 
+        public LiteralKeyword(TokenIndentificator id, LiteralOption data)
         {
             Identificator = id;
             KeywordData = data;
         }
 
-        public bool TryGetKeyword([NotNullWhen(true)]out LiteralKeyword returnData, char source) 
+        public bool TryGetKeyword([NotNullWhen(true)]out LiteralKeyword returnData, char source)
         {
             bool equalSource = IsEqual(source);
             returnData = equalSource ? this : null!;

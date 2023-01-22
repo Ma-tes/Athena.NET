@@ -20,34 +20,30 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords
 
         //Actually I'am not happy with this
         //solution, I hope, that I will fix
-        //this as soon as possible
+        //it as soon as possible
         public bool TryGetKeyword([NotNullWhen(true)] out ReservedKeyword returnData, ReadOnlyMemory<char> source)
         {
             if (ParseFunction is not null) 
                 source = ParseFunction.Invoke(source);
 
-            returnData = null!;
-            if (IsEqual(source)) 
+            bool keywordIsEqual = IsEqual(source);
+            returnData = keywordIsEqual ? this : null!;
+
+            int keywordLength = KeywordData.Length;
+            if (!keywordIsEqual || (keywordLength == source.Length || LiteralConnect))
+                return keywordIsEqual;
+
+            char nextSourceCharacter = source.Span[keywordLength];
+            if ((KeywordsHolder.Character.IsEqual(nextSourceCharacter) ||
+                KeywordsHolder.Digit.IsEqual(nextSourceCharacter)) && keywordLength > 1)
             {
-                returnData = this;
-                int keywordLength = KeywordData.Length;
-
-                if (keywordLength == source.Length || LiteralConnect) 
-                    return true;
-                char nextSourceCharacter = source.Span[keywordLength];
-
-                if ((KeywordsHolder.Character.IsEqual(nextSourceCharacter) ||
-                    KeywordsHolder.Digit.IsEqual(nextSourceCharacter)) && keywordLength > 1) 
-                {
-                    returnData = null!;
-                    return false;
-                }
-                return true;
+                returnData = null!;
+                return false;
             }
-            return false;
+            return true;
         }
 
-        public bool IsEqual(ReadOnlyMemory<char> source) 
+        public bool IsEqual(ReadOnlyMemory<char> source)
         {
             if (source.Length < KeywordData.Length)
                 return false;

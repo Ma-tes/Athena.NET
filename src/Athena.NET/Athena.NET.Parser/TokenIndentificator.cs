@@ -30,7 +30,7 @@
         Char = 13,
         //Possible syntax keywords
         Semicolon = 14,
-        IF = 15,
+        If = 15,
         OpenParenthsis = 16,
         CloseParenthsis = 17,
         OpenBrace = 18,
@@ -39,6 +39,6 @@
         EndLine = 20,
         Unknown = 21,
         Identifier = 22,
-        Tabulator = 23 
+        Tabulator = 23
     }
 }
