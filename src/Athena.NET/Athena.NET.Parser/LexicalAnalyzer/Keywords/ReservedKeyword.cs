@@ -6,14 +6,16 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords
     internal sealed class ReservedKeyword : IKeyword<ReadOnlyMemory<char>, ReadOnlyMemory<char>, ReservedKeyword>
     {
         public Func<ReadOnlyMemory<char>, char[]> ParseFunction { get; init; } = null!;
+        public bool LiteralConnect { get; }
 
         public TokenIndentificator Identificator { get; }
         public ReadOnlyMemory<char> KeywordData { get; }
 
-        public ReservedKeyword(TokenIndentificator id, string data) 
+        public ReservedKeyword(TokenIndentificator id, string data, bool literalConnect = false)
         {
             Identificator = id;
             KeywordData = data.ToCharArray();
+            LiteralConnect = literalConnect;
         }
 
         //Actually I'am not happy with this
@@ -30,7 +32,7 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords
                 returnData = this;
                 int keywordLength = KeywordData.Length;
 
-                if (source.Length == 1 || keywordLength == source.Length) 
+                if (keywordLength == source.Length || LiteralConnect) 
                     return true;
                 char nextSourceCharacter = source.Span[keywordLength];
 
@@ -71,19 +73,19 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords
 
                 //I know this implementation is actually
                 //horrible, but for now is somehow acceptable
-                new (TokenIndentificator.EndLine, "@rn")
+                new (TokenIndentificator.EndLine, "\0n", true)
                 {
                     ParseFunction = (ReadOnlyMemory<char> data) =>
                          (data.ToString()
-                              .Replace("\r\n", "@rn")
+                              .Replace("\r\n", "\0n")
                               .ToCharArray())
                 },
 
-                new (TokenIndentificator.Whitespace, " "),
-                new (TokenIndentificator.Semicolon, ";"),
-                new (TokenIndentificator.Add, "+"),
-                new (TokenIndentificator.Sub, "-"),
-                new (TokenIndentificator.EqualAsigment, "=")
+                new (TokenIndentificator.Whitespace, " ", true),
+                new (TokenIndentificator.Semicolon, ";", true),
+                new (TokenIndentificator.Add, "+", true),
+                new (TokenIndentificator.Sub, "-", true),
+                new (TokenIndentificator.EqualAsigment, "=", true)
              };
     }
 }

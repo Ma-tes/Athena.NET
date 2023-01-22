@@ -1,1 +1,3 @@
-int x = 15; int y = 25; int z = x + y;
+int x = 15;
+int y = 25;
+int z = x + y;

@@ -6,6 +6,7 @@ using (var tokenReader = new TokenReader<FileStream>
 {
     var tokens = await tokenReader.ReadLexicalTokensAsync();
     WriteTokens(tokens);
+    Console.ReadLine();
 }
 
 static void WriteTokens(ReadOnlyMemory<Token> tokens) 
