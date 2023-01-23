@@ -34,20 +34,21 @@ namespace Athena.NET.Athena.NET.Parser
         Float = 13,
         [PrimitiveType(typeof(byte))]
         Byte = 14,
-        [PrimitiveType(typeof(char))]
+
         Char = 15,
         String = 16,
         //Possible syntax keywords
         Semicolon = 17,
         If = 18,
-        OpenParenthsis = 19,
-        CloseParenthsis = 20,
-        OpenBrace = 21,
-        CloseBrace = 22,
+        Else = 19,
+        OpenParenthsis = 20,
+        CloseParenthsis = 21,
+        OpenBrace = 22,
+        CloseBrace = 23,
 
-        EndLine = 23,
-        Unknown = 24,
-        Identifier = 25,
-        Tabulator = 26
+        EndLine = 24,
+        Unknown = 25,
+        Identifier = 26,
+        Tabulator = 27
     }
 }

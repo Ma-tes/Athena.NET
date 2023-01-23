@@ -19,9 +19,16 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer
             new ReservedKeyword[]
             {
                 new (TokenIndentificator.Int, "int"),
+                new (TokenIndentificator.Float, "float"),
+                new (TokenIndentificator.Byte, "byte"),
                 new (TokenIndentificator.Char, "char"),
                 new (TokenIndentificator.If, "if"),
+                new (TokenIndentificator.Else, "else"),
                 new (TokenIndentificator.EqualLogical, "=="),
+                new (TokenIndentificator.GreaterEqual, ">="),
+                new (TokenIndentificator.GreaterThan, ">"),
+                new (TokenIndentificator.LessEqual, "<="),
+                new (TokenIndentificator.LessThan, "<"),
 
                 //I know this implementation is actually
                 //horrible, but for now is somehow acceptable
@@ -37,6 +44,8 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer
                 new (TokenIndentificator.Semicolon, ";", true),
                 new (TokenIndentificator.Add, "+", true),
                 new (TokenIndentificator.Sub, "-", true),
+                new (TokenIndentificator.Mul, "*", true),
+                new (TokenIndentificator.Div, "/", true),
                 new (TokenIndentificator.EqualAsigment, "=", true),
                 new (TokenIndentificator.OpenBrace, "(", true),
                 new (TokenIndentificator.CloseBrace, ")", true)

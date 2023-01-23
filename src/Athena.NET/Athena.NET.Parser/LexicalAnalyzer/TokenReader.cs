@@ -1,9 +1,8 @@
 ﻿using Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Attributes;
 using Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords;
 using Athena.NET.Athena.NET.Parser.Structures;
-using System.ComponentModel;
+using System.Globalization;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer
 {
@@ -11,6 +10,8 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer
     {
         private static ReadOnlyMemory<PrimitiveType> primitiveTypes { get; } =
             GetPrimitiveType().ToArray();
+
+        private static readonly string tryParse = "TryParse";
         private static readonly ReservedKeyword unknownKeyword =
             new(TokenIndentificator.Unknown, "\0u");
 
@@ -36,20 +37,24 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer
             return new(GetPrimitiveToken(resultData, primitiveTypes), resultData);
         }
 
-        //TODO: Create a better implementation
-        //with reflection and without any exception
-        private TokenIndentificator GetPrimitiveToken(ReadOnlyMemory<char> data, ReadOnlyMemory<PrimitiveType> primitiveTypes) 
+        //Actually I have no idea if the reflection
+        //with attributes was a good choose.
+        private TokenIndentificator GetPrimitiveToken(ReadOnlyMemory<char> data, ReadOnlyMemory<PrimitiveType> primitiveTypes)
         {
             string dataString = data.ToString();
             int typesLenght = primitiveTypes.Length;
             for (int i = 0; i < typesLenght; i++)
             {
                 var currentType = primitiveTypes.Span[i];
+                Type primitiveType = currentType.Type;
 
-                var typeConvertor = TypeDescriptor.GetConverter(currentType.Type);
-                var convertResult = typeConvertor.ConvertFrom(dataString);
-                if (convertResult is not null)
-                    return currentType.TokenType;
+                var methodInformation = primitiveType.GetMethod(tryParse, new Type[] {typeof(string), primitiveType.MakeByRefType()});
+                if (methodInformation is not null) 
+                {
+                    bool parseResult = (bool)methodInformation.Invoke(null, new object[] { dataString, null! })!;
+                    if (parseResult)
+                        return currentType.TokenType;
+                }
             }
             return TokenIndentificator.Identifier;
         }

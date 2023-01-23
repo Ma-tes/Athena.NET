@@ -1,6 +1,7 @@
-int x = 15;
-int y = 25;
-int z = x + y;
+int currentPosition = 45;
+float offset = 1,25;
 
-if(x == z)
-	x = z - (x-y);
+if((currentPosition * offset) > 90)
+	currentPosition = currentPosition / 2;
+else
+	currentPosition = currentPosition + 1;
