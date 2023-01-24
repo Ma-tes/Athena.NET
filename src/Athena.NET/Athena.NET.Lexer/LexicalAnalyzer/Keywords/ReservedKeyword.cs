@@ -1,7 +1,7 @@
-﻿using Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Interfaces;
+﻿using Athena.NET.Athena.NET.Lexer.LexicalAnalyzer.Interfaces;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords
+namespace Athena.NET.Athena.NET.Lexer.LexicalAnalyzer.Keywords
 {
     internal sealed class ReservedKeyword : IKeyword<ReadOnlyMemory<char>, ReadOnlyMemory<char>, ReservedKeyword>
     {

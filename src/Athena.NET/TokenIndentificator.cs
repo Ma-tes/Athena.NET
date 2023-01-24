@@ -1,6 +1,6 @@
-﻿using Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Attributes;
+﻿using Athena.NET.Athena.NET;
 
-namespace Athena.NET.Athena.NET.Parser
+namespace Athena.NET
 {
     //TODO: There are a lot of missing,
     //identificators, but it's just for

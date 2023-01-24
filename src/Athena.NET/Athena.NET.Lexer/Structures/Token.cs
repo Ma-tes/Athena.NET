@@ -1,4 +1,4 @@
-﻿namespace Athena.NET.Athena.NET.Parser.Structures
+﻿namespace Athena.NET.Athena.NET.Lexer.Structures
 {
     internal readonly struct Token
     {

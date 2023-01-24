@@ -1,7 +1,7 @@
-﻿using Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords;
-using Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords.Literal;
+﻿using Athena.NET.Athena.NET.Lexer.LexicalAnalyzer.Keywords;
+using Athena.NET.Athena.NET.Lexer.LexicalAnalyzer.Keywords.Literal;
 
-namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer
+namespace Athena.NET.Athena.NET.Lexer.LexicalAnalyzer
 {
     internal static class KeywordsHolder
     {
@@ -13,7 +13,7 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer
             new(TokenIndentificator.Char, new LiteralOption('a', 'z'));
 
         //TODO: I would really like to have a
-        //better storing system for overall keywords
+        //better storing system for reserved keywords
        
         public static ReadOnlyMemory<ReservedKeyword> ReservedKeywords =
             new ReservedKeyword[]
@@ -25,6 +25,7 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer
                 new (TokenIndentificator.If, "if"),
                 new (TokenIndentificator.Else, "else"),
                 new (TokenIndentificator.EqualLogical, "=="),
+                new (TokenIndentificator.NotEqual, "!="),
                 new (TokenIndentificator.GreaterEqual, ">="),
                 new (TokenIndentificator.GreaterThan, ">"),
                 new (TokenIndentificator.LessEqual, "<="),

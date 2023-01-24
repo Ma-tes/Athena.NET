@@ -1,4 +1,4 @@
-﻿namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer
+﻿namespace Athena.NET.Athena.NET.Lexer.LexicalAnalyzer
 {
     internal readonly struct PrimitiveType
     {

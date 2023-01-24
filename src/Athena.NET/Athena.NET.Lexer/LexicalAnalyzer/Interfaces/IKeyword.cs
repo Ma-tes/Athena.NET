@@ -1,4 +1,4 @@
-﻿namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Interfaces
+﻿namespace Athena.NET.Athena.NET.Lexer.LexicalAnalyzer.Interfaces
 {
     internal interface IKeyword<T, TSource, TSelf> where TSelf : IKeyword<T, TSource, TSelf>
     {

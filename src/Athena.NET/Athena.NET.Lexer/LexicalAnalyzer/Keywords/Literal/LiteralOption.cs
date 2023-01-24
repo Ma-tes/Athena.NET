@@ -1,4 +1,4 @@
-﻿namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords.Literal
+﻿namespace Athena.NET.Athena.NET.Lexer.LexicalAnalyzer.Keywords.Literal
 {
     internal readonly struct LiteralOption
     {

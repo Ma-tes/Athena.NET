@@ -1,10 +1,8 @@
-﻿using Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Attributes;
-using Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords;
-using Athena.NET.Athena.NET.Parser.Structures;
-using System.Globalization;
+﻿using Athena.NET.Athena.NET.Lexer.LexicalAnalyzer.Keywords;
+using Athena.NET.Athena.NET.Lexer.Structures;
 using System.Reflection;
 
-namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer
+namespace Athena.NET.Athena.NET.Lexer.LexicalAnalyzer
 {
     internal sealed class TokenReader<T> : LexicalTokenReader where T : Stream
     {
@@ -30,8 +28,6 @@ namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer
             if (reservedKeyword != unknownKeyword)
                 return new(reservedKeyword.Identificator, reservedKeyword.KeywordData);
 
-            //TODO: Create handleing for types such as
-            //int, float, string and much more
             int symbolIndex = GetFirstReservedSymbolIndex(data);
             var resultData = data[0..(symbolIndex)];
             return new(GetPrimitiveToken(resultData, primitiveTypes), resultData);

@@ -1,7 +1,7 @@
-﻿using Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Interfaces;
+﻿using Athena.NET.Athena.NET.Lexer.LexicalAnalyzer.Interfaces;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Athena.NET.Athena.NET.Parser.LexicalAnalyzer.Keywords.Literal
+namespace Athena.NET.Athena.NET.Lexer.LexicalAnalyzer.Keywords.Literal
 {
     internal sealed class LiteralKeyword : IKeyword<LiteralOption, char, LiteralKeyword>
     {
