@@ -43,10 +43,18 @@ namespace Athena.NET.Athena.NET.Lexer.LexicalAnalyzer
                 new (TokenIndentificator.Tabulator, "\t", true),
                 new (TokenIndentificator.Whitespace, " ", true),
                 new (TokenIndentificator.Semicolon, ";", true),
+
                 new (TokenIndentificator.Add, "+", true),
                 new (TokenIndentificator.Sub, "-", true),
                 new (TokenIndentificator.Mul, "*", true),
                 new (TokenIndentificator.Div, "/", true),
+
+                new (TokenIndentificator.LogicalAnd, "&", true),
+                new (TokenIndentificator.LogicalOr, "|", true),
+                new (TokenIndentificator.LogicalXor, "^", true),
+                new (TokenIndentificator.LogicalLshift, "<<", true),
+                new (TokenIndentificator.LogicalRshift, ">>", true),
+
                 new (TokenIndentificator.EqualAsigment, "=", true),
                 new (TokenIndentificator.OpenBrace, "(", true),
                 new (TokenIndentificator.CloseBrace, ")", true)

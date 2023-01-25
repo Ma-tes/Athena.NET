@@ -35,20 +35,27 @@ namespace Athena.NET
         [PrimitiveType(typeof(byte))]
         Byte = 14,
 
-        Char = 15,
-        String = 16,
-        //Possible syntax keywords
-        Semicolon = 17,
-        If = 18,
-        Else = 19,
-        OpenParenthsis = 20,
-        CloseParenthsis = 21,
-        OpenBrace = 22,
-        CloseBrace = 23,
+        //Binary operators
+        LogicalAnd = 15,
+        LogicalOr = 16,
+        LogicalXor = 17,
+        LogicalLshift = 18,
+        LogicalRshift = 19,
 
-        EndLine = 24,
-        Unknown = 25,
-        Identifier = 26,
-        Tabulator = 27
+        Char = 20,
+        String = 21,
+        //Possible syntax keywords
+        Semicolon = 22,
+        If = 23,
+        Else = 24,
+        OpenParenthsis = 25,
+        CloseParenthsis = 26,
+        OpenBrace = 27,
+        CloseBrace = 28,
+
+        EndLine = 29,
+        Unknown = 30,
+        Identifier = 31,
+        Tabulator = 32
     }
 }

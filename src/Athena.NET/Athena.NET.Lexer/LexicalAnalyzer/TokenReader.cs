@@ -1,5 +1,6 @@
 ﻿using Athena.NET.Athena.NET.Lexer.LexicalAnalyzer.Keywords;
 using Athena.NET.Athena.NET.Lexer.Structures;
+using System.Globalization;
 using System.Reflection;
 
 namespace Athena.NET.Athena.NET.Lexer.LexicalAnalyzer
@@ -38,10 +39,12 @@ namespace Athena.NET.Athena.NET.Lexer.LexicalAnalyzer
         private TokenIndentificator GetPrimitiveToken(ReadOnlyMemory<char> data, ReadOnlyMemory<PrimitiveType> primitiveTypes)
         {
             string dataString = data.ToString();
+            var typesSpan = primitiveTypes.Span;
+
             int typesLenght = primitiveTypes.Length;
             for (int i = 0; i < typesLenght; i++)
             {
-                var currentType = primitiveTypes.Span[i];
+                var currentType = typesSpan[i];
                 Type primitiveType = currentType.Type;
 
                 var methodInformation = primitiveType.GetMethod(tryParse, new Type[] {typeof(string), primitiveType.MakeByRefType()});
@@ -79,10 +82,11 @@ namespace Athena.NET.Athena.NET.Lexer.LexicalAnalyzer
 
         private ReservedKeyword FindReservedKeyword(ReadOnlyMemory<char> data)
         {
+            var dataSpan = ReservedKeywords.Span;
             int keywordsLength = ReservedKeywords.Length;
             for (int i = 0; i < keywordsLength; i++)
             {
-                var currentKeyword = ReservedKeywords.Span[i];
+                var currentKeyword = dataSpan[i];
                 if (currentKeyword.TryGetKeyword(out ReservedKeyword returnKeyword, data))
                     return returnKeyword;
             }
