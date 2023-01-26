@@ -1,6 +1,6 @@
 ﻿namespace Athena.NET.Athena.NET;
 
-[AttributeUsage(AttributeTargets.All)]
+[AttributeUsage(AttributeTargets.Field)]
 internal class PrimitiveTypeAttribute : Attribute
 {
     public Type Type { get; }
