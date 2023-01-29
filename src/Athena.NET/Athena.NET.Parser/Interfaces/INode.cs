@@ -8,6 +8,6 @@ namespace Athena.NET.Athena.NET.Parser.Interfaces
         public ChildrenNodes ChildNodes { get; }
         public int ChildNodesCount { get; }
 
-        public ChildrenNodes SepareteNodes(ReadOnlyMemory<Token> tokens);
+        public ChildrenNodes SepareteNodes(ReadOnlyMemory<Token> tokens, int nodeIndex);
     }
 }

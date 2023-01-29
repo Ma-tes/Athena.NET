@@ -6,25 +6,25 @@ using System.Reflection;
 
 namespace Athena.NET.Athena.NET.Parser.Nodes
 {
-    internal abstract class OperatorNode<T, TReturn> : IEvaluationNode where T : OperatorNode<T, TReturn>, new()
+    internal abstract class OperatorNode : IEvaluationNode
     {
-        private static ReadOnlySpan<OperatorNode<T, TReturn>> operators =>
-            new(GetDefaultOperators(typeof(OperatorNode<T, TReturn>)).ToArray());
-        protected abstract int operatorWeight { get; }
+        public abstract int OperatorWeight { get; }
 
         public abstract TokenIndentificator NodeToken { get; }
-        public abstract T FactoryCreate(ReadOnlyMemory<Token> tokens);
 
         public ChildrenNodes ChildNodes { get; private set; }
         public int ChildNodesCount { get; } = 0;
 
-        public OperatorNode(ReadOnlyMemory<Token> tokens) 
+        public OperatorNode(ReadOnlyMemory<Token> tokens)
         {
         }
 
-        public ChildrenNodes SepareteNodes(ReadOnlyMemory<Token> tokens)
+        //TODO: Implement proper separation for
+        //operators, that will support proper
+        //preferences to braces
+        public ChildrenNodes SepareteNodes(ReadOnlyMemory<Token> tokens, int nodeIndex)
         {
-
+            return ChildrenNodes.BlankNodes;
         }
 
         public void Evaluate() 
@@ -35,42 +35,43 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
             ChildNodes = new(evaluatedLeftNode, evaluatedRightNode);
         }
 
-        internal abstract TReturn CalculateData(TReturn firstData, TReturn secondData);
+        internal abstract int CalculateData(int firstData, int secondData);
+
+        //TODO: Move this method into some
+        //sort of parser helper class
+        public static int IndexOfToken(ReadOnlyMemory<Token> tokens, TokenIndentificator token)
+        {
+            var tokensSpan = tokens.Span;
+            int tokensLength = tokensSpan.Length;
+
+            for (int i = 0; i < tokensLength; i++)
+            {
+                if (tokensSpan[i].TokenId == token)
+                    return i;
+            }
+            return -1;
+        }
 
         private INode GetEvaluatedNode(INode node) 
         {
-            if(IsEvaluate(out IEvaluationNode currentNode, node))
+            if(TryGetEvaluateNode(out IEvaluationNode currentNode, node))
             {
                 currentNode.Evaluate();
-                if (node.ChildNodes.LeftNode is DataNode<TReturn> leftData &&
-                    node.ChildNodes.RightNode is DataNode<TReturn> rightData) 
+                if (node.ChildNodes.LeftNode is DataNode<int> leftData &&
+                    node.ChildNodes.RightNode is DataNode<int> rightData) 
                 {
                     var returnData = CalculateData(leftData.NodeData, rightData.NodeData);
-                    return new DataNode<TReturn>(TokenIndentificator.Int, returnData);
+                    return new DataNode<int>(TokenIndentificator.Int, returnData);
                 }
             }
             return node;
         }
 
-        private bool IsEvaluate([NotNullWhen(true)]out IEvaluationNode evaluationNode, INode node)
+        private bool TryGetEvaluateNode([NotNullWhen(true)]out IEvaluationNode evaluationNode, INode node)
         {
             bool isEvaluate = node.GetType().IsDefined(typeof(IEvaluationNode));
             evaluationNode = isEvaluate ? (IEvaluationNode)node : null!;
             return isEvaluate;
-        }
-
-        private static IEnumerable<OperatorNode<T, TReturn>> GetDefaultOperators(Type assemblyType)
-        {
-            var currentAssembly = Assembly.GetAssembly(assemblyType);
-
-            Type[] assemblytypes = currentAssembly!.GetTypes();
-            int typesLength = assemblytypes.Length;
-            for (int i = 0; i < typesLength; i++)
-            {
-                Type currentType = assemblytypes[i];
-                if (currentType.IsSubclassOf(typeof(OperatorNode<T, TReturn>)) && !currentType.IsAbstract)
-                    yield return (OperatorNode<T, TReturn>)Activator.CreateInstance(currentType)!;
-            }
         }
     }
 }
