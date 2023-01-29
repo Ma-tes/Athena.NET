@@ -4,7 +4,10 @@ namespace Athena.NET.Athena.NET.Parser.Interfaces
 {
     internal interface INode
     {
-        public abstract Token NodeToken { get; }
+        public TokenIndentificator NodeToken { get; }
         public ChildrenNodes ChildNodes { get; }
+        public int ChildNodesCount { get; }
+
+        public ChildrenNodes SepareteNodes(ReadOnlyMemory<Token> tokens);
     }
 }

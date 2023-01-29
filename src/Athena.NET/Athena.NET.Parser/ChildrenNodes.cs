@@ -7,6 +7,9 @@ namespace Athena.NET.Athena.NET.Parser
         public INode LeftNode { get; }
         public INode RightNode { get; }
 
+        public static ChildrenNodes BlankNodes { get; } =
+            new(null!, null!);
+
         public ChildrenNodes(INode leftNode, INode rightNode) 
         {
             LeftNode = leftNode;
