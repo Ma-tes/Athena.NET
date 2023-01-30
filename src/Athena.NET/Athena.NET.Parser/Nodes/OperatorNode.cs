@@ -15,16 +15,38 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
         public ChildrenNodes ChildNodes { get; private set; }
         public int ChildNodesCount { get; } = 0;
 
-        public OperatorNode(ReadOnlyMemory<Token> tokens)
+        public OperatorNode(ReadOnlyMemory<Token> tokens, int nodeIndex)
         {
+            ChildNodes = SepareteNodes(tokens, nodeIndex);
         }
 
-        //TODO: Implement proper separation for
-        //operators, that will support proper
-        //preferences to braces
+        //TODO: Create a better readability of this
+        //implementation
         public ChildrenNodes SepareteNodes(ReadOnlyMemory<Token> tokens, int nodeIndex)
         {
-            return ChildrenNodes.BlankNodes;
+            var tokensSpan = tokens.Span;
+            int leftIdentfierIndex = OperatorHelper.IndexOfOperatorNextToken(tokens.Span, TokenIndentificator.Int, nodeIndex);
+
+            //Create retype for every primitive type
+            int leftData = int.Parse(tokensSpan[leftIdentfierIndex].Data.Span);
+            var leftNode = new DataNode<int>(tokensSpan[leftIdentfierIndex].TokenId, leftData);
+
+            var rightTokens = leftIdentfierIndex < nodeIndex ? tokensSpan[nodeIndex..] :
+                tokensSpan[0..(leftIdentfierIndex)];
+
+            int rightOperatorIndex = OperatorHelper.IndexOfOperator(rightTokens);
+            if (rightOperatorIndex == -1) 
+            {
+                int rightIdentfierIndex = OperatorHelper.IndexOfOperatorNextToken(rightTokens, TokenIndentificator.Int, rightOperatorIndex);
+                int rightData = int.Parse(tokensSpan[rightIdentfierIndex].Data.Span);
+
+                var rightNode = new DataNode<int>(tokensSpan[leftIdentfierIndex].TokenId, rightData);
+                return new(leftNode, rightNode);
+            }
+            var currentOperator = rightTokens[rightOperatorIndex].TokenId;
+            if (!OperatorHelper.TryGetOperator(out OperatorNode rightOperatorNode, rightTokens[rightOperatorIndex].TokenId))
+                throw new Exception($"Operator with token: {currentOperator} wasn't implemented");
+            return new(leftNode, rightOperatorNode);
         }
 
         public void Evaluate() 
