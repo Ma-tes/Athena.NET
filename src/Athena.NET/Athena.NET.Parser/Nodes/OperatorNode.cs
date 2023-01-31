@@ -57,7 +57,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
             ChildNodes = new(evaluatedLeftNode, evaluatedRightNode);
         }
 
-        internal abstract int CalculateData(int firstData, int secondData);
+        protected abstract int CalculateData(int firstData, int secondData);
 
         //TODO: Move this method into some
         //sort of parser helper class
