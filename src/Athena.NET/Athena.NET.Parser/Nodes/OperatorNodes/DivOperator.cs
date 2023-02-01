@@ -4,7 +4,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes
 {
     internal sealed class DivOperator : OperatorNode
     {
-        public override int OperatorWeight { get; } = 1;
+        public override OperatorPrecedence Precedence { get; } = OperatorPrecedence.Multiplicative;
         public override TokenIndentificator NodeToken { get; } = TokenIndentificator.Div;
 
         public DivOperator(ReadOnlyMemory<Token> tokens, int nodeIndex) : base(tokens, nodeIndex)

@@ -4,7 +4,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes
 {
     internal sealed class AddOperator : OperatorNode
     {
-        public override int OperatorWeight { get; } = 4;
+        public override OperatorPrecedence Precedence { get; } = OperatorPrecedence.Additive;
         public override TokenIndentificator NodeToken { get; } = TokenIndentificator.Add;
 
         public AddOperator(ReadOnlyMemory<Token> tokens, int nodeIndex) : base(tokens, nodeIndex) 

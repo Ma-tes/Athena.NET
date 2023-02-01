@@ -8,13 +8,14 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
 {
     internal abstract class OperatorNode : IEvaluationNode
     {
-        public abstract int OperatorWeight { get; }
+        public abstract OperatorPrecedence Precedence { get; }
 
         public abstract TokenIndentificator NodeToken { get; }
 
         public ChildrenNodes ChildNodes { get; private set; }
         public int ChildNodesCount { get; } = 0;
 
+        public OperatorNode() { }
         public OperatorNode(ReadOnlyMemory<Token> tokens, int nodeIndex)
         {
             ChildNodes = SepareteNodes(tokens, nodeIndex);
