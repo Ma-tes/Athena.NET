@@ -2,7 +2,7 @@
 {
     internal enum OperatorPrecedence : uint
     {
-        Multiplicative = 1,
-        Additive = 2
+        Additive = 1,
+        Multiplicative = 2
     }
 }

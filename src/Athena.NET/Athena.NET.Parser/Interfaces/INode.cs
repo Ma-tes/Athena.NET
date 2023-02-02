@@ -7,7 +7,5 @@ namespace Athena.NET.Athena.NET.Parser.Interfaces
         public TokenIndentificator NodeToken { get; }
         public ChildrenNodes ChildNodes { get; }
         public int ChildNodesCount { get; }
-
-        public ChildrenNodes SepareteNodes(ReadOnlyMemory<Token> tokens, int nodeIndex);
     }
 }

@@ -7,9 +7,8 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes
         public override OperatorPrecedence Precedence { get; } = OperatorPrecedence.Additive;
         public override TokenIndentificator NodeToken { get; } = TokenIndentificator.Sub;
 
-        public SubOperator(ReadOnlyMemory<Token> tokens, int nodeIndex) : base(tokens, nodeIndex)
+        public SubOperator()
         {
-
         }
 
         protected override int CalculateData(int firstData, int secondData) =>

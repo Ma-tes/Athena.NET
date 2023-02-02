@@ -5,6 +5,9 @@ namespace Athena.NET.Athena.NET.Lexer.LexicalAnalyzer.Keywords
 {
     internal sealed class ReservedKeyword : IKeyword<ReadOnlyMemory<char>, ReadOnlyMemory<char>, ReservedKeyword>
     {
+        public static readonly ReservedKeyword UnknownKeyword =
+            new(TokenIndentificator.Unknown, "\0u");
+
         public Func<ReadOnlyMemory<char>, char[]> ParseFunction { get; init; } = null!;
         public bool LiteralConnect { get; }
 

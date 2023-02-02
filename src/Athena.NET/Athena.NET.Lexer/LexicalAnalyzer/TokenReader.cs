@@ -4,28 +4,25 @@ using System.Reflection;
 
 namespace Athena.NET.Athena.NET.Lexer.LexicalAnalyzer
 {
-    internal sealed class TokenReader<T> : LexicalTokenReader where T : Stream
+    internal sealed class TokenReader : LexicalTokenReader
     {
-        private static ReadOnlyMemory<PrimitiveType> primitiveTypes { get; } =
-            GetPrimitiveType().ToArray();
-
         private static readonly string tryParse = "TryParse";
-        private static readonly ReservedKeyword unknownKeyword =
-            new(TokenIndentificator.Unknown, "\0u");
+        private static PrimitiveType[] primitiveTypes =
+            GetPrimitiveType().ToArray();
 
         public ReadOnlyMemory<ReservedKeyword> ReservedKeywords { get; } =
             KeywordsHolder.ReservedKeywords;
 
-        public TokenReader(T stream) : base(stream)
+        public TokenReader(Stream stream) : base(stream)
         {
         }
 
-        //This is temporary and testing solution,
-        //it will be a much safer
+        //This is a temporary and testing solution,
+        //it will be a much safer implementation
         protected override Token GetToken(ReadOnlyMemory<char> data)
         {
             var reservedKeyword = FindReservedKeyword(data);
-            if (reservedKeyword != unknownKeyword)
+            if (reservedKeyword != ReservedKeyword.UnknownKeyword)
                 return new(reservedKeyword.Identificator, reservedKeyword.KeywordData);
 
             int symbolIndex = GetFirstReservedSymbolIndex(data);
@@ -34,7 +31,7 @@ namespace Athena.NET.Athena.NET.Lexer.LexicalAnalyzer
         }
 
         //Actually I have no idea if the reflection
-        //with attributes was a good choose.
+        //with attributes was a good choice.
         private TokenIndentificator GetPrimitiveToken(ReadOnlyMemory<char> data, ReadOnlyMemory<PrimitiveType> primitiveTypes)
         {
             string dataString = data.ToString();
@@ -76,7 +73,7 @@ namespace Athena.NET.Athena.NET.Lexer.LexicalAnalyzer
                 return false;
 
             var arrayHolder = new ReadOnlyMemory<char>(new[] { character });
-            return FindReservedKeyword(arrayHolder) != unknownKeyword;
+            return FindReservedKeyword(arrayHolder) != ReservedKeyword.UnknownKeyword;
         }
 
         private ReservedKeyword FindReservedKeyword(ReadOnlyMemory<char> data)
@@ -89,7 +86,7 @@ namespace Athena.NET.Athena.NET.Lexer.LexicalAnalyzer
                 if (currentKeyword.TryGetKeyword(out ReservedKeyword returnKeyword, data))
                     return returnKeyword;
             }
-            return unknownKeyword;
+            return ReservedKeyword.UnknownKeyword;
         }
 
         private static IEnumerable<PrimitiveType> GetPrimitiveType()

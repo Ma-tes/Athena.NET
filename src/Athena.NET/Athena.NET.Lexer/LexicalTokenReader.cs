@@ -21,7 +21,7 @@ namespace Athena.NET.Athena.NET.Lexer
             ReaderData = new char[ReaderLength];
         }
 
-        public async Task<ReadOnlyMemory<Token>> ReadLexicalTokensAsync()
+        public async Task<ReadOnlyMemory<Token>> ReadTokensAsync()
         {
             var returnTokens = new List<Token>();
 

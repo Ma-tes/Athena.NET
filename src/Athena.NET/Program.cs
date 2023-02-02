@@ -4,14 +4,17 @@ using Athena.NET.Athena.NET.Lexer.Structures;
 using Athena.NET.Athena.NET.Parser.Nodes;
 using Athena.NET.Athena.NET.Parser.Nodes.DataNodes;
 
-using (var tokenReader = new TokenReader<FileStream>
+using (var tokenReader = new TokenReader
     (File.Open(@"C:\Users\uzivatel\source\repos\Athena.NET\examples\Program.ath", FileMode.Open))) 
 {
-    var tokens = await tokenReader.ReadLexicalTokensAsync();
+    var tokens = await tokenReader.ReadTokensAsync();
 
     var operatorTokenIndex = OperatorHelper.IndexOfOperator(tokens.Span);
-    _ = OperatorHelper.TryGetOperator(out OperatorNode resultOperator, tokens.Span[operatorTokenIndex].TokenId);
+    if (OperatorHelper.TryGetOperator(out OperatorNode resultOperator, tokens.Span[operatorTokenIndex].TokenId))
+        resultOperator.CreateNodes(tokens, operatorTokenIndex);
     //WriteTokens(tokens);
+
+    resultOperator.Evaluate();
     Console.ReadLine();
 }
 

@@ -35,12 +35,17 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.DataNodes
             int lastOperatorWeight = 0;
             for (int i = 0; i < tokensLength; i++)
             {
+                if (tokens[i].TokenId == TokenIndentificator.OpenBrace &&
+                    returnIndex != -1)
+                    return returnIndex;
+
                 if (tokens[i].TokenId == TokenIndentificator.CloseBrace)
-                    lastOperatorWeight += closeBraceWeight;
+                    lastOperatorWeight -= closeBraceWeight;
+
                 if (TryGetOperator(out OperatorNode currentNode, tokens[i].TokenId))
                 {
-                    int operatorWeight = currentNode.OperatorWeight;
-                    if (operatorWeight > lastOperatorWeight) 
+                    int operatorWeight = (int)currentNode.Precedence;
+                    if (operatorWeight > lastOperatorWeight)
                     {
                         lastOperatorWeight = operatorWeight;
                         returnIndex = i;
@@ -58,13 +63,16 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.DataNodes
                 return -1;
 
             int closeBraceIndex = IndexOfToken(tokens[0..(operatorIndex)], TokenIndentificator.CloseBrace);
-            return closeBraceIndex == -1 ? IndexOfToken(tokens[operatorIndex..], identifierToken) :
-                IndexOfToken(tokens[0..(operatorIndex)], identifierToken);
+            if(closeBraceIndex == -1)
+                return IndexOfToken(tokens[0..(operatorIndex)], identifierToken);
+
+            int tokenIndex = IndexOfToken(tokens[operatorIndex..], identifierToken);
+            return tokenIndex + ((((tokenIndex + Math.Abs(tokenIndex)) / 2) / tokenIndex) * operatorIndex);
         }
 
         //Value -1 means that wasn't found
         //any token in that span
-        private static int IndexOfToken(ReadOnlySpan<Token> tokens, TokenIndentificator tokenIdentificator) 
+        public static int IndexOfToken(ReadOnlySpan<Token> tokens, TokenIndentificator tokenIdentificator) 
         {
             int tokensLength = tokens.Length;
             for (int i = 0; i < tokensLength; i++)
