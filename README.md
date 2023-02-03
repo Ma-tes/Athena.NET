@@ -5,6 +5,12 @@ Athena often given the epithet Pallas, is an ancient Greek goddess associated wi
 
 ---
 >>Athena as a small scripting language with similar syntax to C#, is implemented with a pretty enormous abstract structure. As you probably realized, Athena is really hard to read. We are looking forward to create any type of documentation, which can reduce in a some way readablity.
-### Lexical Analyzer ![](https://geps.dev/progress/100)
-### Abstract syntax tree parser ![](https://geps.dev/progress/10)
-### Interpreter ![](https://geps.dev/progress/0)
+<pre>
+
+</pre>
+- Lexical Analyzer
+![](https://geps.dev/progress/100)
+- Abstract syntax tree parser
+![](https://geps.dev/progress/10)
+- Interpreter
+![](https://geps.dev/progress/0)
