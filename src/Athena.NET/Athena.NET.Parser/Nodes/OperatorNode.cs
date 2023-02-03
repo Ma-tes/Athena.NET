@@ -1,8 +1,8 @@
-﻿using Athena.NET.Athena.NET.Lexer.Structures;
+﻿using Athena.NET.Athena.NET.Lexer;
+using Athena.NET.Athena.NET.Lexer.Structures;
 using Athena.NET.Athena.NET.Parser.Interfaces;
 using Athena.NET.Athena.NET.Parser.Nodes.DataNodes;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 
 namespace Athena.NET.Athena.NET.Parser.Nodes
 {
@@ -45,7 +45,6 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
                 leftNode = new DataNode<int>(tokensSpan[leftIdentfierIndex].TokenId, leftData);
 
             }
-
 
             var rightTokensSpan = rightTokens.Span;
             int rightOperatorIndex = OperatorHelper.IndexOfOperator(rightTokensSpan);

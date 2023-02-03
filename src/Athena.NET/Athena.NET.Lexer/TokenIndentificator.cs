@@ -1,11 +1,10 @@
-﻿using Athena.NET.Athena.NET;
-
-namespace Athena.NET
+﻿
+namespace Athena.NET.Athena.NET.Lexer
 {
     //TODO: There are a lot of missing,
     //identificators, but it's just for
     //testing
-    internal enum TokenIndentificator : uint
+    public enum TokenIndentificator : uint
     {
         Whitespace = 0,
         //Arithmetic operators

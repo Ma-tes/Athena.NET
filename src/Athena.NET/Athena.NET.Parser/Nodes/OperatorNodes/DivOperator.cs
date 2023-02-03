@@ -1,4 +1,5 @@
-﻿
+﻿using Athena.NET.Athena.NET.Lexer;
+
 namespace Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes
 {
     internal sealed class DivOperator : OperatorNode

@@ -1,4 +1,5 @@
-﻿using Athena.NET.Athena.NET.Parser.Nodes.DataNodes;
+﻿using Athena.NET.Athena.NET.Lexer;
+using Athena.NET.Athena.NET.Parser.Nodes.DataNodes;
 
 namespace Athena.NET.Athena.NET.Parser.Nodes
 {

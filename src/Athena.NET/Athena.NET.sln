@@ -5,6 +5,8 @@ VisualStudioVersion = 17.3.32519.111
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Athena.NET", "Athena.NET.csproj", "{A22E2103-E77C-499B-B03A-DCE5DF2687A9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Athena.NET.ParseViewer", "..\Athena.NET.ParseViewer\Athena.NET.ParseViewer.csproj", "{AEC206DC-9BC5-441B-AE0C-3DBDAEF184D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{A22E2103-E77C-499B-B03A-DCE5DF2687A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A22E2103-E77C-499B-B03A-DCE5DF2687A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A22E2103-E77C-499B-B03A-DCE5DF2687A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEC206DC-9BC5-441B-AE0C-3DBDAEF184D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEC206DC-9BC5-441B-AE0C-3DBDAEF184D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEC206DC-9BC5-441B-AE0C-3DBDAEF184D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEC206DC-9BC5-441B-AE0C-3DBDAEF184D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

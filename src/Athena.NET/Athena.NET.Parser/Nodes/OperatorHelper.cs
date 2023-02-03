@@ -1,4 +1,5 @@
-﻿using Athena.NET.Athena.NET.Lexer.Structures;
+﻿using Athena.NET.Athena.NET.Lexer;
+using Athena.NET.Athena.NET.Lexer.Structures;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
@@ -45,7 +46,8 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.DataNodes
                 if (TryGetOperator(out OperatorNode currentNode, tokens[i].TokenId))
                 {
                     int operatorWeight = (int)currentNode.Precedence;
-                    if (operatorWeight > lastOperatorWeight)
+
+                    if (operatorWeight >= lastOperatorWeight)
                     {
                         lastOperatorWeight = operatorWeight;
                         returnIndex = i;

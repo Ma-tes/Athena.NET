@@ -1,8 +1,8 @@
-﻿using Athena.NET.Athena.NET.Lexer.Structures;
+﻿using Athena.NET.Athena.NET.Lexer;
 
 namespace Athena.NET.Athena.NET.Parser.Interfaces
 {
-    internal interface INode
+    public interface INode
     {
         public TokenIndentificator NodeToken { get; }
         public ChildrenNodes ChildNodes { get; }
