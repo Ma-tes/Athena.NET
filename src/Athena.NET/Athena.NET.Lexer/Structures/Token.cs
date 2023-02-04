@@ -1,6 +1,6 @@
 ﻿namespace Athena.NET.Athena.NET.Lexer.Structures
 {
-    internal readonly struct Token
+    public readonly struct Token
     {
         public TokenIndentificator TokenId { get; }
         public ReadOnlyMemory<char> Data { get; }

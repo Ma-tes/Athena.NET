@@ -8,7 +8,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.DataNodes
     //this implementation, maybe I should
     //create a different implementation
     //of this data holding node
-    internal class DataNode<T> : INode
+    public class DataNode<T> : INode
     {
         public TokenIndentificator NodeToken { get; }
         public ChildrenNodes ChildNodes { get; set; } =
