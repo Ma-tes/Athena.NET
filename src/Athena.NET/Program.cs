@@ -1,8 +1,12 @@
 ﻿using Athena.NET.Athena.NET.Lexer;
 using Athena.NET.Athena.NET.Lexer.LexicalAnalyzer;
 using Athena.NET.Athena.NET.Lexer.Structures;
+using Athena.NET.Athena.NET.Parser.Interfaces;
 using Athena.NET.Athena.NET.Parser.Nodes;
 using Athena.NET.Athena.NET.Parser.Nodes.DataNodes;
+using Athena.NET.Athena.NET.ParseViewer;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 using (var tokenReader = new TokenReader
     (File.Open(@"C:\Users\uzivatel\source\repos\Athena.NET\examples\Program.ath", FileMode.Open))) 
@@ -12,9 +16,17 @@ using (var tokenReader = new TokenReader
     var operatorTokenIndex = OperatorHelper.IndexOfOperator(tokens.Span);
     if (OperatorHelper.TryGetOperator(out OperatorNode resultOperator, tokens.Span[operatorTokenIndex].TokenId))
         resultOperator.CreateNodes(tokens, operatorTokenIndex);
-    //WriteTokens(tokens);
 
-    resultOperator.Evaluate();
+    ReadOnlyMemory<INode> nodes = new INode[] { resultOperator };
+
+    using (var nodeViewer = new NodeViewer(nodes, new Size(1920, 1080)))
+    {
+        Image nodeImage = nodeViewer.CreateImage();
+        nodeImage.Save(@"C:\Users\uzivatel\source\repos\Athena.NET\examples\Node1.png", ImageFormat.Png);
+    }
+
+    //WriteTokens(tokens);
+    //resultOperator.Evaluate();
     Console.ReadLine();
 }
 

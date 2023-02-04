@@ -1,16 +1,16 @@
 ﻿using Athena.NET.Athena.NET.Lexer;
 using Athena.NET.Athena.NET.Parser.Interfaces;
 using Athena.NET.Athena.NET.Parser.Nodes.DataNodes;
-using Athena.NET.ParseViewer.Interfaces;
+using Athena.NET.Athena.NET.ParseViewer.Interfaces;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 
-namespace Athena.NET.ParseViewer.NodeElements
+namespace Athena.NET.Athena.NET.ParseViewer.NodeElements
 {
     public sealed class NodeGraphElement : INodeDrawer
     {
-        public Pen OutlinePen { get; set; } = Pens.Black;
-        public Brush TextBrush { get; set; } = Brushes.Black;
+        public Pen OutlinePen { get; set; } = Pens.White;
+        public Brush TextBrush { get; set; } = Brushes.White;
 
         public int NodeDistance { get; set; }
 
@@ -46,10 +46,10 @@ namespace Athena.NET.ParseViewer.NodeElements
 
         private Size CalculateNodeSize(INode node)
         {
-            int returnSize = GetEnumTokenName(node.NodeToken).Length;;
+            int returnSize = GetEnumTokenName(node.NodeToken).Length;
             if (TryGetDataNode(out DataNode<object> dataNode, node))
                 returnSize += dataNode.NodeData.ToString()!.Length;
-            return new(returnSize, returnSize);
+            return new(returnSize * 10, (returnSize * 10) / (returnSize / 3));
         }
 
         private bool TryGetDataNode([NotNullWhen(true)]out DataNode<object> returnNode, INode node) 

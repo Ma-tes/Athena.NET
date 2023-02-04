@@ -1,7 +1,7 @@
 ﻿using Athena.NET.Athena.NET.Parser.Interfaces;
 using System.Drawing;
 
-namespace Athena.NET.ParseViewer.Interfaces
+namespace Athena.NET.Athena.NET.ParseViewer.Interfaces
 {
     public interface INodeDrawer
     {
