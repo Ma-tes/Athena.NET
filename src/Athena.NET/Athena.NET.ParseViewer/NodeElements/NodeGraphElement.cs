@@ -4,9 +4,13 @@ using Athena.NET.Athena.NET.Parser.Nodes.DataNodes;
 using Athena.NET.Athena.NET.ParseViewer.Interfaces;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Runtime.Versioning;
 
 namespace Athena.NET.Athena.NET.ParseViewer.NodeElements
 {
+    //TODO: Make sure that drawing a node
+    //tree scheme will be multiplaform
+    [SupportedOSPlatform("windows")]
     public sealed class NodeGraphElement : INodeDrawer
     {
         private static readonly string nodeData = "NodeData";
