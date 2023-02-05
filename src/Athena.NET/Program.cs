@@ -19,7 +19,7 @@ using (var tokenReader = new TokenReader
 
     ReadOnlyMemory<INode> nodes = new INode[] { resultOperator };
 
-    using (var nodeViewer = new NodeViewer(nodes, new Size(1920, 1080)))
+    using (var nodeViewer = new NodeViewer(nodes, new Size(4000, 4000)))
     {
         Image nodeImage = nodeViewer.CreateImage();
         nodeImage.Save(@"C:\Users\uzivatel\source\repos\Athena.NET\examples\Node1.png", ImageFormat.Png);

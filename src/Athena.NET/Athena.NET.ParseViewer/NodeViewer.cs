@@ -13,7 +13,7 @@ namespace Athena.NET.Athena.NET.ParseViewer
         private readonly ReadOnlyMemory<INodeDrawer> drawElements =
             new INodeDrawer[]
             {
-                new NodeGraphElement(50)
+                new NodeGraphElement(150)
             };
         private Size originalSize;
 
@@ -33,9 +33,12 @@ namespace Athena.NET.Athena.NET.ParseViewer
             //will be multiplatform and not just
             //for windows
             nodeBitmap = new Bitmap(ImageSize.Width, ImageSize.Height)!;
+            nodeBitmap.SetResolution(400, 400);
 
             NodeGraphics = Graphics.FromImage(nodeBitmap);
             NodeGraphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            NodeGraphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            NodeGraphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
             NodeGraphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
         }
 
