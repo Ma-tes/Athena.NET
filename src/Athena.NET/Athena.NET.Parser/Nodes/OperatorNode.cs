@@ -25,51 +25,41 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
         //implementation
         private ChildrenNodes SepareteNodes(ReadOnlyMemory<Token> tokens, int nodeIndex)
         {
+            var leftData = tokens[0..(nodeIndex)];
+            var rightData = tokens[(nodeIndex + 1)..];
+
+            INode leftNode = GetChildrenNode(leftData);
+            INode rightNode = GetChildrenNode(rightData);
+            return new(leftNode, rightNode);
+        }
+
+        public INode GetChildrenNode(ReadOnlyMemory<Token> tokens) 
+        {
             var tokensSpan = tokens.Span;
-            int leftIdentfierIndex = OperatorHelper.IndexOfOperatorNextToken(tokensSpan, TokenIndentificator.Int, nodeIndex);
-
-            //TODO: Make sure that everything will be
-            //generics for every primitive type
-            INode leftNode;
-            ReadOnlyMemory<Token> rightTokens = leftIdentfierIndex < nodeIndex ? tokens[(nodeIndex + 1)..] :
-                    tokens[0..(nodeIndex - 1)];
-            if (leftIdentfierIndex == -1)
+            int operatorIndex = OperatorHelper.IndexOfOperator(tokensSpan);
+            if (operatorIndex == -1) 
             {
-                int idetifierIndex = OperatorHelper.IndexOfToken(tokensSpan, TokenIndentificator.Identifier);
-                leftNode = new IdentifierNode(tokensSpan[idetifierIndex].Data);
-                rightTokens = tokens[0..(nodeIndex - 1)];
-            }
-            else 
-            {
-                int leftData = int.Parse(tokensSpan[leftIdentfierIndex].Data.Span);
-                leftNode = new DataNode<int>(tokensSpan[leftIdentfierIndex].TokenId, leftData);
-
-            }
-
-            var rightTokensSpan = rightTokens.Span;
-            int rightOperatorIndex = OperatorHelper.IndexOfOperator(rightTokensSpan);
-            if (rightOperatorIndex == -1) 
-            {
-                int rightIdentfierIndex = OperatorHelper.IndexOfToken(rightTokensSpan, TokenIndentificator.Int);
-                if (rightIdentfierIndex == -1) 
+                int identfierIndex = OperatorHelper.IndexOfToken(tokensSpan, TokenIndentificator.Int);
+                if (identfierIndex == -1)
                 {
-                    int idetifierIndex = OperatorHelper.IndexOfToken(rightTokensSpan, TokenIndentificator.Identifier);
-                    var idetifierNode = new IdentifierNode(rightTokensSpan[idetifierIndex].Data);
-                    return new(leftNode, idetifierNode);
+                    int idetifierIndex = OperatorHelper.IndexOfToken(tokensSpan, TokenIndentificator.Identifier);
+                    var idetifierNode = new IdentifierNode(tokensSpan[idetifierIndex].Data);
+                    return idetifierNode;
                 }
 
-                int rightData = int.Parse(rightTokensSpan[rightIdentfierIndex].Data.Span);
-
-                var rightNode = new DataNode<int>(rightTokensSpan[rightIdentfierIndex].TokenId, rightData);
-                return new(leftNode, rightNode);
+                int currentData = int.Parse(tokensSpan[identfierIndex].Data.Span);
+                var returnNode = new DataNode<int>(tokensSpan[identfierIndex].TokenId, currentData);
+                return returnNode;
             }
-            var currentOperator = rightTokensSpan[rightOperatorIndex].TokenId;
-            if (!OperatorHelper.TryGetOperator(out OperatorNode rightOperatorNode, rightTokensSpan[rightOperatorIndex].TokenId))
+
+            var currentOperator = tokensSpan[operatorIndex].TokenId;
+            if (!OperatorHelper.TryGetOperator(out OperatorNode returnOperatorNode, tokensSpan[operatorIndex].TokenId))
                 throw new Exception($"Operator with token: {currentOperator} wasn't implemented");
 
-            rightOperatorNode.CreateNodes(rightTokens, rightOperatorIndex);
-            return new(leftNode, rightOperatorNode);
+            returnOperatorNode.CreateNodes(tokens, operatorIndex);
+            return returnOperatorNode;
         }
+
 
         public void Evaluate() 
         {

@@ -47,7 +47,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.DataNodes
                 {
                     int operatorWeight = (int)currentNode.Precedence;
 
-                    if (operatorWeight > lastOperatorWeight)
+                    if (operatorWeight >= lastOperatorWeight)
                     {
                         lastOperatorWeight = operatorWeight;
                         returnIndex = i;
