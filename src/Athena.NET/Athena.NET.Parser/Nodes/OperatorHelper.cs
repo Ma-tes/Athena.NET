@@ -38,7 +38,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.DataNodes
             {
                 if (tokens[i].TokenId == TokenIndentificator.OpenBrace &&
                     returnIndex != -1)
-                    return returnIndex;
+                    lastOperatorWeight += closeBraceWeight;
 
                 if (tokens[i].TokenId == TokenIndentificator.CloseBrace)
                     lastOperatorWeight -= closeBraceWeight;

@@ -1,10 +1,14 @@
 ﻿using Athena.NET.Athena.NET.Parser.Interfaces;
+using Athena.NET.Athena.NET.Parser.Nodes;
+using Athena.NET.Athena.NET.Parser.Nodes.DataNodes;
 using Athena.NET.Athena.NET.ParseViewer.Interfaces;
 using Athena.NET.Athena.NET.ParseViewer.NodeElements;
 using System.Drawing;
+using System.Runtime.Versioning;
 
 namespace Athena.NET.Athena.NET.ParseViewer
 {
+    [SupportedOSPlatform("windows")]
     public sealed class NodeViewer : IDisposable
     {
         private Bitmap nodeBitmap;
@@ -13,7 +17,26 @@ namespace Athena.NET.Athena.NET.ParseViewer
         private readonly ReadOnlyMemory<INodeDrawer> drawElements =
             new INodeDrawer[]
             {
-                new NodeGraphElement(150)
+                new NodeGraphElement(150, new NodeShape[]
+                {
+                    new(typeof(OperatorNode),
+                        (INode node, Rectangle rectangle, Graphics graphics)
+                            => graphics.DrawPolygon(Pens.Black, new PointF[]
+                            {
+                                new(rectangle.X, rectangle.Y),
+                                new(rectangle.X + rectangle.Width, rectangle.Y),
+                                new(rectangle.X + (rectangle.Width / 2), rectangle.Y + rectangle.Height),
+                            })),
+                    new(typeof(DataNode<>),
+                        (INode node, Rectangle rectangle, Graphics graphics)
+                            => 
+                            {
+                                graphics.FillEllipse(Brushes.Green, rectangle);
+                                _ = NodeHelper.TryGetDataNode(out DataNode<object> dataNode, node);
+                                graphics.DrawString(dataNode.NodeData.ToString(), SystemFonts.DefaultFont, Brushes.White,
+                                    rectangle.X + (rectangle.Width / 3), rectangle.Y + (rectangle.Width / 3));
+                            })
+                })
             };
         private Size originalSize;
 

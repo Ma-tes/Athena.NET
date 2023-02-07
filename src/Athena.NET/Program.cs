@@ -19,6 +19,7 @@ using (var tokenReader = new TokenReader
 
     ReadOnlyMemory<INode> nodes = new INode[] { resultOperator };
 
+    //resultOperator.Evaluate();
     using (var nodeViewer = new NodeViewer(nodes, new Size(4000, 4000)))
     {
         Image nodeImage = nodeViewer.CreateImage();
@@ -26,7 +27,6 @@ using (var tokenReader = new TokenReader
     }
 
     //WriteTokens(tokens);
-    //resultOperator.Evaluate();
     Console.ReadLine();
 }
 

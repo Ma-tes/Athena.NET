@@ -1,8 +1,7 @@
-﻿using Athena.NET.Athena.NET.Lexer;
+﻿using Athena.NET.Athena.NET.Parser;
 using Athena.NET.Athena.NET.Parser.Interfaces;
 using Athena.NET.Athena.NET.Parser.Nodes.DataNodes;
 using Athena.NET.Athena.NET.ParseViewer.Interfaces;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.Versioning;
 
@@ -13,16 +12,15 @@ namespace Athena.NET.Athena.NET.ParseViewer.NodeElements
     [SupportedOSPlatform("windows")]
     public sealed class NodeGraphElement : INodeDrawer
     {
-        private static readonly string nodeData = "NodeData";
+        private ReadOnlyMemory<NodeShape> nodeShapes;
 
-        public Pen OutlinePen { get; set; } = Pens.Black;
         public Brush TextBrush { get; set; } = Brushes.Black;
-
         public int NodeDistance { get; set; }
 
-        public NodeGraphElement(int distance) 
+        public NodeGraphElement(int distance, ReadOnlyMemory<NodeShape> nodeShapes)
         {
             NodeDistance = distance;
+            this.nodeShapes = nodeShapes;
         }
 
         public void OnDraw(INode node, Graphics graphics, Point position)
@@ -32,30 +30,47 @@ namespace Athena.NET.Athena.NET.ParseViewer.NodeElements
 
             var nodeSize = CalculateNodeSize(node);
             var nodeRectangle = new Rectangle(position, nodeSize);
-            graphics.DrawEllipse(OutlinePen, nodeRectangle);
 
-            string tokenName = GetEnumTokenName(node.NodeToken);
+            NodeShape currentShape = GetNodeShape(node);
+            currentShape.DrawShape.Invoke(node, nodeRectangle, graphics);
+
+            string tokenName = node.NodeToken.GetEnumTokenName();
             var textRectangle = new Rectangle(new(position.X + (nodeSize.Width / 10), position.Y + 10), new(nodeSize.Width - (tokenName.Length * 2), nodeSize.Height - 40));
             graphics.DrawString(tokenName, SystemFonts.DefaultFont, TextBrush, textRectangle);
-            if (TryGetDataNode(out DataNode<object> dataNode, node)) 
+
+            DrawNodeChildrens(node.ChildNodes, graphics, position);
+        }
+
+        private NodeShape GetNodeShape(INode node) 
+        {
+            Type nodeType = node.GetType();
+            var shapesSpan = nodeShapes.Span;
+            for (int i = 0; i < shapesSpan.Length; i++)
             {
-                int currentYPosition = nodeRectangle.Y + (nodeSize.Height / 2);
-                graphics.DrawString(dataNode.NodeData.ToString(), SystemFonts.DefaultFont, TextBrush, nodeRectangle.X, currentYPosition);
+                var currentShape = shapesSpan[i];
+                if(nodeType.IsGenericTypeEqual(currentShape.NodeType) ||
+                    nodeType.IsAssignableTo(currentShape.NodeType)) 
+                {
+                    return currentShape;
+                }
             }
+            return NodeShape.DefaultShape;
+        }
 
+        private void DrawNodeChildrens(ChildrenNodes childrenNodes, Graphics graphics, Point position)
+        {
             int childrenYPosition = position.Y + NodeDistance;
-            var leftNodePosition = new Point(position.X - (NodeDistance), childrenYPosition);
-            var rightNodePosition = new Point(position.X + (NodeDistance), childrenYPosition);
+            var leftNodePosition = new Point(position.X - NodeDistance, childrenYPosition);
+            var rightNodePosition = new Point(position.X + NodeDistance, childrenYPosition);
 
-            var childrenNodes = node.ChildNodes;
             OnDraw(childrenNodes.LeftNode, graphics, leftNodePosition);
             OnDraw(childrenNodes.RightNode, graphics, rightNodePosition);
         }
 
         private Size CalculateNodeSize(INode node)
         {
-            int returnSize = GetEnumTokenName(node.NodeToken).Length;
-            if (TryGetDataNode(out DataNode<object> dataNode, node)) 
+            int returnSize = node.NodeToken.GetEnumTokenName().Length;
+            if (NodeHelper.TryGetDataNode(out DataNode<object> dataNode, node)) 
             {
                 int dataLength = dataNode.NodeData.ToString()!.Length;
                 if (dataLength > returnSize)
@@ -66,34 +81,5 @@ namespace Athena.NET.Athena.NET.ParseViewer.NodeElements
             return returnSize > 7 ? new(scaleSize / (((returnSize) / 5)), returnSize * (returnSize * 3)) :
                 new(scaleSize, scaleSize);
         }
-
-        private bool TryGetDataNode([NotNullWhen(true)]out DataNode<object> returnNode, INode node)
-        {
-            returnNode = null!;
-            var currentData = GetGenericNodeData(node);
-
-            if (currentData is not null) 
-            {
-                returnNode = new DataNode<object>(node.NodeToken, currentData);
-                return true;
-            }
-            return false;
-        }
-
-        private object? GetGenericNodeData(INode node) 
-        {
-            Type nodeType = node.GetType();
-            Type dataNodeType = typeof(DataNode<>);
-
-            if (nodeType.GUID == dataNodeType.GUID) 
-            {
-                var propertyInformation = nodeType.GetProperty(nodeData);
-                return propertyInformation!.GetValue(node);
-            }
-            return null;
-        }
-
-        private string GetEnumTokenName(TokenIndentificator token) =>
-            Enum.GetName(typeof(TokenIndentificator), token)!;
     }
 }
