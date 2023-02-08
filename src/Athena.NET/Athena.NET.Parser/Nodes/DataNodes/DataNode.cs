@@ -13,7 +13,6 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.DataNodes
         public TokenIndentificator NodeToken { get; }
         public ChildrenNodes ChildNodes { get; set; } =
             ChildrenNodes.BlankNodes;
-        public int ChildNodesCount { get; } = 1;
 
         public T NodeData { get; }
 

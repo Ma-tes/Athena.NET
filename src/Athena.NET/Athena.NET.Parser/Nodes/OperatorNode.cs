@@ -12,7 +12,6 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
         public abstract TokenIndentificator NodeToken { get; }
 
         public ChildrenNodes ChildNodes { get; private set; }
-        public int ChildNodesCount { get; } = 0;
 
         public OperatorNode() { }
 
@@ -21,8 +20,6 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
             ChildNodes = SepareteNodes(tokens, nodeIndex);
         }
 
-        //TODO: Create a better readability of this
-        //implementation
         private ChildrenNodes SepareteNodes(ReadOnlyMemory<Token> tokens, int nodeIndex)
         {
             var leftData = tokens[0..(nodeIndex)];
