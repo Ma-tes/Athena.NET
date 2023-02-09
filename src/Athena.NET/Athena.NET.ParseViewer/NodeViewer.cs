@@ -21,7 +21,7 @@ namespace Athena.NET.Athena.NET.ParseViewer
                 {
                     new(typeof(OperatorNode),
                         (INode node, Rectangle rectangle, Graphics graphics)
-                            => graphics.DrawPolygon(Pens.Black, new PointF[]
+                            => graphics.FillPolygon(Brushes.LightBlue, new PointF[]
                             {
                                 new(rectangle.X, rectangle.Y),
                                 new(rectangle.X + rectangle.Width, rectangle.Y),

@@ -8,6 +8,9 @@ using Athena.NET.Athena.NET.ParseViewer;
 using System.Drawing;
 using System.Drawing.Imaging;
 
+//This is here just for easy and fast
+//debugging, it will changed as soon
+//as possible
 using (var tokenReader = new TokenReader
     (File.Open(@"C:\Users\uzivatel\source\repos\Athena.NET\examples\Program.ath", FileMode.Open))) 
 {
@@ -18,14 +21,13 @@ using (var tokenReader = new TokenReader
         resultOperator.CreateNodes(tokens, operatorTokenIndex);
 
     ReadOnlyMemory<INode> nodes = new INode[] { resultOperator };
-
-    //resultOperator.Evaluate();
     using (var nodeViewer = new NodeViewer(nodes, new Size(4000, 4000)))
     {
         Image nodeImage = nodeViewer.CreateImage();
         nodeImage.Save(@"C:\Users\uzivatel\source\repos\Athena.NET\examples\Node1.png", ImageFormat.Png);
     }
 
+    //resultOperator.Evaluate();
     //WriteTokens(tokens);
     Console.ReadLine();
 }
