@@ -14,7 +14,7 @@ namespace Athena.NET.Athena.NET.ParseViewer
             new(null!,
                 (INode node, Rectangle rectangle, Graphics graphics) => 
                 {
-                    graphics.DrawEllipse(Pens.Black, rectangle);
+                    graphics.FillRectangle(Brushes.LightGray, rectangle);
                 });
 
         public NodeShape(Type nodeType, Action<INode, Rectangle, Graphics> drawShape)

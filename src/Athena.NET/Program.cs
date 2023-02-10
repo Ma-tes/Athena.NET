@@ -21,16 +21,16 @@ using (var tokenReader = new TokenReader
         resultOperator.CreateNodes(tokens, operatorTokenIndex);
 
     ReadOnlyMemory<INode> nodes = new INode[] { resultOperator };
+    resultOperator.Evaluate();
     using (var nodeViewer = new NodeViewer(nodes, new Size(4000, 4000)))
     {
         Image nodeImage = nodeViewer.CreateImage();
         nodeImage.Save(@"C:\Users\uzivatel\source\repos\Athena.NET\examples\Node1.png", ImageFormat.Png);
     }
 
-    //resultOperator.Evaluate();
     //WriteTokens(tokens);
-    Console.ReadLine();
 }
+Console.ReadLine();
 
 
 static void WriteTokens(ReadOnlyMemory<Token> tokens) 

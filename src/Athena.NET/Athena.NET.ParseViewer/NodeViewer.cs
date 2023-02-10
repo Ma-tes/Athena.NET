@@ -3,6 +3,7 @@ using Athena.NET.Athena.NET.Parser.Nodes;
 using Athena.NET.Athena.NET.Parser.Nodes.DataNodes;
 using Athena.NET.Athena.NET.ParseViewer.Interfaces;
 using Athena.NET.Athena.NET.ParseViewer.NodeElements;
+using System.Collections.Immutable;
 using System.Drawing;
 using System.Runtime.Versioning;
 
@@ -14,9 +15,9 @@ namespace Athena.NET.Athena.NET.ParseViewer
         private Bitmap nodeBitmap;
         public Graphics NodeGraphics { get; }
 
-        private readonly ReadOnlyMemory<INodeDrawer> drawElements =
-            new INodeDrawer[]
-            {
+        private readonly ImmutableArray<INodeDrawer> drawElements =
+            ImmutableArray.Create<INodeDrawer>
+            ( 
                 new NodeGraphElement(150, new NodeShape[]
                 {
                     new(typeof(OperatorNode),
@@ -28,7 +29,7 @@ namespace Athena.NET.Athena.NET.ParseViewer
                                 new(rectangle.X + (rectangle.Width / 2), rectangle.Y + rectangle.Height),
                             })),
                     new(typeof(DataNode<>),
-                        (INode node, Rectangle rectangle, Graphics graphics)
+                        (INode node, Rectangle rectangle, Graphics graphics )
                             => 
                             {
                                 graphics.FillEllipse(Brushes.Green, rectangle);
@@ -37,7 +38,7 @@ namespace Athena.NET.Athena.NET.ParseViewer
                                     rectangle.X + (rectangle.Width / 3), rectangle.Y + (rectangle.Width / 3));
                             })
                 })
-            };
+            );
         private Size originalSize;
 
         public ReadOnlyMemory<INode> RenderNodes { get; }
@@ -79,10 +80,9 @@ namespace Athena.NET.Athena.NET.ParseViewer
 
         private void DrawNodeElements(INode node, Point position)
         {
-            var nodeElementsSpan = drawElements.Span;
-            for (int i = 0; i < nodeElementsSpan.Length; i++)
+            for (int i = 0; i < drawElements.Length; i++)
             {
-                var currentElement = nodeElementsSpan[i];
+                var currentElement = drawElements[i];
                 currentElement.OnDraw(node, NodeGraphics, position);
             }
         }
@@ -91,6 +91,7 @@ namespace Athena.NET.Athena.NET.ParseViewer
         {
             nodeBitmap.Dispose();
             NodeGraphics.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

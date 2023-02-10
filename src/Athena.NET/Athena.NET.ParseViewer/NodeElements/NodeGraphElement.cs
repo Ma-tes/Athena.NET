@@ -1,5 +1,4 @@
-﻿using Athena.NET.Athena.NET.Parser;
-using Athena.NET.Athena.NET.Parser.Interfaces;
+﻿using Athena.NET.Athena.NET.Parser.Interfaces;
 using Athena.NET.Athena.NET.Parser.Nodes.DataNodes;
 using Athena.NET.Athena.NET.ParseViewer.Interfaces;
 using System.Drawing;
