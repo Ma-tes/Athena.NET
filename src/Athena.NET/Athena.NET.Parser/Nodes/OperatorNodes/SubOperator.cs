@@ -4,8 +4,10 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes
 {
     internal sealed class SubOperator : OperatorNode
     {
-        public override OperatorPrecedence Precedence { get; } = OperatorPrecedence.Additive;
-        public override TokenIndentificator NodeToken { get; } = TokenIndentificator.Sub;
+        public override OperatorPrecedence Precedence { get; } 
+            = OperatorPrecedence.Additive;
+        public override TokenIndentificator NodeToken { get; } 
+            = TokenIndentificator.Sub;
 
         public SubOperator()
         {
