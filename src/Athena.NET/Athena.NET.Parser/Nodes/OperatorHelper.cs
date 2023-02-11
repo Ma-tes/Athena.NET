@@ -46,7 +46,6 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.DataNodes
                 if (TryGetOperator(out OperatorNode currentNode, tokens[i].TokenId))
                 {
                     int operatorWeight = (int)currentNode.Precedence;
-
                     if (operatorWeight >= lastOperatorWeight)
                     {
                         lastOperatorWeight = operatorWeight;
@@ -55,21 +54,6 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.DataNodes
                 }
             }
             return returnIndex;
-        }
-
-        //Value -1 means that wasn't found
-        //any next token that span
-        public static int IndexOfOperatorNextToken(ReadOnlySpan<Token> tokens, TokenIndentificator identifierToken, int operatorIndex)
-        {
-            if (operatorIndex == 0 || operatorIndex == (tokens.Length - 1))
-                return -1;
-
-            int closeBraceIndex = IndexOfToken(tokens[0..(operatorIndex)], TokenIndentificator.CloseBrace);
-            if(closeBraceIndex == -1)
-                return IndexOfToken(tokens[0..(operatorIndex)], identifierToken);
-
-            int tokenIndex = IndexOfToken(tokens[operatorIndex..], identifierToken);
-            return tokenIndex + ((((tokenIndex + Math.Abs(tokenIndex)) / 2) / tokenIndex) * operatorIndex);
         }
 
         //Value -1 means that wasn't found

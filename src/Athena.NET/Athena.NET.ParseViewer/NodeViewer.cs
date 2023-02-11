@@ -5,6 +5,8 @@ using Athena.NET.Athena.NET.ParseViewer.Interfaces;
 using Athena.NET.Athena.NET.ParseViewer.NodeElements;
 using System.Collections.Immutable;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Text;
 using System.Runtime.Versioning;
 
 namespace Athena.NET.Athena.NET.ParseViewer
@@ -60,10 +62,10 @@ namespace Athena.NET.Athena.NET.ParseViewer
             nodeBitmap.SetResolution(400, 400);
 
             NodeGraphics = Graphics.FromImage(nodeBitmap);
-            NodeGraphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-            NodeGraphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            NodeGraphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
-            NodeGraphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+            NodeGraphics.SmoothingMode = SmoothingMode.HighQuality;
+            NodeGraphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            NodeGraphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            NodeGraphics.TextRenderingHint = TextRenderingHint.AntiAlias;
         }
 
         public Image CreateImage() 
@@ -83,7 +85,7 @@ namespace Athena.NET.Athena.NET.ParseViewer
             for (int i = 0; i < drawElements.Length; i++)
             {
                 var currentElement = drawElements[i];
-                currentElement.OnDraw(node, NodeGraphics, position);
+                currentElement.OnDraw(new(node, position), NodeGraphics);
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using Athena.NET.Athena.NET.Parser.Interfaces;
+﻿using Athena.NET.Athena.NET.Parser;
+using Athena.NET.Athena.NET.Parser.Interfaces;
 using Athena.NET.Athena.NET.Parser.Nodes.DataNodes;
 using Athena.NET.Athena.NET.ParseViewer.Interfaces;
 using System.Drawing;
@@ -16,7 +17,8 @@ namespace Athena.NET.Athena.NET.ParseViewer.NodeElements
         public Brush TextBrush { get; set; } = Brushes.Black;
         public Pen LinePen { get; set; } =
             new Pen(Brushes.Black, 3);
-        public int NodeDistance { get; set; }
+
+        public int NodeDistance { get; private set; }
 
         public NodeGraphElement(int distance, ReadOnlyMemory<NodeShape> nodeShapes)
         {
@@ -24,22 +26,22 @@ namespace Athena.NET.Athena.NET.ParseViewer.NodeElements
             this.nodeShapes = nodeShapes;
         }
 
-        public void OnDraw(INode node, Graphics graphics, Point position)
+        public void OnDraw(NodePosition nodePosition, Graphics graphics)
         {
-            if (node is null)
+            if (nodePosition.Node is null)
                 return;
 
-            var nodeSize = CalculateNodeSize(node);
-            var nodeRectangle = new Rectangle(position, nodeSize);
+            var nodeSize = CalculateNodeSize(nodePosition.Node);
+            var nodeRectangle = new Rectangle(nodePosition.Position, nodeSize);
 
-            NodeShape currentShape = GetNodeShape(node);
-            currentShape.DrawShape.Invoke(node, nodeRectangle, graphics);
+            NodeShape currentShape = GetNodeShape(nodePosition.Node);
+            currentShape.DrawShape.Invoke(nodePosition.Node, nodeRectangle, graphics);
 
-            string tokenName = node.NodeToken.GetEnumTokenName();
-            var textRectangle = new Rectangle(new(position.X + (nodeSize.Width / 10), position.Y + 10), new(nodeSize.Width - (tokenName.Length * 3), nodeSize.Height - 40));
+            string tokenName = nodePosition.Node.NodeToken.GetEnumTokenName();
+            var textRectangle = new Rectangle(new(nodePosition.Position.X + (nodeSize.Width / 10), nodePosition.Position.Y + 10), new(nodeSize.Width - (tokenName.Length * 3), nodeSize.Height - 40));
             graphics.DrawString(tokenName, SystemFonts.DefaultFont, TextBrush, textRectangle);
 
-            DrawNodeChildrens(node, graphics, position);
+            DrawNodeChildrens(nodePosition, graphics);
         }
 
         private NodeShape GetNodeShape(INode node) 
@@ -58,36 +60,40 @@ namespace Athena.NET.Athena.NET.ParseViewer.NodeElements
             return NodeShape.DefaultShape;
         }
 
-        private void DrawNodeChildrens(INode parentNode, Graphics graphics, Point position)
+        private void DrawNodeChildrens(NodePosition parentPositionNode, Graphics graphics)
         {
-            int childrenYPosition = position.Y + NodeDistance;
-            var leftNodePosition = new Point(position.X - NodeDistance, childrenYPosition);
-            var rightNodePosition = new Point(position.X + NodeDistance, childrenYPosition);
+            ChildrenNodes parentChildrenNode = parentPositionNode.Node.ChildNodes;
+            Point parentPosition = parentPositionNode.Position;
 
-            DrawNodeConnection(parentNode.ChildNodes.LeftNode, leftNodePosition, parentNode, position, graphics);
-            DrawNodeConnection(parentNode.ChildNodes.RightNode, rightNodePosition, parentNode, position, graphics);
-            OnDraw(parentNode.ChildNodes.LeftNode, graphics, leftNodePosition);
-            OnDraw(parentNode.ChildNodes.RightNode, graphics, rightNodePosition);
+            int childrenYPosition = parentPosition.Y + NodeDistance;
+
+            var leftNodePosition = new NodePosition(parentChildrenNode.LeftNode, parentPosition.X - NodeDistance, childrenYPosition);
+            var rightNodePosition = new NodePosition(parentChildrenNode.RightNode, parentPosition.X + NodeDistance, childrenYPosition);
+
+            DrawNodeConnection(leftNodePosition, parentPositionNode, graphics);
+            DrawNodeConnection(rightNodePosition, parentPositionNode, graphics);
+
+            OnDraw(leftNodePosition, graphics);
+            OnDraw(rightNodePosition, graphics);
         }
 
         //I know that looks wierd and I will
         //totally rewrite this in a next days
-        private void DrawNodeConnection(INode firstNode, Point firstPosition, INode secondNode, Point secondPosition, Graphics graphics)
+        private void DrawNodeConnection(NodePosition firstNode, NodePosition secondNode, Graphics graphics)
         {
-            if (firstNode is null || secondNode is null)
+            if (firstNode.Node is null || secondNode.Node is null)
                 return;
 
-            var firstNodeCenter = CalculateCenterPosition(firstNode, firstPosition);
-            var secondNodeCenter = CalculateCenterPosition(firstNode, secondPosition);
-
+            var firstNodeCenter = CalculateCenterPosition(firstNode);
+            var secondNodeCenter = CalculateCenterPosition(secondNode);
             graphics.DrawLine(LinePen, firstNodeCenter, secondNodeCenter);
         }
 
-        private Point CalculateCenterPosition(INode node, Point currentPosition) 
+        private Point CalculateCenterPosition(NodePosition nodePosition) 
         {
-            var nodeSize = CalculateNodeSize(node);
-            return new(currentPosition.X + (nodeSize.Width / 2),
-                currentPosition.Y + (nodeSize.Height / 2));
+            var nodeSize = CalculateNodeSize(nodePosition.Node);
+            return new(nodePosition.Position.X + (nodeSize.Width / 2),
+                nodePosition.Position.Y + (nodeSize.Height / 2));
         } 
 
         private Size CalculateNodeSize(INode node)
