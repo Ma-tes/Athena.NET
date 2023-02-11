@@ -1,6 +1,6 @@
 ﻿using Athena.NET.Athena.NET.Parser.Interfaces;
-using Athena.NET.Athena.NET.Parser.Nodes;
 using Athena.NET.Athena.NET.Parser.Nodes.DataNodes;
+using Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes;
 using Athena.NET.Athena.NET.ParseViewer.Interfaces;
 using Athena.NET.Athena.NET.ParseViewer.NodeElements;
 using System.Collections.Immutable;

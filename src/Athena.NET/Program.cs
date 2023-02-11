@@ -2,8 +2,7 @@
 using Athena.NET.Athena.NET.Lexer.LexicalAnalyzer;
 using Athena.NET.Athena.NET.Lexer.Structures;
 using Athena.NET.Athena.NET.Parser.Interfaces;
-using Athena.NET.Athena.NET.Parser.Nodes;
-using Athena.NET.Athena.NET.Parser.Nodes.DataNodes;
+using Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes;
 using Athena.NET.Athena.NET.ParseViewer;
 using System.Drawing;
 using System.Drawing.Imaging;
