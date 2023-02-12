@@ -1,4 +1,6 @@
 ﻿
+using Athena.NET.Attributes;
+
 namespace Athena.NET.Athena.NET.Lexer
 {
     //TODO: There are a lot of missing,
@@ -18,7 +20,7 @@ namespace Athena.NET.Athena.NET.Lexer
         GreaterThan = 7,
         GreaterEqual = 8,
         EqualLogical = 9,
-        EqualAsigment = 10,
+        EqualAssignment = 10,
         NotEqual = 11,
 
         //TODO: This part is really temporary
@@ -41,7 +43,9 @@ namespace Athena.NET.Athena.NET.Lexer
         LogicalLshift = 18,
         LogicalRshift = 19,
 
+        [TokenType]
         Char = 20,
+        [TokenType]
         String = 21,
         //Possible syntax keywords
         Semicolon = 22,

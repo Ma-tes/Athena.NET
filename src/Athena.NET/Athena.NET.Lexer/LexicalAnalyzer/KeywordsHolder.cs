@@ -55,7 +55,7 @@ namespace Athena.NET.Athena.NET.Lexer.LexicalAnalyzer
                 new (TokenIndentificator.LogicalLshift, "<<", true),
                 new (TokenIndentificator.LogicalRshift, ">>", true),
 
-                new (TokenIndentificator.EqualAsigment, "=", true),
+                new (TokenIndentificator.EqualAssignment, "=", true),
                 new (TokenIndentificator.OpenBrace, "(", true),
                 new (TokenIndentificator.CloseBrace, ")", true)
              };

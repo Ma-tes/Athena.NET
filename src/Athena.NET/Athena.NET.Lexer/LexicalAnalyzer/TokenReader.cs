@@ -1,5 +1,6 @@
 ﻿using Athena.NET.Athena.NET.Lexer.LexicalAnalyzer.Keywords;
 using Athena.NET.Athena.NET.Lexer.Structures;
+using Athena.NET.Attributes;
 using System.Reflection;
 
 namespace Athena.NET.Athena.NET.Lexer.LexicalAnalyzer
