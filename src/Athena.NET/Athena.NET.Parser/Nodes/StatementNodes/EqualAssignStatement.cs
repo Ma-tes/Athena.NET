@@ -30,11 +30,11 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes
 
         protected override bool TryParseRigthNode(out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens)
         {
-            //This is going to be change to more
-            //elegant solution, without unecessary
+            //This is going to be changed to more
+            //elegant solution, without unnecessary
             //index checking
             int operatorIndex = OperatorHelper.IndexOfOperator(tokens);
-            if (operatorIndex != -1 && OperatorHelper.TryGetOperator(out OperatorNode operatorNode, tokens[operatorIndex].TokenId)) 
+            if (operatorIndex != -1 && OperatorHelper.TryGetOperator(out OperatorNode operatorNode, tokens[operatorIndex].TokenId))
             {
                 operatorNode.CreateNodes(tokens, operatorIndex);
                 nodeResult = new SuccessulNodeResult<INode>(operatorNode);

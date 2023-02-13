@@ -11,11 +11,11 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes
 
         public ChildrenNodes ChildNodes { get; private set; }
 
-        //TODO: Reduce the amount of nullable checks
+        //TODO: Reduce the amount of nullable types
         public NodeResult<StatementNode> CreateStatementResult(ReadOnlyMemory<Token> tokens, int tokenIndex) 
         {
             //Actually this token checking is probably
-            //redudant, by still I will leave it here
+            //redudant, by still... I will leave it just
             //for debugging
             var statementToken = tokens.Span[tokenIndex].TokenId;
             if (statementToken != NodeToken)
