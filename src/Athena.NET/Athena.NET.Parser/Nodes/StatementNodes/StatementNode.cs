@@ -8,6 +8,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes
     internal abstract class StatementNode : INode
     {
         public abstract TokenIndentificator NodeToken { get; }
+
         public ChildrenNodes ChildNodes { get; private set; }
 
         //TODO: Reduce the amount of nullable checks
@@ -21,13 +22,15 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes
                 return new ErrorNodeResult<StatementNode>("Statement node wasn't found in array of tokens");
 
             var leftData = tokens[0..tokenIndex];
-            var rightData = tokens[(tokenIndex + 1)..];
+
+            int semicolonIndex = tokens.Span.IndexOfToken(TokenIndentificator.Semicolon);
+            var rightData = tokens[(tokenIndex + 1)..(semicolonIndex)];
 
             INode leftNode;
             INode rightNode;
             if (!TryParseLeftNode(out NodeResult<INode> leftResult, leftData.Span) && leftResult is not null)
                 return new ErrorNodeResult<StatementNode>(leftResult.Message);
-            if (!TryParseLeftNode(out NodeResult<INode> rightResult, rightData.Span) && rightResult is not null)
+            if (!TryParseRigthNode(out NodeResult<INode> rightResult, rightData.Span) && rightResult is not null)
                 return new ErrorNodeResult<StatementNode>(rightResult.Message);
 
             leftNode = leftResult!.Node!;
