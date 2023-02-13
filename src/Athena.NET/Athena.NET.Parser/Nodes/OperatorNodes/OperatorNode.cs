@@ -15,12 +15,12 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes
 
         public OperatorNode() { }
 
-        public void CreateNodes(ReadOnlyMemory<Token> tokens, int nodeIndex)
+        public void CreateNodes(ReadOnlySpan<Token> tokens, int nodeIndex)
         {
             ChildNodes = SepareteNodes(tokens, nodeIndex);
         }
 
-        private ChildrenNodes SepareteNodes(ReadOnlyMemory<Token> tokens, int nodeIndex)
+        private ChildrenNodes SepareteNodes(ReadOnlySpan<Token> tokens, int nodeIndex)
         {
             var leftData = tokens[0..nodeIndex];
             var rightData = tokens[(nodeIndex + 1)..];
@@ -30,27 +30,26 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes
             return new(leftNode, rightNode);
         }
 
-        public INode GetChildrenNode(ReadOnlyMemory<Token> tokens)
+        public INode GetChildrenNode(ReadOnlySpan<Token> tokens)
         {
-            var tokensSpan = tokens.Span;
-            int operatorIndex = OperatorHelper.IndexOfOperator(tokensSpan);
+            int operatorIndex = OperatorHelper.IndexOfOperator(tokens);
             if (operatorIndex == -1)
             {
-                int identfierIndex = tokensSpan.IndexOfToken(TokenIndentificator.Int);
+                int identfierIndex = tokens.IndexOfToken(TokenIndentificator.Int);
                 if (identfierIndex == -1)
                 {
-                    int idetifierIndex = tokensSpan.IndexOfToken(TokenIndentificator.Identifier);
-                    var idetifierNode = new IdentifierNode(tokensSpan[idetifierIndex].Data);
+                    int idetifierIndex = tokens.IndexOfToken(TokenIndentificator.Identifier);
+                    var idetifierNode = new IdentifierNode(tokens[idetifierIndex].Data);
                     return idetifierNode;
                 }
 
-                int currentData = int.Parse(tokensSpan[identfierIndex].Data.Span);
-                var returnNode = new DataNode<int>(tokensSpan[identfierIndex].TokenId, currentData);
+                int currentData = int.Parse(tokens[identfierIndex].Data.Span);
+                var returnNode = new DataNode<int>(tokens[identfierIndex].TokenId, currentData);
                 return returnNode;
             }
 
-            var currentOperator = tokensSpan[operatorIndex].TokenId;
-            if (!OperatorHelper.TryGetOperator(out OperatorNode returnOperatorNode, tokensSpan[operatorIndex].TokenId))
+            var currentOperator = tokens[operatorIndex].TokenId;
+            if (!OperatorHelper.TryGetOperator(out OperatorNode returnOperatorNode, tokens[operatorIndex].TokenId))
                 throw new Exception($"Operator with token: {currentOperator} wasn't implemented");
 
             returnOperatorNode.CreateNodes(tokens, operatorIndex);

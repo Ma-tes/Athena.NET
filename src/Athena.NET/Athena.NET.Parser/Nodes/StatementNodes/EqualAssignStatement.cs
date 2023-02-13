@@ -2,6 +2,7 @@
 using Athena.NET.Athena.NET.Lexer.Structures;
 using Athena.NET.Athena.NET.Parser.Interfaces;
 using Athena.NET.Athena.NET.Parser.Nodes.DataNodes;
+using Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes;
 
 namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes
 {
@@ -29,7 +30,28 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes
 
         protected override bool TryParseRigthNode(out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens)
         {
-            return base.TryParseRigthNode(out nodeResult, tokens);
+            int operatorIndex = OperatorHelper.IndexOfOperator(tokens);
+            if (OperatorHelper.TryGetOperator(out OperatorNode operatorNode, tokens[operatorIndex].TokenId)) 
+            {
+                operatorNode.CreateNodes(tokens, operatorIndex);
+                nodeResult = new SuccessulNodeResult<INode>(operatorNode);
+                return true;
+            }
+
+            INode resultNode = null!;
+            int identifierIndex = tokens.IndexOfToken(TokenIndentificator.Identifier);
+            int tokenTypeIndex = tokens.IndexOfTokenType();
+            if (identifierIndex != -1)
+                resultNode = new IdentifierNode(tokens[identifierIndex].Data);
+            if (tokenTypeIndex != -1) 
+            {
+                int currentData = int.Parse(tokens[tokenTypeIndex].Data.Span);
+                resultNode = new DataNode<int>(tokens[tokenTypeIndex].TokenId, currentData);
+            }
+
+            nodeResult = resultNode is not null ? new SuccessulNodeResult<INode>(resultNode) :
+                new ErrorNodeResult<INode>("Any valid node wasn't found");
+            return resultNode is not null;
         }
     }
 }
