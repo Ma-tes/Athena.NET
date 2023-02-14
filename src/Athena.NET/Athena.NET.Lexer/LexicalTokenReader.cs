@@ -42,6 +42,7 @@ namespace Athena.NET.Athena.NET.Lexer
         public void Dispose()
         {
             streamReader.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

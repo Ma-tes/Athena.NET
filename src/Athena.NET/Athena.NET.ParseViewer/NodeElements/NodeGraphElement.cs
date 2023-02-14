@@ -12,6 +12,7 @@ namespace Athena.NET.Athena.NET.ParseViewer.NodeElements
     [SupportedOSPlatform("windows")]
     public sealed class NodeGraphElement : INodeDrawer
     {
+        private Point lastPosition;
         private ReadOnlyMemory<NodeShape> nodeShapes;
 
         public Brush TextBrush { get; set; } = Brushes.Black;
@@ -31,17 +32,22 @@ namespace Athena.NET.Athena.NET.ParseViewer.NodeElements
             if (nodePosition.Node is null)
                 return;
 
+            var currentPositionX = nodePosition.Position.X - lastPosition.X > 0 ? nodePosition.Position.X + NodeDistance : 
+                nodePosition.Position.X - NodeDistance;
+            var currentPosition = new Point(currentPositionX, nodePosition.Position.Y);
+
             var nodeSize = CalculateNodeSize(nodePosition.Node);
-            var nodeRectangle = new Rectangle(nodePosition.Position, nodeSize);
+            var nodeRectangle = new Rectangle(currentPosition, nodeSize);
 
             NodeShape currentShape = GetNodeShape(nodePosition.Node);
             currentShape.DrawShape.Invoke(nodePosition.Node, nodeRectangle, graphics);
 
             string tokenName = nodePosition.Node.NodeToken.GetEnumTokenName();
-            var textRectangle = new Rectangle(new(nodePosition.Position.X + (nodeSize.Width / 10), nodePosition.Position.Y + 10), new(nodeSize.Width - (tokenName.Length * 3), nodeSize.Height - 40));
+            var textRectangle = new Rectangle(new(currentPosition.X + (nodeSize.Width / 10), currentPosition.Y + 10), new(nodeSize.Width - (tokenName.Length * 3), nodeSize.Height - 40));
             graphics.DrawString(tokenName, SystemFonts.DefaultFont, TextBrush, textRectangle);
 
-            DrawNodeChildrens(nodePosition, graphics);
+            lastPosition = currentPosition;
+            DrawNodeChildrens(new(nodePosition.Node, currentPosition), graphics);
         }
 
         private NodeShape GetNodeShape(INode node) 
@@ -52,7 +58,7 @@ namespace Athena.NET.Athena.NET.ParseViewer.NodeElements
             {
                 var currentShape = shapesSpan[i];
                 if(nodeType.IsGenericTypeEqual(currentShape.NodeType) ||
-                    nodeType.IsAssignableTo(currentShape.NodeType)) 
+                    nodeType.IsAssignableTo(currentShape.NodeType))
                 {
                     return currentShape;
                 }
@@ -65,7 +71,7 @@ namespace Athena.NET.Athena.NET.ParseViewer.NodeElements
             ChildrenNodes parentChildrenNode = parentPositionNode.Node.ChildNodes;
             Point parentPosition = parentPositionNode.Position;
 
-            int childrenYPosition = parentPosition.Y + NodeDistance;
+            int childrenYPosition = parentPosition.Y + NodeDistance * 2;
 
             var leftNodePosition = new NodePosition(parentChildrenNode.LeftNode, parentPosition.X - NodeDistance, childrenYPosition);
             var rightNodePosition = new NodePosition(parentChildrenNode.RightNode, parentPosition.X + NodeDistance, childrenYPosition);
