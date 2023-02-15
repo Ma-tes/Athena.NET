@@ -32,7 +32,7 @@ namespace Athena.NET.Athena.NET.ParseViewer.NodeElements
             if (nodePosition.Node is null)
                 return;
 
-            var currentPositionX = nodePosition.Position.X - lastPosition.X > 0 ? nodePosition.Position.X + NodeDistance : 
+            var currentPositionX = nodePosition.Position.X - lastPosition.X > 0 ? nodePosition.Position.X + NodeDistance :
                 nodePosition.Position.X - NodeDistance;
             var currentPosition = new Point(currentPositionX, nodePosition.Position.Y);
 
