@@ -10,7 +10,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes
         //This is just for testing
         private static readonly int closeBraceWeight = 100;
         private static ReadOnlySpan<OperatorNode> operatorNodes =>
-            new(GetDefaultOperators(typeof(OperatorNode)).ToArray());
+            new(NodeHelper.GetNodeInstances<OperatorNode>().ToArray());
 
         public static bool TryGetOperator([NotNullWhen(true)] out OperatorNode operatorNode, TokenIndentificator currentToken)
         {
@@ -54,20 +54,6 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes
                 }
             }
             return returnIndex;
-        }
-
-        private static IEnumerable<OperatorNode> GetDefaultOperators(Type assemblyType)
-        {
-            var currentAssembly = Assembly.GetAssembly(assemblyType);
-
-            Type[] assemblytypes = currentAssembly!.GetTypes();
-            int typesLength = assemblytypes.Length;
-            for (int i = 0; i < typesLength; i++)
-            {
-                Type currentType = assemblytypes[i];
-                if (currentType.IsSubclassOf(typeof(OperatorNode)) && !currentType.IsAbstract)
-                    yield return (OperatorNode)Activator.CreateInstance(currentType)!;
-            }
         }
     }
 }

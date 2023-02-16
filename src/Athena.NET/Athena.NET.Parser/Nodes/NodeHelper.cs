@@ -1,5 +1,6 @@
 ﻿using Athena.NET.Athena.NET.Lexer;
 using Athena.NET.Athena.NET.Lexer.Structures;
+using Athena.NET.Athena.NET.Parser.Interfaces;
 using Athena.NET.Attributes;
 using System.Reflection;
 
@@ -7,6 +8,9 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
 {
     public static class NodeHelper
     {
+        private static ReadOnlySpan<INode> nodeInstances =>
+            new(GetNodeInstances<INode>().ToArray());
+
         private static readonly Type tokenIdentificatorType =
             typeof(TokenIndentificator);
         private static readonly Type tokenTypeAttribute =
@@ -37,6 +41,21 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
                     return i;
             }
             return -1;
+        }
+
+        public static IEnumerable<T> GetNodeInstances<T>() where T : INode
+        {
+            Type parentNodeType = typeof(T);
+            var currentAssembly = Assembly.GetAssembly(parentNodeType);
+
+            Type[] assemblytypes = currentAssembly!.GetTypes();
+            int typesLength = assemblytypes.Length;
+            for (int i = 0; i < typesLength; i++)
+            {
+                Type currentType = assemblytypes[i];
+                if (currentType.IsSubclassOf(parentNodeType) && !currentType.IsAbstract)
+                    yield return (T)Activator.CreateInstance(currentType)!;
+            }
         }
 
         private static bool IsTokenType(this TokenIndentificator tokenIndentificator) 

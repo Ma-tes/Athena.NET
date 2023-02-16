@@ -59,6 +59,7 @@ namespace Athena.NET.Athena.NET.Lexer
         EndLine = 29,
         Unknown = 30,
         Identifier = 31,
-        Tabulator = 32
+        Tabulator = 32,
+        Invoker = 33
     }
 }
