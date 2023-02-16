@@ -10,6 +10,9 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements
         private static readonly TokenIndentificator invokerToken =
             TokenIndentificator.Invoker;
 
+        public ReadOnlyMemory<INode> BodyNodes { get; private set; } 
+        public int BodyLength { get; private set; }
+
         public sealed override NodeResult<StatementNode> CreateStatementResult(ReadOnlyMemory<Token> tokens, int tokenIndex)
         {
             int invokerIndex = tokens.Span[tokenIndex..].IndexOfToken(invokerToken);
@@ -19,12 +22,46 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements
 
         protected sealed override bool TryParseRigthNode([NotNullWhen(true)] out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens)
         {
-            //TODO: Create GetFirstNode method in a NodeHelper,
-            //where we then need to determine how to splittem
-            //up. Easiest solution will probably be save of a length
-            //in every node
+            ReadOnlySpan<Token> bodyTokens = GetBodyTokens(tokens);
+
             nodeResult = null!;
             return false;
+        }
+
+        private ReadOnlySpan<Token> GetBodyTokens(ReadOnlySpan<Token> tokens) 
+        {
+            Span<Token> returnBodyNodes = new Token[tokens.Length];
+
+            int currentBodyLength = 0;
+            int currentTabulatorIndex = tokens.IndexOfToken(TokenIndentificator.Tabulator);
+            while (currentTabulatorIndex != -1)
+            {
+                var shiftedTokens = tokens[(currentTabulatorIndex + 1)..];
+                int nextTabulatorIndex = IndexOfLineTabulator(tokens);
+                ReadOnlySpan<Token> bodyNodes = nextTabulatorIndex != -1 ?
+                    shiftedTokens[0..(nextTabulatorIndex)] :
+                    shiftedTokens[0..(shiftedTokens.IndexOfToken(TokenIndentificator.EndLine))];
+
+                bodyNodes.CopyTo(returnBodyNodes[currentBodyLength..]);
+                currentBodyLength += bodyNodes.Length;
+                currentTabulatorIndex = nextTabulatorIndex;
+            }
+            return returnBodyNodes;
+        }
+
+        private int IndexOfLineTabulator(ReadOnlySpan<Token> tokens) 
+        {
+            int currentOperatorIndex = tokens.IndexOfToken(TokenIndentificator.Tabulator);
+            while (currentOperatorIndex != -1) 
+            {
+                if (currentOperatorIndex != 0 &&
+                    tokens[currentOperatorIndex - 1].TokenId == TokenIndentificator.EndLine)
+                    return currentOperatorIndex;
+
+                int nextEndLine = tokens[currentOperatorIndex..].IndexOfToken(TokenIndentificator.EndLine);
+                currentOperatorIndex = tokens[nextEndLine..].IndexOfToken(TokenIndentificator.Tabulator) + nextEndLine;
+            }
+            return -1;
         }
     }
 }

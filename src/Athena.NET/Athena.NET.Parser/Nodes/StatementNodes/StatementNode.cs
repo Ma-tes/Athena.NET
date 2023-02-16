@@ -22,8 +22,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes
                 return new ErrorNodeResult<StatementNode>("Statement node wasn't found in array of tokens");
 
             var leftData = tokens[0..tokenIndex];
-            int semicolonIndex = tokens.Span.IndexOfToken(TokenIndentificator.Semicolon);
-            var rightData = tokens[(tokenIndex + 1)..(semicolonIndex)];
+            var rightData = tokens[(tokenIndex + 1)..];
 
             if (!TryParseLeftNode(out NodeResult<INode> leftResult, leftData.Span) && leftResult is not null)
                 return new ErrorNodeResult<StatementNode>(leftResult.Message);

@@ -16,6 +16,9 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
         private static readonly Type tokenTypeAttribute =
             typeof(TokenTypeAttribute);
 
+        //TODO: Create method for getting first node
+        //from a span of tokens
+
         //Value -1 means that wasn't found
         //any token in that span
         public static int IndexOfToken(this ReadOnlySpan<Token> tokens, TokenIndentificator tokenIdentificator)
