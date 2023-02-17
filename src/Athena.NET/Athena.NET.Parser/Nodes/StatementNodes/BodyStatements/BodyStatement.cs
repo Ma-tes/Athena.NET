@@ -23,6 +23,8 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements
         protected sealed override bool TryParseRigthNode([NotNullWhen(true)] out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens)
         {
             ReadOnlySpan<Token> bodyTokens = GetBodyTokens(tokens);
+            BodyLength = bodyTokens.Length;
+
 
             nodeResult = null!;
             return false;

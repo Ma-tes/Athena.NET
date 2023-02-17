@@ -2,6 +2,7 @@
 using Athena.NET.Athena.NET.Lexer.Structures;
 using Athena.NET.Athena.NET.Parser.Interfaces;
 using Athena.NET.Attributes;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace Athena.NET.Athena.NET.Parser.Nodes
@@ -16,8 +17,18 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
         private static readonly Type tokenTypeAttribute =
             typeof(TokenTypeAttribute);
 
-        //TODO: Create method for getting first node
-        //from a span of tokens
+        public static int GetFirstNode([NotNullWhen(true)]out INode nodeResult, ReadOnlySpan<Token> tokens) 
+        {
+            for (int i = 0; i < tokens.Length; i++)
+            {
+                if (TryGetNodeIntance(out INode result, tokens[i])) 
+                {
+                    //TODO: Finish this method with size checking
+                }
+            }
+            nodeResult = null!;
+            return -1;
+        }
 
         //Value -1 means that wasn't found
         //any token in that span
@@ -59,6 +70,23 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
                 if (currentType.IsSubclassOf(parentNodeType) && !currentType.IsAbstract)
                     yield return (T)Activator.CreateInstance(currentType)!;
             }
+        }
+
+        private static bool TryGetNodeIntance([NotNullWhen(true)]out INode node, Token currentToken) 
+        {
+            int nodeInstancesLength = nodeInstances.Length;
+            for (int i = 0; i < nodeInstancesLength; i++)
+            {
+                var currentInstance = nodeInstances[i];
+                if (currentInstance.NodeToken == currentToken.TokenId) 
+                {
+                    node = currentInstance;
+                    return true;
+                }
+            }
+
+            node = null!;
+            return false;
         }
 
         private static bool IsTokenType(this TokenIndentificator tokenIndentificator) 
