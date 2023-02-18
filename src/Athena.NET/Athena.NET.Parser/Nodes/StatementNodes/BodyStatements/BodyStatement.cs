@@ -1,6 +1,7 @@
 ﻿using Athena.NET.Athena.NET.Lexer;
 using Athena.NET.Athena.NET.Lexer.Structures;
 using Athena.NET.Athena.NET.Parser.Interfaces;
+using Athena.NET.Athena.NET.Parser.Nodes.DataNodes;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements
@@ -9,8 +10,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements
     {
         private static readonly TokenIndentificator invokerToken =
             TokenIndentificator.Invoker;
-
-        public ReadOnlyMemory<INode> BodyNodes { get; private set; } 
+        //TODO: Move this to BodyNode.cs
         public int BodyLength { get; private set; }
 
         public sealed override NodeResult<StatementNode> CreateStatementResult(ReadOnlyMemory<Token> tokens, int tokenIndex)
@@ -25,9 +25,23 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements
             ReadOnlySpan<Token> bodyTokens = GetBodyTokens(tokens);
             BodyLength = bodyTokens.Length;
 
+            var bodyNodes = new List<INode>();
+            int tokenIndex = 0;
+            for (int i = 0; i < BodyLength; i++)
+            {
+                int nodeLength = NodeHelper.GetFirstNode(out INode currentNode, tokens[tokenIndex..]);
+                if (nodeLength == -1 && tokenIndex == 0) 
+                {
+                    nodeResult = new ErrorNodeResult<INode>("Any valid node wasn't found");
+                    return false;
+                }
+                bodyNodes.Add(currentNode);
+                tokenIndex += nodeLength;
+            }
 
-            nodeResult = null!;
-            return false;
+            var bodyNode = new BodyNode(bodyNodes.ToArray());
+            nodeResult = new SuccessulNodeResult<INode>(bodyNode);
+            return true;
         }
 
         private ReadOnlySpan<Token> GetBodyTokens(ReadOnlySpan<Token> tokens) 

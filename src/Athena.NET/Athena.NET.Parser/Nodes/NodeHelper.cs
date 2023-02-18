@@ -1,6 +1,7 @@
 ﻿using Athena.NET.Athena.NET.Lexer;
 using Athena.NET.Athena.NET.Lexer.Structures;
 using Athena.NET.Athena.NET.Parser.Interfaces;
+using Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements;
 using Athena.NET.Attributes;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
@@ -21,9 +22,12 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
         {
             for (int i = 0; i < tokens.Length; i++)
             {
-                if (TryGetNodeIntance(out INode result, tokens[i])) 
+                if (TryGetNodeIntance(out INode result, tokens[i]))
                 {
-                    //TODO: Finish this method with size checking
+                    nodeResult = result;
+                    return result is BodyStatement bodyStatement ?
+                        bodyStatement.BodyLength : 
+                        i + (tokens[i..].IndexOfToken(TokenIndentificator.Semicolon));
                 }
             }
             nodeResult = null!;
