@@ -4,6 +4,7 @@ using Athena.NET.Athena.NET.Lexer.Structures;
 using Athena.NET.Athena.NET.Parser.Interfaces;
 using Athena.NET.Athena.NET.Parser.Nodes;
 using Athena.NET.Athena.NET.Parser.Nodes.StatementNodes;
+using Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements;
 using Athena.NET.Athena.NET.ParseViewer;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -16,9 +17,9 @@ using (var tokenReader = new TokenReader
 {
 
     var tokens = await tokenReader.ReadTokensAsync();
-    int assingTokenIndex = tokens.Span.IndexOfToken(TokenIndentificator.EqualAssignment);
+    int assingTokenIndex = tokens.Span.IndexOfToken(TokenIndentificator.If);
 
-    var assingTokenNode = new EqualAssignStatement();
+    var assingTokenNode = new IfStatement();
     var result = assingTokenNode.CreateStatementResult(tokens, assingTokenIndex);
 
     ReadOnlyMemory<INode> nodes = new INode[] { result.Node! };

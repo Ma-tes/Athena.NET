@@ -14,15 +14,8 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes
         //TODO: Reduce the amount of nullable types
         public virtual NodeResult<StatementNode> CreateStatementResult(ReadOnlyMemory<Token> tokens, int tokenIndex)
         {
-            //Actually this token checking is probably
-            //redudant, by still... I will leave it just
-            //for debugging
-            var statementToken = tokens.Span[tokenIndex].TokenId;
-            if (statementToken != NodeToken)
-                return new ErrorNodeResult<StatementNode>("Statement node wasn't found in array of tokens");
-
             var leftData = tokens[0..tokenIndex];
-            var rightData = tokens[(tokenIndex + 1)..];
+            var rightData = tokens[(tokenIndex + 2)..];
 
             if (!TryParseLeftNode(out NodeResult<INode> leftResult, leftData.Span) && leftResult is not null)
                 return new ErrorNodeResult<StatementNode>(leftResult.Message);

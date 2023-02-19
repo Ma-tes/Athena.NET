@@ -1,6 +1,8 @@
 ﻿using Athena.NET.Athena.NET.Lexer;
 using Athena.NET.Athena.NET.Lexer.Structures;
 using Athena.NET.Athena.NET.Parser.Interfaces;
+using Athena.NET.Athena.NET.Parser.Nodes.DataNodes;
+using Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes;
 using Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements;
 using Athena.NET.Attributes;
 using System.Diagnostics.CodeAnalysis;
@@ -11,7 +13,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
     public static class NodeHelper
     {
         private static ReadOnlySpan<INode> nodeInstances =>
-            new(GetNodeInstances<INode>().ToArray());
+            GetNodeInstances<INode>().ToArray();
 
         private static readonly Type tokenIdentificatorType =
             typeof(TokenIndentificator);
@@ -22,7 +24,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
         {
             for (int i = 0; i < tokens.Length; i++)
             {
-                if (TryGetNodeIntance(out INode result, tokens[i]))
+                if (TryGetNodeInstance(out INode result, tokens[i]))
                 {
                     nodeResult = result;
                     return result is BodyStatement bodyStatement ?
@@ -71,12 +73,13 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
             for (int i = 0; i < typesLength; i++)
             {
                 Type currentType = assemblytypes[i];
-                if (currentType.IsSubclassOf(parentNodeType) && !currentType.IsAbstract)
+                if ((currentType.IsAssignableTo(parentNodeType) && !currentType.IsAbstract) 
+                    && !IsDataNode(currentType))
                     yield return (T)Activator.CreateInstance(currentType)!;
             }
         }
 
-        private static bool TryGetNodeIntance([NotNullWhen(true)]out INode node, Token currentToken) 
+        private static bool TryGetNodeInstance([NotNullWhen(true)]out INode node, Token currentToken) 
         {
             int nodeInstancesLength = nodeInstances.Length;
             for (int i = 0; i < nodeInstancesLength; i++)
@@ -91,6 +94,15 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
 
             node = null!;
             return false;
+        }
+
+        private static bool IsDataNode(Type nodeType) 
+        {
+            Type dataType = typeof(DataNode<>);
+            if (nodeType == dataType)
+                return true;
+            return nodeType.BaseType!.IsGenericType 
+                && nodeType.BaseType!.GetGenericTypeDefinition() == dataType;
         }
 
         private static bool IsTokenType(this TokenIndentificator tokenIndentificator) 

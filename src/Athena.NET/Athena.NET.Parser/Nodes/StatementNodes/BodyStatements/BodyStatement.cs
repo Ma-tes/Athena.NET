@@ -25,8 +25,8 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements
             ReadOnlySpan<Token> bodyTokens = GetBodyTokens(tokens);
             BodyLength = bodyTokens.Length;
 
-            var bodyNodes = new List<INode>();
             int tokenIndex = 0;
+            var bodyNodes = new List<INode>();
             for (int i = 0; i < BodyLength; i++)
             {
                 int nodeLength = NodeHelper.GetFirstNode(out INode currentNode, tokens[tokenIndex..]);
@@ -53,16 +53,17 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements
             while (currentTabulatorIndex != -1)
             {
                 var shiftedTokens = tokens[(currentTabulatorIndex + 1)..];
-                int nextTabulatorIndex = IndexOfLineTabulator(tokens);
+                int nextTabulatorIndex = IndexOfLineTabulator(shiftedTokens);
                 ReadOnlySpan<Token> bodyNodes = nextTabulatorIndex != -1 ?
-                    shiftedTokens[0..(nextTabulatorIndex)] :
+                    shiftedTokens[0..(nextTabulatorIndex - 1)] :
                     shiftedTokens[0..(shiftedTokens.IndexOfToken(TokenIndentificator.EndLine))];
 
                 bodyNodes.CopyTo(returnBodyNodes[currentBodyLength..]);
                 currentBodyLength += bodyNodes.Length;
-                currentTabulatorIndex = nextTabulatorIndex;
+                currentTabulatorIndex = nextTabulatorIndex == -1 ? nextTabulatorIndex :
+                    currentTabulatorIndex + nextTabulatorIndex;
             }
-            return returnBodyNodes;
+            return returnBodyNodes[0..(currentBodyLength)];
         }
 
         private int IndexOfLineTabulator(ReadOnlySpan<Token> tokens) 
@@ -73,9 +74,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements
                 if (currentOperatorIndex != 0 &&
                     tokens[currentOperatorIndex - 1].TokenId == TokenIndentificator.EndLine)
                     return currentOperatorIndex;
-
-                int nextEndLine = tokens[currentOperatorIndex..].IndexOfToken(TokenIndentificator.EndLine);
-                currentOperatorIndex = tokens[nextEndLine..].IndexOfToken(TokenIndentificator.Tabulator) + nextEndLine;
+                currentOperatorIndex = tokens[(currentOperatorIndex + 1)..].IndexOfToken(TokenIndentificator.Tabulator);
             }
             return -1;
         }
