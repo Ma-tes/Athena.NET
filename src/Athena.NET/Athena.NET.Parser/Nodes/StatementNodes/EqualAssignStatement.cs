@@ -36,9 +36,9 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes
             int operatorIndex = OperatorHelper.IndexOfOperator(tokens);
             if (operatorIndex != -1 && OperatorHelper.TryGetOperator(out OperatorNode operatorNode, tokens[operatorIndex].TokenId))
             {
-                operatorNode.CreateNodes(tokens, operatorIndex);
-                nodeResult = new SuccessulNodeResult<INode>(operatorNode);
-                return true;
+                var operatorResult = operatorNode.CreateStatementResult(tokens, operatorIndex);
+                nodeResult = operatorResult;
+                return operatorResult.ResultMessage == StatementResultMessage.Error;
             }
 
             INode resultNode = null!;

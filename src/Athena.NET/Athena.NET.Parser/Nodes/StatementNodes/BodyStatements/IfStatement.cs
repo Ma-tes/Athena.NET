@@ -19,10 +19,13 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements
             {
                 if (currentNode is LogicalOperator logicalOperator) 
                 {
-                    logicalOperator.CreateNodes(tokens, logicalOperatorIndex);
-                    logicalOperator.Evaluate();
-                    nodeResult = new SuccessulNodeResult<INode>(logicalOperator);
-                    return true;
+                    nodeResult = logicalOperator.CreateStatementResult(tokens, logicalOperatorIndex);
+                    if (nodeResult.ResultMessage != StatementResultMessage.Error) 
+                    {
+                        logicalOperator.Evaluate();
+                        return true;
+                    }
+                    return false;
                 }
             }
             nodeResult = new ErrorNodeResult<INode>("No logical operator was found");

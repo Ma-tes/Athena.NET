@@ -22,7 +22,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
         }
     }
 
-    public sealed class SuccessulNodeResult<T> : NodeResult<T> where T : INode 
+    public sealed class SuccessulNodeResult<T> : NodeResult<T> where T : INode
     {
         public SuccessulNodeResult(T node) :
             base(node, StatementResultMessage.Successful)
@@ -30,7 +30,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
         }
     }
 
-    public sealed class ErrorNodeResult<T> : NodeResult<T> where T : INode 
+    public sealed class ErrorNodeResult<T> : NodeResult<T> where T : INode
     {
         public ErrorNodeResult(string message) :
             base(default!, StatementResultMessage.Error)

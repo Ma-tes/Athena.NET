@@ -15,9 +15,12 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes
 
         public OperatorNode() { }
 
-        public void CreateNodes(ReadOnlySpan<Token> tokens, int nodeIndex)
+        public NodeResult<INode> CreateStatementResult(ReadOnlySpan<Token> tokens, int tokenIndex)
         {
-            ChildNodes = SepareteNodes(tokens, nodeIndex);
+            ChildNodes = SepareteNodes(tokens, tokenIndex);
+            if (ChildNodes.LeftNode is null || ChildNodes.LeftNode is null)
+                return new ErrorNodeResult<INode>($"Parsing nodes from token {tokens[tokenIndex]} wen't wrong");
+            return new SuccessulNodeResult<INode>(this);
         }
 
         private ChildrenNodes SepareteNodes(ReadOnlySpan<Token> tokens, int nodeIndex)
@@ -52,7 +55,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes
             if (!OperatorHelper.TryGetOperator(out OperatorNode returnOperatorNode, tokens[operatorIndex].TokenId))
                 throw new Exception($"Operator with token: {currentOperator} wasn't implemented");
 
-            returnOperatorNode.CreateNodes(tokens, operatorIndex);
+            _ = returnOperatorNode.CreateStatementResult(tokens, operatorIndex);
             return returnOperatorNode;
         }
 

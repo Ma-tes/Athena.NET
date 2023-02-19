@@ -22,7 +22,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.DataNodes
             NodeData = data;
         }
 
-        public ChildrenNodes SepareteNodes(ReadOnlyMemory<Token> tokens, int nodeIndex) =>
-            ChildrenNodes.BlankNodes;
+        public NodeResult<INode> CreateStatementResult(ReadOnlySpan<Token> tokens, int tokenIndex) =>
+            new SuccessulNodeResult<INode>(this);
     }
 }

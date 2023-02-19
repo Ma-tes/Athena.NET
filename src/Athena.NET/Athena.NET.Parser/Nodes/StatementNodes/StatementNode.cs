@@ -12,21 +12,21 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes
         public ChildrenNodes ChildNodes { get; private set; }
 
         //TODO: Reduce the amount of nullable types
-        public virtual NodeResult<StatementNode> CreateStatementResult(ReadOnlyMemory<Token> tokens, int tokenIndex)
+        public virtual NodeResult<INode> CreateStatementResult(ReadOnlySpan<Token> tokens, int tokenIndex)
         {
             var leftData = tokens[0..tokenIndex];
             var rightData = tokens[(tokenIndex + 2)..];
 
-            if (!TryParseLeftNode(out NodeResult<INode> leftResult, leftData.Span) && leftResult is not null)
-                return new ErrorNodeResult<StatementNode>(leftResult.Message);
-            if (!TryParseRigthNode(out NodeResult<INode> rightResult, rightData.Span) && rightResult is not null)
-                return new ErrorNodeResult<StatementNode>(rightResult.Message);
+            if (!TryParseLeftNode(out NodeResult<INode> leftResult, leftData) && leftResult is not null)
+                return new ErrorNodeResult<INode>(leftResult.Message);
+            if (!TryParseRigthNode(out NodeResult<INode> rightResult, rightData) && rightResult is not null)
+                return new ErrorNodeResult<INode>(rightResult.Message);
 
             //TODO: Create a better handling of another errors
             //Probably I should return the error message from
             //the TryParseStatement
             ChildNodes = new(leftResult!.Node!, rightResult!.Node!);
-            return new SuccessulNodeResult<StatementNode>(this);
+            return new SuccessulNodeResult<INode>(this);
         }
 
         protected virtual bool TryParseLeftNode([NotNullWhen(true)]out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens) 

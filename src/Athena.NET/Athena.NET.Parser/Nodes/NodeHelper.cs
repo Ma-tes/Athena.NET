@@ -26,6 +26,9 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
             {
                 if (TryGetNodeInstance(out INode result, tokens[i]))
                 {
+                    int nodeIndex = tokens.IndexOfToken(result.NodeToken);
+                    result.CreateStatementResult(tokens, nodeIndex);
+
                     nodeResult = result;
                     return result is BodyStatement bodyStatement ?
                         bodyStatement.BodyLength : 
