@@ -20,7 +20,28 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
         private static readonly Type tokenTypeAttribute =
             typeof(TokenTypeAttribute);
 
-        public static int GetFirstNode([NotNullWhen(true)]out INode nodeResult, ReadOnlySpan<Token> tokens) 
+
+        //Actually I'm not entiry sure
+        //about the name of this method
+        //so it's possible, that I will
+        //change it to something else
+        public static ReadOnlyMemory<INode> CreateNodes(this ReadOnlySpan<Token> tokens) 
+        {
+            int tokenIndex = 0;
+            var returnNodes = new List<INode>();
+
+            int currentNodeSize = GetFirstNode(out INode currentNode, tokens[tokenIndex..]);
+            while(currentNodeSize != -1)
+            {
+                returnNodes.Add(currentNode);
+                tokenIndex += currentNodeSize;
+
+                currentNodeSize = GetFirstNode(out INode _, tokens[tokenIndex..]);
+            }
+            return returnNodes.ToArray();
+        }
+
+        private static int GetFirstNode([NotNullWhen(true)]out INode nodeResult, ReadOnlySpan<Token> tokens) 
         {
             for (int i = 0; i < tokens.Length; i++)
             {
@@ -37,6 +58,12 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
             }
             nodeResult = null!;
             return -1;
+        }
+
+        public static bool TryGetIndexOfToken(this ReadOnlySpan<Token> tokens, out int index, TokenIndentificator tokenIdentificator) 
+        {
+            index = tokens.IndexOfToken(tokenIdentificator);
+            return index != -1;
         }
 
         //Value -1 means that wasn't found

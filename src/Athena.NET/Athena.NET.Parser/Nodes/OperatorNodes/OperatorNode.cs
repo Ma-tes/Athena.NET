@@ -38,16 +38,15 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes
             int operatorIndex = OperatorHelper.IndexOfOperator(tokens);
             if (operatorIndex == -1)
             {
-                int identfierIndex = tokens.IndexOfToken(TokenIndentificator.Int);
-                if (identfierIndex == -1)
+                if (!tokens.TryGetIndexOfToken(out int valueIndex, TokenIndentificator.Int))
                 {
                     int idetifierIndex = tokens.IndexOfToken(TokenIndentificator.Identifier);
                     var idetifierNode = new IdentifierNode(tokens[idetifierIndex].Data);
                     return idetifierNode;
                 }
 
-                int currentData = int.Parse(tokens[identfierIndex].Data.Span);
-                var returnNode = new DataNode<int>(tokens[identfierIndex].TokenId, currentData);
+                int currentData = int.Parse(tokens[valueIndex].Data.Span);
+                var returnNode = new DataNode<int>(tokens[valueIndex].TokenId, currentData);
                 return returnNode;
             }
 

@@ -17,25 +17,17 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements
         {
             int invokerIndex = tokens[tokenIndex..].IndexOfToken(invokerToken);
             int returnTokenIndex = invokerIndex == -1 ? tokenIndex : invokerIndex;
+            BodyLength = invokerIndex;
+
             return base.CreateStatementResult(tokens, returnTokenIndex);
         }
 
         protected sealed override bool TryParseRigthNode([NotNullWhen(true)] out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens)
         {
             ReadOnlySpan<Token> bodyTokens = GetBodyTokens(tokens);
-            BodyLength = bodyTokens.Length;
+            BodyLength += bodyTokens.Length;
 
-            int tokenIndex = 0;
-            var bodyNodes = new List<INode>();
-
-            int currentNodeSize = NodeHelper.GetFirstNode(out INode currentNode, tokens[tokenIndex..]);
-            while(currentNodeSize != -1)
-            {
-                bodyNodes.Add(currentNode);
-                tokenIndex += currentNodeSize;
-
-                currentNodeSize = NodeHelper.GetFirstNode(out INode _, tokens[tokenIndex..]);
-            }
+            var bodyNodes = bodyTokens.CreateNodes();
             var bodyNode = new BodyNode(bodyNodes.ToArray());
             nodeResult = new SuccessulNodeResult<INode>(bodyNode);
             return true;

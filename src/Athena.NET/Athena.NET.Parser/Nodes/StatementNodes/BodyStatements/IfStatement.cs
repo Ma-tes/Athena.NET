@@ -20,7 +20,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements
                 if (currentNode is LogicalOperator logicalOperator) 
                 {
                     nodeResult = logicalOperator.CreateStatementResult(tokens, logicalOperatorIndex);
-                    if (nodeResult.ResultMessage != StatementResultMessage.Error) 
+                    if (nodeResult.ResultMessage != StatementResultMessage.Error)
                     {
                         logicalOperator.Evaluate();
                         return true;

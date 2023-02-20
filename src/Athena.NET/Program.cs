@@ -16,12 +16,8 @@ using (var tokenReader = new TokenReader
 {
 
     var tokens = await tokenReader.ReadTokensAsync();
-    int assingTokenIndex = tokens.Span.IndexOfToken(TokenIndentificator.If);
+    var nodes = tokens.Span.CreateNodes();
 
-    var assingTokenNode = new IfStatement();
-    var result = assingTokenNode.CreateStatementResult(tokens.Span, assingTokenIndex);
-
-    ReadOnlyMemory<INode> nodes = new INode[] { result.Node! };
     using (var nodeViewer = new NodeViewer(nodes, new Size(4000, 4000)))
     {
         Image nodeImage = nodeViewer.CreateImage();
