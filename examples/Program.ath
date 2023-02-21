@@ -1,3 +1,6 @@
 if((83 + 2005) == (73 + 2005)) ->
 	int firstValue = 25;
 	int secondValue = 35;
+int delimeter = 2;
+if(((delimeter * delimeter) * 3) > delimeter + 180) ->
+	delimeter = delimeter / 2;

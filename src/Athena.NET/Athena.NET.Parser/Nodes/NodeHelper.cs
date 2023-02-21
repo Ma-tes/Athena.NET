@@ -2,7 +2,6 @@
 using Athena.NET.Athena.NET.Lexer.Structures;
 using Athena.NET.Athena.NET.Parser.Interfaces;
 using Athena.NET.Athena.NET.Parser.Nodes.DataNodes;
-using Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes;
 using Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements;
 using Athena.NET.Attributes;
 using System.Diagnostics.CodeAnalysis;
@@ -36,7 +35,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
                 returnNodes.Add(currentNode);
                 tokenIndex += currentNodeSize;
 
-                currentNodeSize = GetFirstNode(out INode _, tokens[tokenIndex..]);
+                currentNodeSize = GetFirstNode(out currentNode, tokens[tokenIndex..]);
             }
             return returnNodes.ToArray();
         }
@@ -52,7 +51,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
 
                     nodeResult = result;
                     return result is BodyStatement bodyStatement ?
-                        bodyStatement.BodyLength : 
+                        bodyStatement.BodyLength :
                         i + (tokens[i..].IndexOfToken(TokenIndentificator.Semicolon));
                 }
             }
