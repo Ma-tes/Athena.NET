@@ -33,7 +33,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements
             return true;
         }
 
-        private ReadOnlySpan<Token> GetBodyTokens(ReadOnlySpan<Token> tokens) 
+        private ReadOnlySpan<Token> GetBodyTokens(ReadOnlySpan<Token> tokens)
         {
             Span<Token> returnBodyNodes = new Token[tokens.Length];
 
@@ -57,11 +57,11 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements
 
         private int IndexOfLineTabulator(ReadOnlySpan<Token> tokens) 
         {
-            int currentOperatorIndex = tokens.IndexOfToken(TokenIndentificator.Tabulator);
+            int currentOperatorIndex = tokens.IndexOfToken(TokenIndentificator.EndLine);
             while (currentOperatorIndex != -1) 
             {
                 if (currentOperatorIndex != 0 &&
-                    tokens[currentOperatorIndex - 1].TokenId == TokenIndentificator.EndLine)
+                    tokens[currentOperatorIndex + 1].TokenId == TokenIndentificator.Tabulator)
                     return currentOperatorIndex;
                 currentOperatorIndex = tokens[(currentOperatorIndex + 1)..].IndexOfToken(TokenIndentificator.Tabulator);
             }
