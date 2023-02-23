@@ -1,7 +1,6 @@
 ﻿using Athena.NET.Athena.NET.Lexer;
 using Athena.NET.Athena.NET.Lexer.Structures;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 
 namespace Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes
 {

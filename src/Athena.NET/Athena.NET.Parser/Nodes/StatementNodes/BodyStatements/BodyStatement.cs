@@ -41,7 +41,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements
             int currentTabulatorIndex = tokens.IndexOfToken(TokenIndentificator.Tabulator);
             while (currentTabulatorIndex != -1)
             {
-                var shiftedTokens = tokens[(currentTabulatorIndex + 1)..];
+                var shiftedTokens = tokens[(currentTabulatorIndex)..];
                 int nextTabulatorIndex = IndexOfLineTabulator(shiftedTokens);
                 ReadOnlySpan<Token> bodyNodes = nextTabulatorIndex != -1 ?
                     shiftedTokens[0..(nextTabulatorIndex - 1)] :
@@ -58,13 +58,9 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements
         private int IndexOfLineTabulator(ReadOnlySpan<Token> tokens) 
         {
             int currentOperatorIndex = tokens.IndexOfToken(TokenIndentificator.EndLine);
-            while (currentOperatorIndex != -1) 
-            {
-                if (currentOperatorIndex != 0 &&
-                    tokens[currentOperatorIndex + 1].TokenId == TokenIndentificator.Tabulator)
-                    return currentOperatorIndex;
-                currentOperatorIndex = tokens[(currentOperatorIndex + 1)..].IndexOfToken(TokenIndentificator.Tabulator);
-            }
+            if (currentOperatorIndex != 0 &&
+                tokens[currentOperatorIndex + 1].TokenId == TokenIndentificator.Tabulator)
+                return currentOperatorIndex + 1;
             return -1;
         }
     }
