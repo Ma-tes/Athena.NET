@@ -17,7 +17,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes
             int operatorsLength = operatorNodes.Length;
             for (int i = 0; i < operatorsLength; i++)
             {
-                var currentNode = operatorNodes[i];
+                OperatorNode currentNode = operatorNodes[i];
                 if (currentNode.NodeToken == currentToken)
                     operatorNode = currentNode;
             }
@@ -29,10 +29,10 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes
         //any operator token that in span
         public static int IndexOfOperator(ReadOnlySpan<Token> tokens)
         {
-            int returnIndex = -1;
-            int tokensLength = tokens.Length;
-
             int lastOperatorWeight = 0;
+            int returnIndex = -1;
+
+            int tokensLength = tokens.Length;
             for (int i = 0; i < tokensLength; i++)
             {
                 if (tokens[i].TokenId == TokenIndentificator.OpenBrace &&

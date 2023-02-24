@@ -15,7 +15,7 @@ namespace Athena.NET.Athena.NET.ParseViewer
     public sealed class NodeViewer : IDisposable
     {
         private Bitmap nodeBitmap;
-        public Graphics NodeGraphics { get; }
+        private Size originalSize;
 
         private readonly ImmutableArray<INodeDrawer> drawElements =
             ImmutableArray.Create<INodeDrawer>
@@ -41,10 +41,10 @@ namespace Athena.NET.Athena.NET.ParseViewer
                             })
                 })
             );
-        private Size originalSize;
 
         public ReadOnlyMemory<INode> RenderNodes { get; }
         public Size ImageSize { get; }
+        public Graphics NodeGraphics { get; }
 
         public NodeViewer(ReadOnlyMemory<INode> nodes, Size imageSize)
         {
@@ -70,7 +70,7 @@ namespace Athena.NET.Athena.NET.ParseViewer
 
         public Image CreateImage() 
         {
-            var nodesSpan = RenderNodes.Span;
+            ReadOnlySpan<INode> nodesSpan = RenderNodes.Span;
             int nodesLenght = nodesSpan.Length;
             for (int i = 0; i < nodesLenght; i++)
             {
@@ -84,7 +84,7 @@ namespace Athena.NET.Athena.NET.ParseViewer
         {
             for (int i = 0; i < drawElements.Length; i++)
             {
-                var currentElement = drawElements[i];
+                INodeDrawer currentElement = drawElements[i];
                 currentElement.OnDraw(new(node, position), NodeGraphics);
             }
         }

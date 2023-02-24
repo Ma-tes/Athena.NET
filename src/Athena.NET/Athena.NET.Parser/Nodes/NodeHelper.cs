@@ -19,7 +19,6 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
         private static readonly Type tokenTypeAttribute =
             typeof(TokenTypeAttribute);
 
-
         //Actually I'm not entiry sure
         //about the name of this method
         //so it's possible, that I will
@@ -113,7 +112,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
             int nodeInstancesLength = nodeInstances.Length;
             for (int i = 0; i < nodeInstancesLength; i++)
             {
-                var currentInstance = nodeInstances[i];
+                INode currentInstance = nodeInstances[i];
                 if (currentInstance.NodeToken == currentToken.TokenId) 
                 {
                     node = currentInstance;

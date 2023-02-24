@@ -16,13 +16,13 @@ namespace Athena.NET.Athena.NET.Lexer.LexicalAnalyzer.Keywords.Literal
 
         public bool TryGetKeyword([NotNullWhen(true)]out LiteralKeyword returnData, char source)
         {
-            bool equalSource = IsEqual(source);
+            bool equalSource = Equals(source);
             returnData = equalSource ? this : null!;
 
             return equalSource;
         }
 
-        public bool IsEqual(char source) =>
+        public bool Equals(char source) =>
             (source >= KeywordData.Start && source <= KeywordData.End);
     }
 }

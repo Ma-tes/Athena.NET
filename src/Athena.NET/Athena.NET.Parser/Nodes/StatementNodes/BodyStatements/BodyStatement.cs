@@ -26,9 +26,9 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements
         {
             BodyLength += tokens.Length;
             ReadOnlySpan<Token> bodyTokens = GetBodyTokens(tokens);
+            ReadOnlyMemory<INode> bodyNodes = bodyTokens.CreateNodes();
 
-            var bodyNodes = bodyTokens.CreateNodes();
-            var bodyNode = new BodyNode(bodyNodes.ToArray());
+            var bodyNode = new BodyNode(bodyNodes);
             nodeResult = new SuccessulNodeResult<INode>(bodyNode);
             return true;
         }
@@ -41,18 +41,18 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements
             int currentTabulatorIndex = tokens.IndexOfToken(TokenIndentificator.Tabulator);
             while (currentTabulatorIndex != -1)
             {
-                var shiftedTokens = tokens[(currentTabulatorIndex)..];
+                ReadOnlySpan<Token> shiftedTokens = tokens[(currentTabulatorIndex)..];
                 int nextTabulatorIndex = IndexOfLineTabulator(shiftedTokens);
                 ReadOnlySpan<Token> bodyNodes = nextTabulatorIndex != -1 ?
-                    shiftedTokens[0..(nextTabulatorIndex - 1)] :
-                    shiftedTokens[0..(shiftedTokens.IndexOfToken(TokenIndentificator.EndLine))];
+                    shiftedTokens[..(nextTabulatorIndex - 1)] :
+                    shiftedTokens[..(shiftedTokens.IndexOfToken(TokenIndentificator.EndLine))];
 
                 bodyNodes.CopyTo(returnBodyNodes[currentBodyLength..]);
                 currentBodyLength += bodyNodes.Length;
                 currentTabulatorIndex = nextTabulatorIndex == -1 ? nextTabulatorIndex :
                     currentTabulatorIndex + nextTabulatorIndex;
             }
-            return returnBodyNodes[0..(currentBodyLength)];
+            return returnBodyNodes[..(currentBodyLength)];
         }
 
         private int IndexOfLineTabulator(ReadOnlySpan<Token> tokens) 

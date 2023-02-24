@@ -29,7 +29,7 @@ namespace Athena.NET.Athena.NET.Lexer.LexicalAnalyzer.Keywords
             if (ParseFunction is not null) 
                 source = ParseFunction.Invoke(source);
 
-            bool keywordIsEqual = IsEqual(source);
+            bool keywordIsEqual = Equals(source);
             returnData = keywordIsEqual ? this : null!;
 
             int keywordLength = KeywordData.Length;
@@ -37,8 +37,8 @@ namespace Athena.NET.Athena.NET.Lexer.LexicalAnalyzer.Keywords
                 return keywordIsEqual;
 
             char nextSourceCharacter = source.Span[keywordLength];
-            if ((KeywordsHolder.Character.IsEqual(nextSourceCharacter) ||
-                KeywordsHolder.Digit.IsEqual(nextSourceCharacter)) && keywordLength > 1)
+            if ((KeywordsHolder.Character.Equals(nextSourceCharacter) ||
+                KeywordsHolder.Digit.Equals(nextSourceCharacter)) && keywordLength > 1)
             {
                 returnData = null!;
                 return false;
@@ -46,7 +46,7 @@ namespace Athena.NET.Athena.NET.Lexer.LexicalAnalyzer.Keywords
             return true;
         }
 
-        public bool IsEqual(ReadOnlyMemory<char> source)
+        public bool Equals(ReadOnlyMemory<char> source)
         {
             if (source.Length < KeywordData.Length)
                 return false;

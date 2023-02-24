@@ -12,7 +12,8 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
     {
         public T? Node { get; }
         public StatementResultMessage ResultMessage { get; }
-        public string Message { get; protected set; }
+        public string Message { get; protected set; } =
+            String.Empty;
 
 
         public NodeResult(T node, StatementResultMessage resultMessage) 

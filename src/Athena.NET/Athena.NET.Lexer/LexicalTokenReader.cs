@@ -28,8 +28,8 @@ namespace Athena.NET.Athena.NET.Lexer
             await streamReader.ReadAsync(ReaderData);
             while (ReaderPosition < ReaderLength)
             {
-                var currentData = ReaderData[ReaderPosition..];
-                var currentToken = GetToken(currentData);
+                Memory<char> currentData = ReaderData[ReaderPosition..];
+                Token currentToken = GetToken(currentData);
 
                 returnTokens.Add(currentToken);
                 ReaderPosition += currentToken.Data.Length;

@@ -25,11 +25,11 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes
 
         private ChildrenNodes SepareteNodes(ReadOnlySpan<Token> tokens, int nodeIndex)
         {
-            var leftData = tokens[0..nodeIndex];
-            var rightData = tokens[(nodeIndex + 1)..];
+            ReadOnlySpan<Token> leftTokens = tokens[..nodeIndex];
+            ReadOnlySpan<Token> rightTokens = tokens[(nodeIndex + 1)..];
 
-            INode leftNode = GetChildrenNode(leftData);
-            INode rightNode = GetChildrenNode(rightData);
+            INode leftNode = GetChildrenNode(leftTokens);
+            INode rightNode = GetChildrenNode(rightTokens);
             return new(leftNode, rightNode);
         }
 
@@ -50,7 +50,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes
                 return returnNode;
             }
 
-            var currentOperator = tokens[operatorIndex].TokenId;
+            TokenIndentificator currentOperator = tokens[operatorIndex].TokenId;
             if (!OperatorHelper.TryGetOperator(out OperatorNode returnOperatorNode, tokens[operatorIndex].TokenId))
                 throw new Exception($"Operator with token: {currentOperator} wasn't implemented");
 
@@ -58,11 +58,10 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes
             return returnOperatorNode;
         }
 
-
         public void Evaluate()
         {
-            var evaluatedLeftNode = GetEvaluatedNode(ChildNodes.LeftNode);
-            var evaluatedRightNode = GetEvaluatedNode(ChildNodes.RightNode);
+            INode evaluatedLeftNode = GetEvaluatedNode(ChildNodes.LeftNode);
+            INode evaluatedRightNode = GetEvaluatedNode(ChildNodes.RightNode);
 
             ChildNodes = new(evaluatedLeftNode, evaluatedRightNode);
         }
@@ -78,7 +77,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes
                     currentNode.ChildNodes.RightNode is DataNode<int> rightData &&
                     currentNode is OperatorNode currentOperator)
                 {
-                    var returnData = currentOperator.CalculateData(leftData.NodeData, rightData.NodeData);
+                    int returnData = currentOperator.CalculateData(leftData.NodeData, rightData.NodeData);
                     return new DataNode<int>(TokenIndentificator.Int, returnData);
                 }
             }

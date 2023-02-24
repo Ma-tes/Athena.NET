@@ -27,7 +27,7 @@ namespace Athena.NET.Athena.NET.Lexer.LexicalAnalyzer
                 return new(reservedKeyword.Identificator, reservedKeyword.KeywordData);
 
             int symbolIndex = GetFirstReservedSymbolIndex(data);
-            var resultData = data[0..(symbolIndex)];
+            ReadOnlyMemory<char> resultData = data[0..(symbolIndex)];
             return new(GetPrimitiveToken(resultData, primitiveTypes), resultData);
         }
 
@@ -41,7 +41,7 @@ namespace Athena.NET.Athena.NET.Lexer.LexicalAnalyzer
             int typesLenght = primitiveTypes.Length;
             for (int i = 0; i < typesLenght; i++)
             {
-                var currentType = typesSpan[i];
+                PrimitiveType currentType = typesSpan[i];
                 Type primitiveType = currentType.Type;
 
                 var methodInformation = primitiveType.GetMethod(tryParse, new Type[] {typeof(string), primitiveType.MakeByRefType()});
@@ -69,8 +69,8 @@ namespace Athena.NET.Athena.NET.Lexer.LexicalAnalyzer
 
         private bool IsReservedSymbol(char character)
         {
-            if (KeywordsHolder.Character.IsEqual(character) ||
-                KeywordsHolder.Digit.IsEqual(character))
+            if (KeywordsHolder.Character.Equals(character) ||
+                KeywordsHolder.Digit.Equals(character))
                 return false;
 
             var arrayHolder = new ReadOnlyMemory<char>(new[] { character });
@@ -83,7 +83,7 @@ namespace Athena.NET.Athena.NET.Lexer.LexicalAnalyzer
             int keywordsLength = ReservedKeywords.Length;
             for (int i = 0; i < keywordsLength; i++)
             {
-                var currentKeyword = dataSpan[i];
+                ReservedKeyword currentKeyword = dataSpan[i];
                 if (currentKeyword.TryGetKeyword(out ReservedKeyword returnKeyword, data))
                     return returnKeyword;
             }
