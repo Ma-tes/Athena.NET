@@ -20,7 +20,7 @@ namespace Athena.NET.Athena.NET.ParseViewer
         private readonly ImmutableArray<INodeDrawer> drawElements =
             ImmutableArray.Create<INodeDrawer>
             ( 
-                new NodeGraphElement(150, new NodeShape[]
+                new NodeGraphElement(new NodeShape[]
                 {
                     new(typeof(OperatorNode),
                         (INode node, Rectangle rectangle, Graphics graphics)
