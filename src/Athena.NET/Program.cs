@@ -12,7 +12,6 @@ using System.Drawing.Imaging;
 using (var tokenReader = new TokenReader
     (File.Open(@"C:\Users\uzivatel\source\repos\Athena.NET\examples\Program.ath", FileMode.Open)))
 {
-
     var tokens = await tokenReader.ReadTokensAsync();
     var nodes = tokens.Span.CreateNodes();
 

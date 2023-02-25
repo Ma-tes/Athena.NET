@@ -16,7 +16,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements
         public sealed override NodeResult<INode> CreateStatementResult(ReadOnlySpan<Token> tokens, int tokenIndex)
         {
             int invokerIndex = tokens[tokenIndex..].IndexOfToken(invokerToken);
-            int returnTokenIndex = invokerIndex == -1 ? tokenIndex : invokerIndex;
+            int returnTokenIndex = invokerIndex == -1 ? tokenIndex : tokenIndex + invokerIndex;
             BodyLength = invokerIndex;
 
             return base.CreateStatementResult(tokens, returnTokenIndex);
@@ -24,8 +24,8 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements
 
         protected sealed override bool TryParseRigthNode([NotNullWhen(true)] out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens)
         {
-            BodyLength += tokens.Length;
             ReadOnlySpan<Token> bodyTokens = GetBodyTokens(tokens);
+            BodyLength += bodyTokens.Length;
             ReadOnlyMemory<INode> bodyNodes = bodyTokens.CreateNodes();
 
             var bodyNode = new BodyNode(bodyNodes);
@@ -44,15 +44,15 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements
                 ReadOnlySpan<Token> shiftedTokens = tokens[(currentTabulatorIndex)..];
                 int nextTabulatorIndex = IndexOfLineTabulator(shiftedTokens);
                 ReadOnlySpan<Token> bodyNodes = nextTabulatorIndex != -1 ?
-                    shiftedTokens[..(nextTabulatorIndex - 1)] :
-                    shiftedTokens[..(shiftedTokens.IndexOfToken(TokenIndentificator.EndLine))];
+                    shiftedTokens[..(nextTabulatorIndex)] :
+                    shiftedTokens[..(shiftedTokens.IndexOfToken(TokenIndentificator.EndLine) + 1)];
 
                 bodyNodes.CopyTo(returnBodyNodes[currentBodyLength..]);
                 currentBodyLength += bodyNodes.Length;
                 currentTabulatorIndex = nextTabulatorIndex == -1 ? nextTabulatorIndex :
                     currentTabulatorIndex + nextTabulatorIndex;
             }
-            return returnBodyNodes[..(currentBodyLength)];
+            return returnBodyNodes[..(currentBodyLength + 1)];
         }
 
         private int IndexOfLineTabulator(ReadOnlySpan<Token> tokens) 

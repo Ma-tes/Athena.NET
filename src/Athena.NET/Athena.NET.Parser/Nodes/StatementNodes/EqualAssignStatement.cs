@@ -22,7 +22,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes
             }
 
             ReadOnlyMemory<char> identifierData = tokens[identifierIndex].Data;
-            INode returnNode = tokenTypeIndex != -1 ? new InstanceNode(tokens[tokenTypeIndex].TokenId, identifierData) :
+            INode returnNode = tokenTypeIndex != -1 ? new InstanceNode(tokens[tokenTypeIndex].TokenId, identifierData) : 
                 new IdentifierNode(identifierData);
             nodeResult = new SuccessulNodeResult<INode>(returnNode);
             return true;
@@ -33,12 +33,13 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes
             //This is going to be changed to more
             //elegant solution, without unnecessary
             //index checking
-            int operatorIndex = OperatorHelper.IndexOfOperator(tokens);
+            int semicolonIndex = tokens.IndexOfToken(TokenIndentificator.Semicolon);
+            int operatorIndex = OperatorHelper.IndexOfOperator(tokens[..semicolonIndex]);
             if (operatorIndex != -1 && OperatorHelper.TryGetOperator(out OperatorNode operatorNode, tokens[operatorIndex].TokenId))
             {
                 var operatorResult = operatorNode.CreateStatementResult(tokens, operatorIndex);
                 nodeResult = operatorResult;
-                return operatorResult.ResultMessage == StatementResultMessage.Error;
+                return operatorResult.ResultMessage != StatementResultMessage.Error;
             }
 
             INode resultNode = null!;

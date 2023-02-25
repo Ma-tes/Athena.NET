@@ -26,9 +26,9 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
         public static ReadOnlyMemory<INode> CreateNodes(this ReadOnlySpan<Token> tokens) 
         {
             int tokenIndex = 0;
-            var returnNodes = new List<INode>();
-
             int currentNodeSize = GetFirstNode(out INode currentNode, tokens[tokenIndex..]);
+
+            var returnNodes = new List<INode>();
             while(currentNodeSize != -1)
             {
                 returnNodes.Add(currentNode);
@@ -51,7 +51,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
                     nodeResult = result;
                     return result is BodyStatement bodyStatement ?
                         bodyStatement.BodyLength :
-                        i + (tokens[i..].IndexOfToken(TokenIndentificator.Semicolon));
+                            i + (tokens[i..].IndexOfToken(TokenIndentificator.EndLine));
                 }
             }
             nodeResult = null!;
