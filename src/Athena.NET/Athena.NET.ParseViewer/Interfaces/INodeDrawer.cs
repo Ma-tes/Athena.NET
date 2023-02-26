@@ -5,6 +5,6 @@ namespace Athena.NET.Athena.NET.ParseViewer.Interfaces
 {
     public interface INodeDrawer
     {
-        public void OnDraw(NodePosition nodePosition, Graphics graphics);
+        public NodePosition OnDraw(NodePosition nodePosition, Graphics graphics);
     }
 }
