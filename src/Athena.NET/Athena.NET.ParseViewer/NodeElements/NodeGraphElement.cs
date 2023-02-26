@@ -31,25 +31,21 @@ namespace Athena.NET.Athena.NET.ParseViewer.NodeElements
             if (nodePosition.Node is null)
                 return default;
             NodeDistance = CalculateGraphDistance(nodePosition.Node) * 25;
-
-            int positionDifferenceIndex = Math.Abs(lastNodePosition.Position.X - nodePosition.Position.X) / ((lastNodePosition.Position.X - nodePosition.Position.X));
             Size nodeSize = CalculateNodeSize(nodePosition.Node);
-            int currentPositionX = nodeSize.Width < 10 ?
-                nodePosition.Position.X : nodePosition.Position.X - ((nodeSize.Width) * positionDifferenceIndex);
 
-            var currentPosition = new Point(currentPositionX, nodePosition.Position.Y);
-            var nodeRectangle = new Rectangle(currentPosition, nodeSize);
-
+            var nodeRectangle = new Rectangle(nodePosition.Position, nodeSize);
             NodeShape currentShape = GetNodeShape(nodePosition.Node);
             currentShape.DrawShape.Invoke(nodePosition.Node, nodeRectangle, graphics);
 
             string tokenName = nodePosition.Node.NodeToken.GetEnumTokenName();
-            var textRectangle = new Rectangle(new(currentPosition.X + (nodeSize.Width / 10), currentPosition.Y + 10), new(nodeSize.Width - (tokenName.Length * 3), nodeSize.Height - 40));
+            var textRectangle = new Rectangle(new(nodePosition.Position.X + (nodeSize.Width / 10), nodePosition.Position.Y + 10), new(nodeSize.Width - (tokenName.Length * 3), nodeSize.Height - 40));
             graphics.DrawString(tokenName, SystemFonts.DefaultFont, TextBrush, textRectangle);
 
-            var currentNodePosition = new NodePosition(nodePosition.Node, currentPosition);
+            var currentNodePosition = new NodePosition(nodePosition.Node, nodePosition.Position);
             lastNodePosition = nodePosition;
-            DrawNodeChildrens(currentNodePosition, graphics);
+
+            if(!nodePosition.Node.ChildNodes.Equals(ChildrenNodes.BlankNodes))
+                DrawNodeChildrens(currentNodePosition, graphics);
             return currentNodePosition;
         }
 
@@ -74,12 +70,15 @@ namespace Athena.NET.Athena.NET.ParseViewer.NodeElements
             ChildrenNodes parentChildrenNode = parentPositionNode.Node.ChildNodes;
             Point parentPosition = parentPositionNode.Position;
 
-            int childrenYPosition = parentPosition.Y + NodeDistance * 2;
-            var leftNodePosition = new NodePosition(parentChildrenNode.LeftNode, parentPosition.X - NodeDistance, childrenYPosition);
-            var rightNodePosition = new NodePosition(parentChildrenNode.RightNode, parentPosition.X + NodeDistance, childrenYPosition);
+            int childrenYPosition = parentPosition.Y + (60 + NodeDistance);
+            var leftNodePosition = CalculateRelativeNodePosition(new NodePosition(parentChildrenNode.LeftNode, parentPosition.X - NodeDistance, childrenYPosition));
+            var rightNodePosition = CalculateRelativeNodePosition(new NodePosition(parentChildrenNode.RightNode, parentPosition.X + NodeDistance, childrenYPosition));
 
-            DrawNodeConnection(OnDraw(leftNodePosition, graphics), parentPositionNode, graphics);
-            DrawNodeConnection(OnDraw(rightNodePosition, graphics), parentPositionNode, graphics);
+            DrawNodeConnection(leftNodePosition, parentPositionNode, graphics);
+            DrawNodeConnection(rightNodePosition, parentPositionNode, graphics);
+
+            OnDraw(leftNodePosition, graphics);
+            OnDraw(rightNodePosition, graphics);
         }
 
         //I know that looks wierd and I will
@@ -92,6 +91,18 @@ namespace Athena.NET.Athena.NET.ParseViewer.NodeElements
             Point firstNodePosition = CalculateCenterPosition(firstNode);
             Point secondNodePosition = CalculateCenterPosition(secondNode);
             graphics.DrawLine(LinePen, firstNodePosition, secondNodePosition);
+        }
+
+        private NodePosition CalculateRelativeNodePosition(NodePosition nodePosition) 
+        {
+            Size nodeSize = CalculateNodeSize(nodePosition.Node);
+            int positionDifferenceIndex = Math.Abs(lastNodePosition.Position.X - nodePosition.Position.X) /
+                (lastNodePosition.Position.X - nodePosition.Position.X);
+
+            int currentPositionX = nodeSize.Width < 10 ?
+                nodePosition.Position.X : nodePosition.Position.X - ((nodeSize.Width) * positionDifferenceIndex);
+            var newPosition = new Point(currentPositionX, nodePosition.Position.Y);
+            return new(nodePosition.Node, newPosition);
         }
 
         private Point CalculateCenterPosition(NodePosition nodePosition) 
@@ -112,7 +123,7 @@ namespace Athena.NET.Athena.NET.ParseViewer.NodeElements
             }
 
             int scaleSize = returnSize * 50;
-            return returnSize > 7 ? new(scaleSize / (((returnSize) / 5)), returnSize * (returnSize * 3)) :
+            return returnSize > 7 ? new(scaleSize / (((returnSize) / 5)), returnSize * (returnSize + (returnSize / 4))) :
                 new(scaleSize, scaleSize);
         }
 
