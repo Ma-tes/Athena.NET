@@ -24,7 +24,7 @@ namespace Athena.NET.Athena.NET.ParseViewer
                 {
                     new(typeof(OperatorNode),
                         (INode node, Rectangle rectangle, Graphics graphics)
-                            => graphics.FillPolygon(Brushes.LightSkyBlue, new PointF[]
+                            => graphics.FillPolygon(Brushes.DimGray, new PointF[]
                             {
                                 new(rectangle.X, rectangle.Y),
                                 new(rectangle.X + rectangle.Width, rectangle.Y),
@@ -34,7 +34,7 @@ namespace Athena.NET.Athena.NET.ParseViewer
                         (INode node, Rectangle rectangle, Graphics graphics )
                             => 
                             {
-                                graphics.FillRectangle(Brushes.LightSeaGreen, rectangle);
+                                graphics.FillRectangle(Brushes.LightSlateGray, rectangle);
                                 _ = NodeHelper.TryGetDataNode(out DataNode<object> dataNode, node);
                                 graphics.DrawString(dataNode.NodeData.ToString(), SystemFonts.DefaultFont, Brushes.Black,
                                     rectangle.X + (rectangle.Width / 4), rectangle.Y + (rectangle.Width / 3));
