@@ -31,13 +31,13 @@ namespace Athena.NET.Athena.NET.ParseViewer.NodeElements
             if (nodePosition.Node is null)
                 return default;
             NodeDistance = CalculateGraphDistance(nodePosition.Node) * 25;
-
             lastNodePosition = nodePosition;
+
             var currentNodePosition = new NodePosition(nodePosition.Node, nodePosition.Position);
             if(!nodePosition.Node.ChildNodes.Equals(ChildrenNodes.BlankNodes))
                 DrawNodeChildrens(currentNodePosition, graphics);
-            Size nodeSize = CalculateNodeSize(nodePosition.Node);
 
+            Size nodeSize = CalculateNodeSize(nodePosition.Node);
             var nodeRectangle = new Rectangle(nodePosition.Position, nodeSize);
             NodeShape currentShape = GetNodeShape(nodePosition.Node);
             currentShape.DrawShape.Invoke(nodePosition.Node, nodeRectangle, graphics);

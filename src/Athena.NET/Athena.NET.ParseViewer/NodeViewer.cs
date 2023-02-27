@@ -34,7 +34,7 @@ namespace Athena.NET.Athena.NET.ParseViewer
                         (INode node, Rectangle rectangle, Graphics graphics )
                             => 
                             {
-                                graphics.FillRectangle(Brushes.LightSlateGray, rectangle);
+                                graphics.FillRectangle(Brushes.LightGray, rectangle);
                                 _ = NodeHelper.TryGetDataNode(out DataNode<object> dataNode, node);
                                 graphics.DrawString(dataNode.NodeData.ToString(), SystemFonts.DefaultFont, Brushes.Black,
                                     rectangle.X + (rectangle.Width / 4), rectangle.Y + (rectangle.Width / 3));
