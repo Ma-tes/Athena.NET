@@ -74,7 +74,7 @@ namespace Athena.NET.Athena.NET.ParseViewer
             int nodesLenght = nodesSpan.Length;
             for (int i = 0; i < nodesLenght; i++)
             {
-                var currentPosition = new Point(originalSize.Width / 2, (originalSize.Height * i));
+                var currentPosition = new Point(ImageSize.Width / 2, (originalSize.Height * i));
                 DrawNodeElements(nodesSpan[i], currentPosition);
             }
             return nodeBitmap;

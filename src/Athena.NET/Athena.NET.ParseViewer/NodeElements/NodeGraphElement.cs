@@ -3,6 +3,7 @@ using Athena.NET.Athena.NET.Parser.Interfaces;
 using Athena.NET.Athena.NET.Parser.Nodes.DataNodes;
 using Athena.NET.Athena.NET.ParseViewer.Interfaces;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
 
 namespace Athena.NET.Athena.NET.ParseViewer.NodeElements
@@ -26,6 +27,7 @@ namespace Athena.NET.Athena.NET.ParseViewer.NodeElements
             this.nodeShapes = nodeShapes;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NodePosition OnDraw(NodePosition nodePosition, Graphics graphics)
         {
             if (nodePosition.Node is null)
@@ -65,6 +67,7 @@ namespace Athena.NET.Athena.NET.ParseViewer.NodeElements
             return NodeShape.DefaultShape;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void DrawNodeChildrens(NodePosition parentPositionNode, Graphics graphics)
         {
             ChildrenNodes parentChildrenNode = parentPositionNode.Node.ChildNodes;

@@ -4,6 +4,6 @@ if((83 + 2005) == (73 + 2005)) ->
 	if(firstValue == secondValue) ->
 		firstValue = firstValue - (secondValue / 2);
 int delimeter = 2;
-if(((delimeter * delimeter) * 3) == (((delimeter / 2) - 1280)) + 180) ->
+if(((delimeter * delimeter) * 3) == (((delimeter / 2) - 1280)) + (180 - (delimeter * 7) * 1990)) ->
 	delimeter = delimeter - 2;
 delimeter = 3;
