@@ -30,9 +30,6 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes
 
         protected override bool TryParseRigthNode(out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens)
         {
-            //This is going to be changed to more
-            //elegant solution, without unnecessary
-            //index checking
             int semicolonIndex = tokens.IndexOfToken(TokenIndentificator.Semicolon);
             int operatorIndex = OperatorHelper.IndexOfOperator(tokens[..semicolonIndex]);
             if (operatorIndex != -1 && OperatorHelper.TryGetOperator(out OperatorNode operatorNode, tokens[operatorIndex].TokenId))

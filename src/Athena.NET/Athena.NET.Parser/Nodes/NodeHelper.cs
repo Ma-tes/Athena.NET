@@ -58,38 +58,27 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
             return -1;
         }
 
-        public static bool TryGetIndexOfToken(this ReadOnlySpan<Token> tokens, out int index, TokenIndentificator tokenIdentificator) 
-        {
-            index = tokens.IndexOfToken(tokenIdentificator);
-            return index != -1;
-        }
-
         //Value -1 means that wasn't found
         //any token in that span
-        public static int IndexOfToken(this ReadOnlySpan<Token> tokens, TokenIndentificator tokenIdentificator)
+        private static int IndexOfTokenCondition(this ReadOnlySpan<Token> tokens, Func<Token, bool> conditionResult) 
         {
             int tokensLength = tokens.Length;
             for (int i = 0; i < tokensLength; i++)
             {
-                if (tokens[i].TokenId == tokenIdentificator)
+                Token currentToken = tokens[i];
+                bool currentResult = conditionResult.Invoke(currentToken);
+                if (currentResult)
                     return i;
             }
             return -1;
         }
 
-        //Value -1 means that wasn't found
-        //any token in that span
-        public static int IndexOfTokenType(this ReadOnlySpan<Token> tokens) 
-        {
-            int tokensLength = tokens.Length;
-            for (int i = 0; i < tokensLength; i++)
-            {
-                TokenIndentificator currentIdentificator = tokens[i].TokenId;
-                if (currentIdentificator.IsTokenType())
-                    return i;
-            }
-            return -1;
-        }
+        public static int IndexOfToken(this ReadOnlySpan<Token> tokens, TokenIndentificator tokenIdentificator) =>
+            tokens.IndexOfTokenCondition((Token token) =>
+                token.TokenId == tokenIdentificator);
+        public static int IndexOfTokenType(this ReadOnlySpan<Token> tokens) =>
+            tokens.IndexOfTokenCondition((Token token) =>
+                token.TokenId.IsTokenType());
 
         public static IEnumerable<T> GetNodeInstances<T>() where T : INode
         {
