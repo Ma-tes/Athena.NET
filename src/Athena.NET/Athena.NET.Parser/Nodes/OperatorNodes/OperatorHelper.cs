@@ -6,8 +6,6 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes
 {
     internal static class OperatorHelper
     {
-        //This is just for testing
-        private static readonly int closeBraceWeight = 100;
         private static ReadOnlySpan<OperatorNode> operatorNodes =>
             new(NodeHelper.GetNodeInstances<OperatorNode>().ToArray());
 
@@ -37,10 +35,10 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes
             {
                 if (tokens[i].TokenId == TokenIndentificator.OpenBrace &&
                     returnIndex != -1)
-                    lastOperatorWeight += closeBraceWeight;
+                    lastOperatorWeight += (int)OperatorPrecedence.Brace;
 
                 if (tokens[i].TokenId == TokenIndentificator.CloseBrace)
-                    lastOperatorWeight -= closeBraceWeight;
+                    lastOperatorWeight -= (int)OperatorPrecedence.Brace;
 
                 if (TryGetOperator(out OperatorNode currentNode, tokens[i].TokenId))
                 {

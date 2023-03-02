@@ -1,9 +1,9 @@
 if((83 + 2005) == (73 + 2005)) ->
 	int firstValue = 25;
 	int secondValue = 35;
-	if(firstValue == secondValue) ->
+	if(firstValue > secondValue) ->
 		firstValue = firstValue - (secondValue / 2);
 int delimeter = 2;
-if(((delimeter * delimeter) * 3) == (((delimeter / 2) - 1280)) + (180 - (delimeter * 7) * 1990)) ->
+if(((delimeter * delimeter) * 3) < (((delimeter / 2) - 1280)) + (180 - (delimeter * 7) * 1990)) ->
 	delimeter = delimeter - 2;
 delimeter = 3;
