@@ -17,9 +17,8 @@ namespace Athena.NET.Athena.NET.ParseViewer.NodeElements
         private ReadOnlyMemory<NodeShape> nodeShapes;
 
         public Brush TextBrush { get; set; } = Brushes.Black;
-        public Pen LinePen { get; set; } =
-            new Pen(Brushes.Black, 3);
 
+        public int DistanceMultiplier { get; set; } = 25;
         public int NodeDistance { get; private set; } 
 
         public NodeGraphElement(ReadOnlyMemory<NodeShape> nodeShapes) 
@@ -32,7 +31,7 @@ namespace Athena.NET.Athena.NET.ParseViewer.NodeElements
         {
             if (nodePosition.Node is null)
                 return default;
-            NodeDistance = CalculateGraphDistance(nodePosition.Node) * 25;
+            NodeDistance = CalculateGraphDistance(nodePosition.Node) * DistanceMultiplier;
             lastNodePosition = nodePosition;
 
             var currentNodePosition = new NodePosition(nodePosition.Node, nodePosition.Position);
@@ -45,9 +44,10 @@ namespace Athena.NET.Athena.NET.ParseViewer.NodeElements
             currentShape.DrawShape.Invoke(nodePosition.Node, nodeRectangle, graphics);
 
             string tokenName = nodePosition.Node.NodeToken.GetEnumTokenName();
-            var textRectangle = new Rectangle(new(nodePosition.Position.X + (nodeSize.Width / 10), nodePosition.Position.Y + 10), new(nodeSize.Width - (tokenName.Length * 3), nodeSize.Height - 40));
+            var textRectangle = new Rectangle(
+                new Point(nodePosition.Position.X + (nodeSize.Width / 10), nodePosition.Position.Y + 10),
+                new Size(nodeSize.Width - (tokenName.Length * 3), nodeSize.Height - 40));
             graphics.DrawString(tokenName, SystemFonts.DefaultFont, TextBrush, textRectangle);
-
             return currentNodePosition;
         }
 
@@ -84,8 +84,6 @@ namespace Athena.NET.Athena.NET.ParseViewer.NodeElements
             OnDraw(rightNodePosition, graphics);
         }
 
-        //I know that looks wierd and I will
-        //totally rewrite this in a next days
         private void DrawNodeConnection(NodePosition firstNode, NodePosition secondNode, Graphics graphics)
         {
             if (firstNode.Node is null || secondNode.Node is null)

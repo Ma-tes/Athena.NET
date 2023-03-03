@@ -6,6 +6,7 @@ using Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements;
 using Athena.NET.Attributes;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Athena.NET.Athena.NET.Parser.Nodes
 {
@@ -60,6 +61,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes
 
         //Value -1 means that wasn't found
         //any token in that span
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int IndexOfTokenCondition(this ReadOnlySpan<Token> tokens, Func<Token, bool> conditionResult) 
         {
             int tokensLength = tokens.Length;

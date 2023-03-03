@@ -3,7 +3,6 @@ using Athena.NET.Athena.NET.Lexer.Structures;
 using Athena.NET.Athena.NET.Parser.Interfaces;
 using Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes;
 using Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes.LogicalOperators;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements
 {
@@ -12,7 +11,7 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.StatementNodes.BodyStatements
         public override TokenIndentificator NodeToken { get; } =
             TokenIndentificator.If;
 
-        protected override bool TryParseLeftNode([NotNullWhen(true)] out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens)
+        protected override bool TryParseLeftNode(out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens)
         {
             int logicalOperatorIndex = OperatorHelper.IndexOfOperator(tokens);
             if (OperatorHelper.TryGetOperator(out OperatorNode currentNode, tokens[logicalOperatorIndex].TokenId))

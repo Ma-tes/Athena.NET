@@ -36,7 +36,6 @@ namespace Athena.NET.Athena.NET.Parser.Nodes.OperatorNodes
                 if (tokens[i].TokenId == TokenIndentificator.OpenBrace &&
                     returnIndex != -1)
                     lastOperatorWeight += (int)OperatorPrecedence.Brace;
-
                 if (tokens[i].TokenId == TokenIndentificator.CloseBrace)
                     lastOperatorWeight -= (int)OperatorPrecedence.Brace;
 
