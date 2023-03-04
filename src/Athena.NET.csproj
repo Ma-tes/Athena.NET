@@ -11,8 +11,4 @@
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Athena.NET.Compiler\" />
-  </ItemGroup>
-
 </Project>
