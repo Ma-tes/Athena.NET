@@ -16,7 +16,7 @@ namespace Athena.NET.Parser.Nodes.StatementNodes.BodyStatements
             int logicalOperatorIndex = OperatorHelper.IndexOfOperator(tokens);
             if (OperatorHelper.TryGetOperator(out OperatorNode currentNode, tokens[logicalOperatorIndex].TokenId))
             {
-                if (currentNode is LogicalOperator logicalOperator) 
+                if (currentNode is LogicalOperator logicalOperator)
                 {
                     nodeResult = logicalOperator.CreateStatementResult(tokens, logicalOperatorIndex);
                     if (nodeResult.ResultMessage != StatementResultMessage.Error)

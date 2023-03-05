@@ -1,18 +1,35 @@
 ﻿namespace Athena.NET.Athena.NET.Compiler
 {
+    //Every operator is slightly inspired
+    //by x86 instructions
     internal enum OperatorCodes : uint
     {
-        BPush = 0x01,
-        SPush = 0x02,
-        IPush = 0x03,
-        LPush = 0x04,
+        Store = 0x01,
+        Load = 0x02,
 
         //I have a great idea of having
         //two registers, so it will be just
         //24 bits
-        R0Store = 0xA1, //Store data in register of 8 bits
-        R1Store = 0xA2, //Store data in register of 16 bits
-        R0Load = 0xB1,  //Load data from register of 8 bits
-        R1Load = 0xB2,  //Load data from register of 16 bits
+        AH = 0xA0, //Register of 8 bits
+        AX = 0xB0, //Register of 16 bits
+
+        //Arithmetic and logic instruction
+        //Syntax:
+        //add [reg]AH 4 [reg]AH 8
+        //add [reg]AH 4 [const]255
+        Add = 0x03,
+        Sub = 0x04,
+        Mul = 0x05,
+        Div = 0x06,
+        //TODO: Implement logic operators
+ 
+        //Syntax: jumpE [reg]AH 4 [reg]AH 8 [jumpFrameId] 0
+        Jump = 0xC0,
+        JumpE = 0xC1,
+        JumpNE = 0xC2,
+        JumpG = 0xC3,
+        JumpGE = 0xC4,
+        JumpL = 0xC5,
+        JumpLE = 0xC6,
     }
 }
