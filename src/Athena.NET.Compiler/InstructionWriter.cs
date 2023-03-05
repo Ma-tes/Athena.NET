@@ -1,4 +1,4 @@
-﻿namespace Athena.NET.Athena.NET.Compiler
+﻿namespace Athena.NET.Compiler
 {
     internal sealed class InstructionWriter
     {

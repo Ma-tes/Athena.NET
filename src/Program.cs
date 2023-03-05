@@ -1,4 +1,5 @@
-﻿using Athena.NET.Lexer;
+﻿using Athena.NET.Athena.NET.Compiler;
+using Athena.NET.Lexer;
 using Athena.NET.Lexer.LexicalAnalyzer;
 using Athena.NET.Lexer.Structures;
 using Athena.NET.Parser.Nodes;

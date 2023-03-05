@@ -1,4 +1,4 @@
-﻿namespace Athena.NET.Athena.NET.Compiler
+﻿namespace Athena.NET.Compiler
 {
     //Every operator is slightly inspired
     //by x86 instructions
