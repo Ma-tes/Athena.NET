@@ -2,7 +2,7 @@
 
 namespace Athena.NET.Athena.NET.Compiler
 {
-    internal unsafe sealed class NativeMemoryList<T> : IDisposable where T : struct //TODO: Implement an ICollection<T> interface
+    public unsafe sealed class NativeMemoryList<T> : IDisposable where T : struct //TODO: Implement an ICollection<T> interface
     {
         private Span<T> memoryBuffer => new Span<T>(memoryPointer, allocationLength);
         private void* memoryPointer;

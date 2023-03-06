@@ -1,4 +1,5 @@
 ﻿using Athena.NET.Compiler;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace Athena.NET.Athena.NET.Compiler.Structures
@@ -27,6 +28,23 @@ namespace Athena.NET.Athena.NET.Compiler.Structures
             int dataSize = CalculateByteSize(data);
             memoryData.Add(new MemoryData(identificatorName, lastOffset, dataSize));
             lastOffset += dataSize;
+        }
+
+        public bool TryGetMemoryData([NotNullWhen(true)]out MemoryData resultData, ReadOnlyMemory<char> identificatorName) 
+        {
+            var memoryDataSpan = memoryData.Span;
+            for (int i = 0; i < memoryDataSpan.Length; i++)
+            {
+                MemoryData currentData = memoryDataSpan[i];
+                if (identificatorName.Span.
+                    SequenceEqual(currentData.IdentifierName.Span)) 
+                {
+                    resultData = currentData;
+                    return true;
+                }
+            }
+            resultData = default;
+            return false;
         }
 
         private int CalculateByteSize(int data) 

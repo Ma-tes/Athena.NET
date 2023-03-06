@@ -12,6 +12,7 @@
         //24 bits
         AH = 0xA0, //Register of 8 bits
         AX = 0xB0, //Register of 16 bits
+        TM = 0xB1, //Temporary access memory
 
         //Arithmetic and logic instruction
         //Syntax:
