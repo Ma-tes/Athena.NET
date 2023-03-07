@@ -23,11 +23,14 @@ namespace Athena.NET.Athena.NET.Compiler.Structures
         //is need to be an a generic unmanged
         //type, maybe consider implementing
         //a INumber interface
-        public void AddRegisterData(ReadOnlyMemory<char> identificatorName, int data)
+        public MemoryData AddRegisterData(ReadOnlyMemory<char> identificatorName, int data)
         {
             int dataSize = CalculateByteSize(data);
-            memoryData.Add(new MemoryData(identificatorName, lastOffset, dataSize));
+            var returnData = new MemoryData(identificatorName, lastOffset, dataSize);
+            memoryData.Add(returnData);
             lastOffset += dataSize;
+
+            return returnData;
         }
 
         public bool TryGetMemoryData([NotNullWhen(true)]out MemoryData resultData, ReadOnlyMemory<char> identificatorName) 
@@ -36,8 +39,8 @@ namespace Athena.NET.Athena.NET.Compiler.Structures
             for (int i = 0; i < memoryDataSpan.Length; i++)
             {
                 MemoryData currentData = memoryDataSpan[i];
-                if (identificatorName.Span.
-                    SequenceEqual(currentData.IdentifierName.Span)) 
+                if (MemoryData.CalculateIdentifierId(identificatorName) ==
+                    currentData.IdentifierId)
                 {
                     resultData = currentData;
                     return true;
@@ -47,7 +50,7 @@ namespace Athena.NET.Athena.NET.Compiler.Structures
             return false;
         }
 
-        private int CalculateByteSize(int data) 
+        public int CalculateByteSize(int data) 
         {
             int currentOffset = 0;
             while (currentOffset != TypeSize) 

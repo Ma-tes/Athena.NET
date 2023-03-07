@@ -23,12 +23,13 @@ namespace Athena.NET.Compiler.Instructions
 
         //TODO: Change the exception to a proper
         //error message
-        public void CreateInstructions() 
+        public void CreateInstructions()
         {
             ReadOnlySpan<INode> nodesSpan = Nodes.Span;
             int nodesLength = nodesSpan.Length;
             for (int i = 0; i < nodesLength; i++)
             {
+                InstructionList.Add((uint)OperatorCodes.Nop);
                 if (!TryGetEmitInstruction(nodesSpan[i]))
                     throw new Exception("Instruction wasn't completed or found");
             }
@@ -44,6 +45,13 @@ namespace Athena.NET.Compiler.Instructions
                 .EmitInstruction(equalNode, this),
             _ => false
         };
+
+        internal Register? GetEmitIntRegister(int data)
+        {
+            if (RegisterAH.CalculateByteSize(data) != -1) { return RegisterAH; }
+            if (RegisterAX.CalculateByteSize(data) != -1) { return RegisterAX; }
+            return null;
+        }
 
         public void Dispose() 
         {

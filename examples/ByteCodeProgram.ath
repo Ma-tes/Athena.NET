@@ -1,0 +1,3 @@
+int firstValue = 83;
+int secondValue = 3;
+int thirdValue = 128 + 72;

@@ -7,7 +7,7 @@
 
         protected abstract bool CalculateLogicalBool(int firstValue, int secondValue);
 
-        protected sealed override int CalculateData(int firstData, int secondData)
+        public sealed override int CalculateData(int firstData, int secondData)
         {
             //Actually, I'm really emberrased by this
             //solution, so I would like to change to

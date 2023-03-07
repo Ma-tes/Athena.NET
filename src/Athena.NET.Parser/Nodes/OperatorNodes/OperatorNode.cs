@@ -67,7 +67,7 @@ namespace Athena.NET.Parser.Nodes.OperatorNodes
             ChildNodes = new(evaluatedLeftNode, evaluatedRightNode);
         }
 
-        protected abstract int CalculateData(int firstData, int secondData);
+        public abstract int CalculateData(int firstData, int secondData);
 
         private INode GetEvaluatedNode(INode node)
         {

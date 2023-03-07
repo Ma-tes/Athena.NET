@@ -13,7 +13,7 @@ namespace Athena.NET.Parser.Nodes.OperatorNodes.ArithmeticOperators
         {
         }
 
-        protected override int CalculateData(int firstData, int secondData) =>
+        public override int CalculateData(int firstData, int secondData) =>
             firstData + secondData;
     }
 }
