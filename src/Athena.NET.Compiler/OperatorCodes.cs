@@ -19,8 +19,8 @@
 
         //Arithmetic and logic instruction
         //Syntax:
-        //add [reg]AH 4 [reg]AH 8
-        //add [reg]AH 4 [const]255
+        //add TM [reg] AH [reg] 4 [size] 0 [offset] AH [reg] 8 [size] 0 [offset]
+        //add TM [reg] AH [red] 4 [size] 4 [offset] 255 [const]
         Add = 0xffee03,
         Sub = 0xffee04,
         Mul = 0xffee05,

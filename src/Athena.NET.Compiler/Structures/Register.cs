@@ -63,6 +63,12 @@ namespace Athena.NET.Athena.NET.Compiler.Structures
             return -1;
         }
 
+        public void ReDispose() 
+        {
+            Dispose();
+            memoryData = new NativeMemoryList<MemoryData>();
+        }
+
         public void Dispose() 
         {
             memoryData.Dispose();

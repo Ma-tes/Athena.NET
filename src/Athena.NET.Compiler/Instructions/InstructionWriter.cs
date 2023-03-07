@@ -1,6 +1,7 @@
 ﻿using Athena.NET.Athena.NET.Compiler;
 using Athena.NET.Athena.NET.Compiler.Structures;
 using Athena.NET.Parser.Interfaces;
+using Athena.NET.Parser.Nodes.OperatorNodes;
 using Athena.NET.Parser.Nodes.StatementNodes;
 
 namespace Athena.NET.Compiler.Instructions
@@ -11,6 +12,8 @@ namespace Athena.NET.Compiler.Instructions
             = new(OperatorCodes.AH, typeof(byte));
         internal Register RegisterAX { get; }
             = new(OperatorCodes.AX, typeof(short));
+        internal Register TemporaryRegisterTM { get; }
+            = new(OperatorCodes.TM, typeof(short));
 
         public ReadOnlyMemory<INode> Nodes { get; }
         public NativeMemoryList<uint> InstructionList { get; }
@@ -43,6 +46,8 @@ namespace Athena.NET.Compiler.Instructions
         {
             EqualAssignStatement equalNode => new StoreInstruction()
                 .EmitInstruction(equalNode, this),
+            OperatorNode operatorNode => new OperatorInstruction()
+                .EmitInstruction(operatorNode, this),
             _ => false
         };
 
@@ -50,6 +55,14 @@ namespace Athena.NET.Compiler.Instructions
         {
             if (RegisterAH.CalculateByteSize(data) != -1) { return RegisterAH; }
             if (RegisterAX.CalculateByteSize(data) != -1) { return RegisterAX; }
+            return null;
+        }
+
+        internal Register? GetIdentifierData(out MemoryData returnData, ReadOnlyMemory<char> identifierName)
+        {
+            if (RegisterAH.TryGetMemoryData(out MemoryData AHData, identifierName)) { returnData = AHData; return RegisterAH; }
+            if (RegisterAX.TryGetMemoryData(out MemoryData AXData, identifierName)) { returnData = AXData; return RegisterAX; }
+            returnData = default!;
             return null;
         }
 
