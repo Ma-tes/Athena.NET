@@ -14,7 +14,7 @@ namespace Athena.NET.Athena.NET.Compiler
         public Span<T> Span => memoryBuffer[..Count];
         public int Count { get; private set; }
 
-        public NativeMemoryList(int allocationLength = 4) 
+        public NativeMemoryList(int allocationLength = 4)
         {
             dataSize = Marshal.SizeOf<T>();
 
@@ -23,9 +23,9 @@ namespace Athena.NET.Athena.NET.Compiler
             memoryPointer = NativeMemory.AlignedAlloc((nuint)(allocationLength * dataSize), memoryAlignment);
         }
 
-        public void Add(T data) 
+        public void Add(T data)
         {
-            if (Count == allocationLength) 
+            if (Count == allocationLength)
             {
                 allocationLength = allocationLength + 4;
                 memoryPointer = NativeMemory.AlignedRealloc(memoryPointer, (nuint)(allocationLength * dataSize), memoryAlignment);
@@ -34,7 +34,7 @@ namespace Athena.NET.Athena.NET.Compiler
             Count++;
         }
 
-        public void Dispose() 
+        public void Dispose()
         {
             NativeMemory.AlignedFree(memoryPointer);
         }

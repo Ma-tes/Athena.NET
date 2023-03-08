@@ -14,10 +14,10 @@ namespace Athena.NET.Compiler.Instructions
         public bool EmitInstruction(EqualAssignStatement node, InstructionWriter writer)
         {
             ChildrenNodes childrenNodes = node.ChildNodes;
-            if (childrenNodes.RightNode is OperatorNode operatorNode) 
+            if (childrenNodes.RightNode is OperatorNode operatorNode)
             {
                 if (operatorNode.ChildNodes.LeftNode is DataNode<int> leftData &&
-                    operatorNode.ChildNodes.RightNode is DataNode<int> rightData) 
+                    operatorNode.ChildNodes.RightNode is DataNode<int> rightData)
                 {
                     int operatorData = operatorNode.CalculateData(leftData.NodeData, rightData.NodeData);
                     return TryWriteStoreInstruction(childrenNodes.LeftNode, writer.GetEmitIntRegister(operatorData)!, operatorData, writer);
@@ -29,7 +29,10 @@ namespace Athena.NET.Compiler.Instructions
                 writer.InstructionList.Add((uint)OperatorCodes.Nop);
                 Register currentRegister = writer.GetEmitIntRegister(
                     operatorInstruction.EmitMemoryData.Size * 2)!;
-                return TryWriteStoreInstruction(childrenNodes.LeftNode, currentRegister, (int)OperatorCodes.TM, writer);
+                bool instructionResult = TryWriteStoreInstruction(childrenNodes.LeftNode, currentRegister, (int)OperatorCodes.TM, writer);
+                writer.InstructionList.Add((uint)operatorInstruction.EmitMemoryData.Size);
+                writer.InstructionList.Add((uint)operatorInstruction.EmitMemoryData.Offset);
+                return instructionResult;
             }
 
             int rightNodeData = ((DataNode<int>)childrenNodes.RightNode).NodeData;
@@ -39,7 +42,7 @@ namespace Athena.NET.Compiler.Instructions
         private bool TryWriteStoreInstruction(INode dataNode, Register register, int data, InstructionWriter writer)
         {
             writer.InstructionList.Add((uint)OperatorCodes.Store);
-            if (dataNode is InstanceNode instanceNode) 
+            if (dataNode is InstanceNode instanceNode)
             {
                 var memoryData = register.AddRegisterData(instanceNode.NodeData, data);
                 writer.InstructionList.Add((uint)memoryData.Size);

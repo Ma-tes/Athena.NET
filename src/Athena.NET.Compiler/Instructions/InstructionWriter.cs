@@ -17,11 +17,11 @@ namespace Athena.NET.Compiler.Instructions
 
         public ReadOnlyMemory<INode> Nodes { get; }
         public NativeMemoryList<uint> InstructionList { get; }
+            = new();
 
         public InstructionWriter(ReadOnlyMemory<INode> nodes)
         {
             Nodes = nodes;
-            InstructionList = new NativeMemoryList<uint>();
         }
 
         //TODO: Change the exception to a proper
@@ -66,7 +66,7 @@ namespace Athena.NET.Compiler.Instructions
             return null;
         }
 
-        public void Dispose() 
+        public void Dispose()
         {
             RegisterAH.Dispose();
             RegisterAX.Dispose();

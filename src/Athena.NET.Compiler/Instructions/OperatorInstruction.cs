@@ -12,7 +12,7 @@ namespace Athena.NET.Compiler.Instructions
     {
         public MemoryData EmitMemoryData { get; private set; }
 
-        public bool EmitInstruction(OperatorNode node, InstructionWriter writer) 
+        public bool EmitInstruction(OperatorNode node, InstructionWriter writer)
         {
             bool isInstruction = TryGenerateOperatorInstructions(out MemoryData returnData, node, writer);
             EmitMemoryData = returnData;
@@ -30,7 +30,6 @@ namespace Athena.NET.Compiler.Instructions
 
                 WriteMemoryDataInstructions(childrenNodes.LeftNode, writer);
                 WriteMemoryDataInstructions(childrenNodes.RightNode, writer);
-
 
                 returnData = writer.TemporaryRegisterTM.AddRegisterData(new char[1], 16);
                 return true;

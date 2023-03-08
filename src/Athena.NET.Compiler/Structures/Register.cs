@@ -33,7 +33,7 @@ namespace Athena.NET.Athena.NET.Compiler.Structures
             return returnData;
         }
 
-        public bool TryGetMemoryData([NotNullWhen(true)]out MemoryData resultData, ReadOnlyMemory<char> identificatorName) 
+        public bool TryGetMemoryData([NotNullWhen(true)]out MemoryData resultData, ReadOnlyMemory<char> identificatorName)
         {
             var memoryDataSpan = memoryData.Span;
             for (int i = 0; i < memoryDataSpan.Length; i++)
@@ -50,10 +50,10 @@ namespace Athena.NET.Athena.NET.Compiler.Structures
             return false;
         }
 
-        public int CalculateByteSize(int data) 
+        public int CalculateByteSize(int data)
         {
             int currentOffset = 0;
-            while (currentOffset != TypeSize) 
+            while (currentOffset != TypeSize)
             {
                 int offsetValue = (data >> (currentOffset)) & 255;
                 if (offsetValue == 0)
@@ -63,13 +63,13 @@ namespace Athena.NET.Athena.NET.Compiler.Structures
             return -1;
         }
 
-        public void ReDispose() 
+        public void ReDispose()
         {
             Dispose();
             memoryData = new NativeMemoryList<MemoryData>();
         }
 
-        public void Dispose() 
+        public void Dispose()
         {
             memoryData.Dispose();
         }

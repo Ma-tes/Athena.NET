@@ -6,14 +6,14 @@
         public int Offset { get; }
         public int Size { get; }
 
-        public MemoryData(ReadOnlyMemory<char> identifierName, int offset, int size) 
+        public MemoryData(ReadOnlyMemory<char> identifierName, int offset, int size)
         {
             IdentifierId = CalculateIdentifierId(identifierName);
             Offset = offset;
             Size = size;
         }
 
-        public static uint CalculateIdentifierId(ReadOnlyMemory<char> identifierName) 
+        public static uint CalculateIdentifierId(ReadOnlyMemory<char> identifierName)
         {
             ReadOnlySpan<char> identifierSpan = identifierName.Span;
             uint resultIdentificator = 0;
