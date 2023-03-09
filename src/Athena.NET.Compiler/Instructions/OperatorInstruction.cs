@@ -1,5 +1,5 @@
-﻿using Athena.NET.Athena.NET.Compiler.DataHolders;
-using Athena.NET.Athena.NET.Compiler.Structures;
+﻿using Athena.NET.Compiler.Structures;
+using Athena.NET.Compiler.DataHolders;
 using Athena.NET.Lexer;
 using Athena.NET.Parser;
 using Athena.NET.Parser.Interfaces;
@@ -42,7 +42,9 @@ namespace Athena.NET.Compiler.Instructions
                 WriteMemoryDataInstructions(currentInstructions, childrenNodes.RightNode, writer);
 
                 operatorInstructions.AddRange(currentInstructions.Span.ToArray());
+
                 returnData = writer.TemporaryRegisterTM.AddRegisterData(new char[1], 16);
+                currentInstructions.Dispose();
                 return true;
             }
 

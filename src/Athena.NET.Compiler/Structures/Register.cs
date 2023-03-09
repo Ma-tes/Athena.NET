@@ -1,9 +1,8 @@
-﻿using Athena.NET.Athena.NET.Compiler.DataHolders;
-using Athena.NET.Compiler;
+﻿using Athena.NET.Compiler.DataHolders;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
-namespace Athena.NET.Athena.NET.Compiler.Structures
+namespace Athena.NET.Compiler.Structures
 {
     internal sealed class Register : IDisposable
     {

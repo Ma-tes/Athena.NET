@@ -1,5 +1,5 @@
-﻿using Athena.NET.Athena.NET.Compiler.DataHolders;
-using Athena.NET.Athena.NET.Compiler.Structures;
+﻿using Athena.NET.Compiler.DataHolders;
+using Athena.NET.Compiler.Structures;
 using Athena.NET.Parser.Interfaces;
 using Athena.NET.Parser.Nodes.OperatorNodes;
 using Athena.NET.Parser.Nodes.StatementNodes;

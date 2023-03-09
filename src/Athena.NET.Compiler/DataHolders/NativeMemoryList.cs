@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Athena.NET.Athena.NET.Compiler.DataHolders
+namespace Athena.NET.Compiler.DataHolders
 {
     public unsafe class NativeMemoryList<T> : IDisposable where T : struct //TODO: Implement an ICollection<T> interface
     {

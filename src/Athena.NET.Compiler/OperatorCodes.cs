@@ -28,12 +28,11 @@
         //TODO: Implement logic operators
  
         //Syntax: jumpE [reg]AH 4 [reg]AH 8 [jumpFrameId] 0
-        Jump = 0xffeeC0,
-        JumpE = 0xffeeC1,
-        JumpNE = 0xffeeC2,
-        JumpG = 0xffeeC3,
-        JumpGE = 0xffeeC4,
-        JumpL = 0xffeeC5,
-        JumpLE = 0xffeeC6,
+        JumpE = 0xffeeC0,
+        JumpNE = 0xffeeC1,
+        JumpG = 0xffeeC2,
+        JumpGE = 0xffeeC3,
+        JumpL = 0xffeeC4,
+        JumpLE = 0xffeeC5,
     }
 }

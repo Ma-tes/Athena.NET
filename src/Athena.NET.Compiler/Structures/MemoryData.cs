@@ -1,4 +1,4 @@
-﻿namespace Athena.NET.Athena.NET.Compiler.Structures
+﻿namespace Athena.NET.Compiler.Structures
 {
     internal readonly struct MemoryData
     {

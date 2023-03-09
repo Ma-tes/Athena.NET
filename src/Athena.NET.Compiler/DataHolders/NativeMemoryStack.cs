@@ -1,4 +1,4 @@
-﻿namespace Athena.NET.Athena.NET.Compiler.DataHolders
+﻿namespace Athena.NET.Compiler.DataHolders
 {
     public unsafe sealed class NativeMemoryStack<T> : NativeMemoryList<T>
         where T : struct
