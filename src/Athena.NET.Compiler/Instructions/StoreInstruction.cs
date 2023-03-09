@@ -1,6 +1,7 @@
 ﻿using Athena.NET.Compiler.Structures;
 using Athena.NET.Parser;
 using Athena.NET.Parser.Interfaces;
+using Athena.NET.Parser.Nodes;
 using Athena.NET.Parser.Nodes.DataNodes;
 using Athena.NET.Parser.Nodes.OperatorNodes;
 using Athena.NET.Parser.Nodes.StatementNodes;
@@ -42,18 +43,18 @@ namespace Athena.NET.Compiler.Instructions
         private bool TryWriteStoreInstruction(INode dataNode, Register register, int data, InstructionWriter writer)
         {
             writer.InstructionList.Add((uint)OperatorCodes.Store);
+
+            MemoryData returnData;
             if (dataNode is InstanceNode instanceNode)
-            {
-                var memoryData = register.AddRegisterData(instanceNode.NodeData, data);
-                writer.InstructionList.Add((uint)memoryData.Size);
-                writer.InstructionList.Add((uint)memoryData.Offset);
-                writer.InstructionList.Add((uint)register.RegisterCode);
-                writer.InstructionList.Add((uint)data);
-                return true;
-            }
-            //TODO: Create an implementation of
-            //the identifierNode
-            return false;
+                returnData = register.AddRegisterData(instanceNode.NodeData, data);
+            else
+                _ = register.TryGetMemoryData(out returnData, ((IdentifierNode)dataNode).NodeData);
+
+            writer.InstructionList.Add((uint)returnData.Size);
+            writer.InstructionList.Add((uint)returnData.Offset);
+            writer.InstructionList.Add((uint)register.RegisterCode);
+            writer.InstructionList.Add((uint)data);
+            return true;
         }
     }
 }

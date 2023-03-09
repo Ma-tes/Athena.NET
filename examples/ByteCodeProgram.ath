@@ -1,4 +1,5 @@
 int firstValue = 83;
 int secondValue = 3;
-int maximumValue = 3;
+if(firstValue / 10 > secondValue - 2) ->
+	secondValue = 10;
 int thirdValue = (firstValue + secondValue + 83) / 20 * 3;

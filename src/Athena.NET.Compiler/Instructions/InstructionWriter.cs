@@ -3,6 +3,7 @@ using Athena.NET.Compiler.Structures;
 using Athena.NET.Parser.Interfaces;
 using Athena.NET.Parser.Nodes.OperatorNodes;
 using Athena.NET.Parser.Nodes.StatementNodes;
+using Athena.NET.Parser.Nodes.StatementNodes.BodyStatements;
 
 namespace Athena.NET.Compiler.Instructions
 {
@@ -15,20 +16,15 @@ namespace Athena.NET.Compiler.Instructions
         internal Register TemporaryRegisterTM { get; }
             = new(OperatorCodes.TM, typeof(short));
 
-        public ReadOnlyMemory<INode> Nodes { get; }
         public NativeMemoryList<uint> InstructionList { get; }
             = new();
 
-        public InstructionWriter(ReadOnlyMemory<INode> nodes)
-        {
-            Nodes = nodes;
-        }
 
         //TODO: Change the exception to a proper
         //error message
-        public void CreateInstructions()
+        public void CreateInstructions(ReadOnlyMemory<INode> nodes)
         {
-            ReadOnlySpan<INode> nodesSpan = Nodes.Span;
+            ReadOnlySpan<INode> nodesSpan = nodes.Span;
             int nodesLength = nodesSpan.Length;
             for (int i = 0; i < nodesLength; i++)
             {
@@ -46,6 +42,8 @@ namespace Athena.NET.Compiler.Instructions
         {
             EqualAssignStatement equalNode => new StoreInstruction()
                 .EmitInstruction(equalNode, this),
+            BodyStatement bodyNode => new JumpInstruction()
+                .EmitInstruction(bodyNode, this),
             OperatorNode operatorNode => new OperatorInstruction()
                 .EmitInstruction(operatorNode, this),
             _ => false
@@ -53,17 +51,23 @@ namespace Athena.NET.Compiler.Instructions
 
         internal Register? GetEmitIntRegister(int data)
         {
-            if (RegisterAH.CalculateByteSize(data) != -1) { return RegisterAH; }
-            if (RegisterAX.CalculateByteSize(data) != -1) { return RegisterAX; }
+            if (RegisterAH.CalculateByteSize(data) != RegisterAH.TypeSize) { return RegisterAH; }
+            if (RegisterAX.CalculateByteSize(data) != RegisterAX.TypeSize) { return RegisterAX; }
+            return null;
+        }
+
+        internal Register? GetIdentifierData(out MemoryData returnData, uint identifierId)
+        {
+            if (RegisterAH.TryGetMemoryData(out MemoryData AHData, identifierId)) { returnData = AHData; return RegisterAH; }
+            if (RegisterAX.TryGetMemoryData(out MemoryData AXData, identifierId)) { returnData = AXData; return RegisterAX; }
+            returnData = default!;
             return null;
         }
 
         internal Register? GetIdentifierData(out MemoryData returnData, ReadOnlyMemory<char> identifierName)
         {
-            if (RegisterAH.TryGetMemoryData(out MemoryData AHData, identifierName)) { returnData = AHData; return RegisterAH; }
-            if (RegisterAX.TryGetMemoryData(out MemoryData AXData, identifierName)) { returnData = AXData; return RegisterAX; }
-            returnData = default!;
-            return null;
+            uint identiferId = MemoryData.CalculateIdentifierId(identifierName);
+            return GetIdentifierData(out returnData, identiferId);
         }
 
         public void Dispose()

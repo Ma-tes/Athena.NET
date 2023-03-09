@@ -33,14 +33,13 @@ namespace Athena.NET.Compiler.Structures
             return returnData;
         }
 
-        public bool TryGetMemoryData([NotNullWhen(true)]out MemoryData resultData, ReadOnlyMemory<char> identificatorName)
+        public bool TryGetMemoryData([NotNullWhen(true)]out MemoryData resultData, uint identiferId)
         {
             var memoryDataSpan = memoryData.Span;
             for (int i = 0; i < memoryDataSpan.Length; i++)
             {
                 MemoryData currentData = memoryDataSpan[i];
-                if (MemoryData.CalculateIdentifierId(identificatorName) ==
-                    currentData.IdentifierId)
+                if (identiferId == currentData.IdentifierId)
                 {
                     resultData = currentData;
                     return true;
@@ -48,6 +47,12 @@ namespace Athena.NET.Compiler.Structures
             }
             resultData = default;
             return false;
+        }
+
+        public bool TryGetMemoryData([NotNullWhen(true)]out MemoryData resultData, ReadOnlyMemory<char> identifierName)
+        {
+            uint identiferId = MemoryData.CalculateIdentifierId(identifierName);
+            return TryGetMemoryData(out resultData, identiferId);
         }
 
         public int CalculateByteSize(int data)

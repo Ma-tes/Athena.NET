@@ -50,15 +50,14 @@ namespace Athena.NET.Compiler.Instructions
 
             if (node is IdentifierNode identifierNode) 
             {
-                _ = writer.GetIdentifierData(out MemoryData memoryData, identifierNode.NodeData);
-                returnData = memoryData;
+                _ = writer.GetIdentifierData(out returnData, identifierNode.NodeData);
                 return true;
             }
             returnData = default;
             return false;
         }
 
-        private void WriteMemoryDataInstructions(NativeMemoryList<uint> nativeInstructions, INode node, InstructionWriter writer) 
+        public void WriteMemoryDataInstructions(NativeMemoryList<uint> nativeInstructions, INode node, InstructionWriter writer) 
         {
             if (TryGenerateOperatorInstructions(out MemoryData returnData, node, writer)) 
             {
