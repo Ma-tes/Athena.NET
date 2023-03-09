@@ -61,7 +61,7 @@ namespace Athena.NET.Athena.NET.Compiler.Structures
                     return currentOffset;
                 currentOffset += 4;
             }
-            return -1;
+            return TypeSize;
         }
 
         public void ReDispose()
