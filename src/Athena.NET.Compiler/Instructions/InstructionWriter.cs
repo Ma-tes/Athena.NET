@@ -1,4 +1,4 @@
-﻿using Athena.NET.Athena.NET.Compiler;
+﻿using Athena.NET.Athena.NET.Compiler.DataHolders;
 using Athena.NET.Athena.NET.Compiler.Structures;
 using Athena.NET.Parser.Interfaces;
 using Athena.NET.Parser.Nodes.OperatorNodes;
@@ -41,7 +41,7 @@ namespace Athena.NET.Compiler.Instructions
         //I'm not sure if I like this solution,
         //because I could easily create reflection that
         //will find the right instruction without any
-        //hard coded values
+        //hard code
         private bool TryGetEmitInstruction(INode node) => node switch
         {
             EqualAssignStatement equalNode => new StoreInstruction()
