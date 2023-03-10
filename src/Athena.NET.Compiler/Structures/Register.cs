@@ -23,9 +23,8 @@ namespace Athena.NET.Compiler.Structures
         //is need to be an a generic unmanged
         //type, maybe consider implementing
         //a INumber interface
-        public MemoryData AddRegisterData(ReadOnlyMemory<char> identificatorName, int data)
+        public MemoryData AddRegisterData(ReadOnlyMemory<char> identificatorName, int dataSize)
         {
-            int dataSize = CalculateByteSize(data);
             var returnData = new MemoryData(identificatorName, lastOffset, dataSize);
             memoryData.Add(returnData);
             lastOffset += dataSize;

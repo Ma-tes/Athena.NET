@@ -21,7 +21,9 @@ namespace Athena.NET.Compiler.Instructions
                     operatorNode.ChildNodes.RightNode is DataNode<int> rightData)
                 {
                     int operatorData = operatorNode.CalculateData(leftData.NodeData, rightData.NodeData);
-                    return TryWriteStoreInstruction(childrenNodes.LeftNode, writer.GetEmitIntRegister(operatorData)!, operatorData, writer);
+                    Register? operatorRegister = writer.GetEmitIntRegister(operatorData)!;
+                    return TryWriteStoreInstruction(childrenNodes.LeftNode, operatorRegister,
+                        operatorRegister.CalculateByteSize(operatorData), writer);
                 }
                 var operatorInstruction = new OperatorInstruction();
                 if (!operatorInstruction.EmitInstruction(operatorNode, writer))
@@ -30,30 +32,55 @@ namespace Athena.NET.Compiler.Instructions
                 writer.InstructionList.Add((uint)OperatorCodes.Nop);
                 Register currentRegister = writer.GetEmitIntRegister(
                     operatorInstruction.EmitMemoryData.Size * 2)!;
-                bool instructionResult = TryWriteStoreInstruction(childrenNodes.LeftNode, currentRegister, (int)OperatorCodes.TM, writer);
+
+                bool instructionResult = TryWriteStoreInstruction(childrenNodes.LeftNode, currentRegister, currentRegister.TypeSize, writer);
                 writer.InstructionList.Add((uint)operatorInstruction.EmitMemoryData.Size);
                 writer.InstructionList.Add((uint)operatorInstruction.EmitMemoryData.Offset);
+                writer.InstructionList.Add((uint)OperatorCodes.TM);
                 return instructionResult;
             }
 
-            int rightNodeData = ((DataNode<int>)childrenNodes.RightNode).NodeData;
-            return TryWriteStoreInstruction(childrenNodes.LeftNode, writer.GetEmitIntRegister(rightNodeData)!, rightNodeData, writer);
+            if (childrenNodes.RightNode is IdentifierNode identifierNode) 
+            {
+                Register? identifierRegister = writer.GetIdentifierData(out MemoryData rightData, identifierNode.NodeData);
+                if (identifierRegister is null)
+                    return false;
+
+                bool instructionResult =  TryWriteStoreInstruction(childrenNodes.LeftNode, identifierRegister, rightData.Size, writer);
+                writer.InstructionList.Add((uint)rightData.Size);
+                writer.InstructionList.Add((uint)rightData.Offset);
+                writer.InstructionList.Add((uint)identifierRegister.RegisterCode);
+                return instructionResult;
+            }
+
+            int nodeData = ((DataNode<int>)childrenNodes.RightNode).NodeData;
+            Register? emitRegister = writer.GetEmitIntRegister(nodeData)!;
+            bool writeInstructions = TryWriteStoreInstruction(childrenNodes.LeftNode, emitRegister,
+                emitRegister.CalculateByteSize(nodeData), writer);
+            writer.InstructionList.Add((uint)nodeData);
+            return writeInstructions;
         }
 
-        private bool TryWriteStoreInstruction(INode dataNode, Register register, int data, InstructionWriter writer)
+        private bool TryWriteStoreInstruction(INode dataNode, Register register, int size, InstructionWriter writer)
         {
+            MemoryData currentMemoryData = default;
+            if (dataNode is IdentifierNode identifierNode) 
+            {
+                Register? identiferRegister = writer.GetIdentifierData(out currentMemoryData,
+                    identifierNode.NodeData);
+                if (identiferRegister is null)
+                    return false;
+
+                if (currentMemoryData.Size != size) 
+                    currentMemoryData = register.AddRegisterData(identifierNode.NodeData, size);
+            }
+            if (dataNode is InstanceNode instanceNode) 
+                currentMemoryData = register.AddRegisterData(instanceNode.NodeData, size);
+
             writer.InstructionList.Add((uint)OperatorCodes.Store);
-
-            MemoryData returnData;
-            if (dataNode is InstanceNode instanceNode)
-                returnData = register.AddRegisterData(instanceNode.NodeData, data);
-            else
-                _ = register.TryGetMemoryData(out returnData, ((IdentifierNode)dataNode).NodeData);
-
-            writer.InstructionList.Add((uint)returnData.Size);
-            writer.InstructionList.Add((uint)returnData.Offset);
+            writer.InstructionList.Add((uint)currentMemoryData.Size);
+            writer.InstructionList.Add((uint)currentMemoryData.Offset);
             writer.InstructionList.Add((uint)register.RegisterCode);
-            writer.InstructionList.Add((uint)data);
             return true;
         }
     }
