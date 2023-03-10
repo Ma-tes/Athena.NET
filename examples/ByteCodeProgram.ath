@@ -3,4 +3,4 @@ int secondValue = 3;
 if(firstValue / 10 > secondValue - 2) ->
 	secondValue = 10;
 	firstValue = secondValue;
-int thirdValue = (firstValue + secondValue + 83) / 20 * 3;
+int thirdValue = (firstValue + secondValue + 83) / (20 * 3);

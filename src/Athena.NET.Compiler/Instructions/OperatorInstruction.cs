@@ -33,17 +33,18 @@ namespace Athena.NET.Compiler.Instructions
             {
                 OperatorCodes instructionOperator = GetOperatorNodeCode(operatorNode);
                 var currentInstructions = new NativeMemoryStack<uint>();
+                returnData = writer.TemporaryRegisterTM.AddRegisterData(new char[1], 16);
 
                 currentInstructions.Add((uint)OperatorCodes.Nop);
                 currentInstructions.Add((uint)instructionOperator);
+                currentInstructions.Add((uint)returnData.Size);
+                currentInstructions.Add((uint)returnData.Offset);
                 currentInstructions.Add((uint)OperatorCodes.TM);
 
                 WriteMemoryDataInstructions(currentInstructions, childrenNodes.LeftNode, writer);
                 WriteMemoryDataInstructions(currentInstructions, childrenNodes.RightNode, writer);
 
                 operatorInstructions.AddRange(currentInstructions.Span.ToArray());
-
-                returnData = writer.TemporaryRegisterTM.AddRegisterData(new char[1], 16);
                 currentInstructions.Dispose();
                 return true;
             }
@@ -64,8 +65,8 @@ namespace Athena.NET.Compiler.Instructions
                 OperatorCodes registerCode = node is IdentifierNode identifierNode ?
                     writer.GetIdentifierData(out _, identifierNode.NodeData)!.RegisterCode :
                     OperatorCodes.TM;
-                nativeInstructions.Add((uint)returnData.Offset);
                 nativeInstructions.Add((uint)returnData.Size);
+                nativeInstructions.Add((uint)returnData.Offset);
                 nativeInstructions.Add((uint)registerCode);
             }
             else
