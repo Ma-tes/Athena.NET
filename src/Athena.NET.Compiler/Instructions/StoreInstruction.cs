@@ -34,9 +34,7 @@ namespace Athena.NET.Compiler.Instructions
                     operatorInstruction.EmitMemoryData.Size * 2)!;
 
                 bool instructionResult = TryWriteStoreInstruction(childrenNodes.LeftNode, currentRegister, currentRegister.TypeSize, writer);
-                writer.InstructionList.Add((uint)operatorInstruction.EmitMemoryData.Size);
-                writer.InstructionList.Add((uint)operatorInstruction.EmitMemoryData.Offset);
-                writer.InstructionList.Add((uint)OperatorCodes.TM);
+                AddMemoryDataInstructions(OperatorCodes.TM, operatorInstruction.EmitMemoryData, writer);
                 return instructionResult;
             }
 
@@ -47,9 +45,7 @@ namespace Athena.NET.Compiler.Instructions
                     return false;
 
                 bool instructionResult =  TryWriteStoreInstruction(childrenNodes.LeftNode, identifierRegister, rightData.Size, writer);
-                writer.InstructionList.Add((uint)rightData.Size);
-                writer.InstructionList.Add((uint)rightData.Offset);
-                writer.InstructionList.Add((uint)identifierRegister.RegisterCode);
+                AddMemoryDataInstructions(identifierRegister.RegisterCode, rightData, writer);
                 return instructionResult;
             }
 
@@ -78,10 +74,15 @@ namespace Athena.NET.Compiler.Instructions
                 currentMemoryData = register.AddRegisterData(instanceNode.NodeData, size);
 
             writer.InstructionList.Add((uint)OperatorCodes.Store);
-            writer.InstructionList.Add((uint)currentMemoryData.Size);
-            writer.InstructionList.Add((uint)currentMemoryData.Offset);
-            writer.InstructionList.Add((uint)register.RegisterCode);
+            AddMemoryDataInstructions(register.RegisterCode, currentMemoryData, writer);
             return true;
+        }
+
+        private void AddMemoryDataInstructions(OperatorCodes registerCode, MemoryData memoryData, InstructionWriter writer)
+        {
+            writer.InstructionList.AddRange((uint)memoryData.Size,
+                (uint)memoryData.Offset,
+                (uint)registerCode);
         }
     }
 }

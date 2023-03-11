@@ -17,8 +17,8 @@ namespace Athena.NET.Compiler.Instructions
             MemoryData leftData = GetMemoryData(leftChildrenNodes.LeftNode, writer);
             MemoryData rightData = GetMemoryData(leftChildrenNodes.RightNode, writer);
 
-            writer.InstructionList.Add((uint)OperatorCodes.Nop);
-            writer.InstructionList.Add((uint)GetJumpOperatorCode((OperatorNode)node.ChildNodes.LeftNode));
+            writer.InstructionList.AddRange((uint)OperatorCodes.Nop,
+                (uint)GetJumpOperatorCode((OperatorNode)node.ChildNodes.LeftNode));
             WriteMemoryDataInstruction(leftData, leftChildrenNodes.LeftNode, writer);
             WriteMemoryDataInstruction(rightData, leftChildrenNodes.RightNode, writer);
 
@@ -39,9 +39,9 @@ namespace Athena.NET.Compiler.Instructions
             OperatorCodes registerCode = memoryDataRegister is not null ?
                 memoryDataRegister.RegisterCode : OperatorCodes.TM;
 
-            writer.InstructionList.Add((uint)memoryData.Offset);
-            writer.InstructionList.Add((uint)memoryData.Size);
-            writer.InstructionList.Add((uint)registerCode);
+            writer.InstructionList.AddRange((uint)memoryData.Offset,
+                (uint)memoryData.Size,
+                (uint)registerCode);
         }
 
         private MemoryData GetMemoryData(INode node, InstructionWriter writer)

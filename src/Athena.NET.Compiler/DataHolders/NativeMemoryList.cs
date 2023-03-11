@@ -42,7 +42,7 @@ namespace Athena.NET.Compiler.DataHolders
             Count += dataLength;
         }
 
-        public void AddRange(T[] data)
+        public void AddRange(params T[] data)
         {
             Span<T> dataSpan = data.AsSpan();
             AddRange(dataSpan);
