@@ -23,6 +23,8 @@ namespace Athena.NET.Compiler.Instructions
             WriteMemoryDataInstruction(rightData, leftChildrenNodes.RightNode, writer);
 
             BodyNode bodyNode = (BodyNode)node.ChildNodes.RightNode;
+            writer.InstructionList.AddRange((uint)OperatorCodes.Goto,
+                (uint)bodyNode.NodeData.Length);
             writer.CreateInstructions(bodyNode.NodeData);
             return true;
         }

@@ -42,6 +42,7 @@ namespace Athena.NET.Compiler.DataHolders
             Count += dataLength;
         }
 
+        //TODO: Create Span<T> params in .NET 7
         public void AddRange(params T[] data)
         {
             Span<T> dataSpan = data.AsSpan();

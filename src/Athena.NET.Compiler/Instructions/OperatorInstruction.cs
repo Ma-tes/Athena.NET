@@ -44,7 +44,7 @@ namespace Athena.NET.Compiler.Instructions
                 WriteMemoryDataInstructions(currentInstructions, childrenNodes.LeftNode, writer);
                 WriteMemoryDataInstructions(currentInstructions, childrenNodes.RightNode, writer);
 
-                operatorInstructions.AddRange(currentInstructions.Span.ToArray());
+                operatorInstructions.AddRange(currentInstructions.Span);
                 currentInstructions.Dispose();
                 return true;
             }

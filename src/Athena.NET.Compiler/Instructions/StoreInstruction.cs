@@ -21,6 +21,7 @@ namespace Athena.NET.Compiler.Instructions
                     operatorNode.ChildNodes.RightNode is DataNode<int> rightData)
                 {
                     int operatorData = operatorNode.CalculateData(leftData.NodeData, rightData.NodeData);
+
                     Register? operatorRegister = writer.GetEmitIntRegister(operatorData)!;
                     return TryWriteStoreInstruction(childrenNodes.LeftNode, operatorRegister,
                         operatorRegister.CalculateByteSize(operatorData), writer);
