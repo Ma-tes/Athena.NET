@@ -21,15 +21,14 @@ namespace Athena.NET.Compiler.Instructions
                 (uint)GetJumpOperatorCode((OperatorNode)node.ChildNodes.LeftNode));
             WriteMemoryDataInstruction(leftData, leftChildrenNodes.LeftNode, writer);
             WriteMemoryDataInstruction(rightData, leftChildrenNodes.RightNode, writer);
-
+ 
             BodyNode bodyNode = (BodyNode)node.ChildNodes.RightNode;
-            writer.InstructionList.AddRange((uint)OperatorCodes.Goto,
-                (uint)bodyNode.NodeData.Length);
+            writer.InstructionList.Add((uint)bodyNode.NodeData.Length);
             writer.CreateInstructions(bodyNode.NodeData);
             return true;
         }
 
-        private void WriteMemoryDataInstruction(MemoryData memoryData, INode node, InstructionWriter writer) 
+        private void WriteMemoryDataInstruction(MemoryData memoryData, INode node, InstructionWriter writer)
         {
             if (memoryData.Equals(default) && node is DataNode<int> dataNode) 
             {

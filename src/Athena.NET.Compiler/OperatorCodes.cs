@@ -27,14 +27,15 @@
         Div = 0xffee06,
         //TODO: Implement logic operators
  
-        //Syntax: jumpE [reg]AH 4 [reg]AH 8 [Goto] 0
+        Goto = 0xffeeD0, // Goto [number(-x to x)] 5, the number determines line count from the current Goto instruction
+        Jump = 0xffeeD1, // Jump [number(0 to instructions-length)] 5, the number determines line number of specific instruction
+
+        //Syntax: jumpE [reg]AH 4 [reg]AH 8 [Jump] 0
         JumpE = 0xffeeC0,
         JumpNE = 0xffeeC1,
         JumpG = 0xffeeC2,
         JumpGE = 0xffeeC3,
         JumpL = 0xffeeC4,
-        JumpLE = 0xffeeC5,
-
-        Goto = 0xffeeD5 // Goto [number(-x to x)] 5, the number determines line count from the current Goto instruction
+        JumpLE = 0xffeeC5
     }
 }
