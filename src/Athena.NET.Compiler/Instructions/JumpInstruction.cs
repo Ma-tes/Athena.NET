@@ -24,7 +24,7 @@ namespace Athena.NET.Compiler.Instructions
  
             BodyNode bodyNode = (BodyNode)node.ChildNodes.RightNode;
             writer.InstructionList.Add((uint)bodyNode.NodeData.Length);
-            writer.CreateInstructions(bodyNode.NodeData);
+            writer.CreateInstructions(bodyNode.NodeData.Span);
             return true;
         }
 

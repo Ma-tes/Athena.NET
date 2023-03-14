@@ -5,6 +5,7 @@ using Athena.NET.Parser.Nodes;
 using Athena.NET.Parser.Nodes.DataNodes;
 using Athena.NET.Parser.Nodes.OperatorNodes;
 using Athena.NET.Parser.Nodes.StatementNodes;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Athena.NET.Compiler.Instructions
 {
@@ -17,19 +18,13 @@ namespace Athena.NET.Compiler.Instructions
             ChildrenNodes childrenNodes = node.ChildNodes;
             if (childrenNodes.RightNode is OperatorNode operatorNode)
             {
-                if (operatorNode.ChildNodes.LeftNode is DataNode<int> leftData &&
-                    operatorNode.ChildNodes.RightNode is DataNode<int> rightData)
-                {
-                    int operatorData = operatorNode.CalculateData(leftData.NodeData, rightData.NodeData);
+                if (TryEmitDataNodeChildrens(out Register? returnRegister, operatorNode, writer)
+                    && returnRegister is not null)
+                    return true;
 
-                    Register? operatorRegister = writer.GetEmitIntRegister(operatorData)!;
-                    return TryWriteStoreInstruction(childrenNodes.LeftNode, operatorRegister,
-                        operatorRegister.CalculateByteSize(operatorData), writer);
-                }
                 var operatorInstruction = new OperatorInstruction();
                 if (!operatorInstruction.EmitInstruction(operatorNode, writer))
                     return false;
-
                 writer.InstructionList.Add((uint)OperatorCodes.Nop);
                 Register currentRegister = writer.GetEmitIntRegister(
                     operatorInstruction.EmitMemoryData.Size * 2)!;
@@ -56,6 +51,23 @@ namespace Athena.NET.Compiler.Instructions
                 emitRegister.CalculateByteSize(nodeData), writer);
             writer.InstructionList.Add((uint)nodeData);
             return writeInstructions;
+        }
+
+        private bool TryEmitDataNodeChildrens([NotNullWhen(true)]out Register returnRegister, OperatorNode operatorNode,
+            InstructionWriter writer)
+        {
+            ChildrenNodes childNodes = operatorNode.ChildNodes;
+            if (childNodes.LeftNode is DataNode<int> leftData &&
+                childNodes.RightNode is DataNode<int> rightData)
+            {
+                int operatorData = operatorNode.CalculateData(leftData.NodeData, rightData.NodeData);
+                returnRegister = writer.GetEmitIntRegister(operatorData)!;
+                return TryWriteStoreInstruction(childNodes.LeftNode, returnRegister,
+                    returnRegister!.CalculateByteSize(operatorData), writer);
+            }
+
+            returnRegister = null!;
+            return false;
         }
 
         private bool TryWriteStoreInstruction(INode dataNode, Register register, int size, InstructionWriter writer)

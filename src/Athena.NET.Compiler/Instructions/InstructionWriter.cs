@@ -22,14 +22,13 @@ namespace Athena.NET.Compiler.Instructions
 
         //TODO: Change the exception to a proper
         //error message
-        public void CreateInstructions(ReadOnlyMemory<INode> nodes)
+        public void CreateInstructions(ReadOnlySpan<INode> nodes)
         {
-            ReadOnlySpan<INode> nodesSpan = nodes.Span;
-            int nodesLength = nodesSpan.Length;
+            int nodesLength = nodes.Length;
             for (int i = 0; i < nodesLength; i++)
             {
                 InstructionList.Add((uint)OperatorCodes.Nop);
-                if (!TryGetEmitInstruction(nodesSpan[i]))
+                if (!TryGetEmitInstruction(nodes[i]))
                     throw new Exception("Instruction wasn't completed or found");
             }
         }

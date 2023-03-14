@@ -25,7 +25,7 @@ namespace Athena.NET.Compiler.Instructions
             return isInstruction;
         }
 
-        private bool TryGenerateOperatorInstructions(out MemoryData returnData, INode node, 
+        private bool TryGenerateOperatorInstructions(out MemoryData returnData, INode node,
             InstructionWriter writer)
         {
             ChildrenNodes childrenNodes = node.ChildNodes; 
@@ -41,7 +41,7 @@ namespace Athena.NET.Compiler.Instructions
                     (uint)returnData.Offset,
                     (uint)OperatorCodes.TM);
 
-                WriteMemoryDataInstructions(currentInstructions, childrenNodes.LeftNode, writer);
+                WriteMemoryDataInstructions(currentInstructions, childrenNodes.LeftNode, writer); 
                 WriteMemoryDataInstructions(currentInstructions, childrenNodes.RightNode, writer);
 
                 operatorInstructions.AddRange(currentInstructions.Span);

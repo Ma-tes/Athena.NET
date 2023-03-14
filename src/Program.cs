@@ -19,7 +19,7 @@ using (var tokenReader = new TokenReader
     var nodes = tokens.Span.CreateNodes();
     using (var instructionWriter = new InstructionWriter()) 
     {
-        instructionWriter.CreateInstructions(nodes);
+        instructionWriter.CreateInstructions(nodes.Span);
         WriteInstructions(instructionWriter.InstructionList.Span);
     }
 
