@@ -9,8 +9,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Athena.NET.Compiler.Instructions
 {
-    //TODO: Create complete implmentation
-    //of this store instruction
     internal sealed class StoreInstruction : IInstruction<EqualAssignStatement>
     {
         public bool EmitInstruction(EqualAssignStatement node, InstructionWriter writer)

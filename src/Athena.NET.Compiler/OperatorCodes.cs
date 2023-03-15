@@ -4,6 +4,9 @@
     //by x86 instructions
     internal enum OperatorCodes : uint
     {
+        //TODO: Add an instruction, that will dispose specific
+        //part of a memory in a coresponding register
+
         Store = 0xffee01,
         Load = 0xffee02,
         //For now, it's being used for determine

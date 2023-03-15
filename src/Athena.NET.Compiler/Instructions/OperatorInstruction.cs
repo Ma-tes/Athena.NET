@@ -20,7 +20,7 @@ namespace Athena.NET.Compiler.Instructions
             bool isInstruction = TryGenerateOperatorInstructions(out MemoryData returnData, node, writer);
             writer.InstructionList.AddRange(operatorInstructions.Span);
             EmitMemoryData = returnData;
-
+ 
             operatorInstructions.Dispose();
             return isInstruction;
         }
@@ -58,7 +58,8 @@ namespace Athena.NET.Compiler.Instructions
             return false;
         }
 
-        public void WriteMemoryDataInstructions(NativeMemoryList<uint> nativeInstructions, INode node, InstructionWriter writer) 
+        public void WriteMemoryDataInstructions(NativeMemoryList<uint> nativeInstructions, INode node,
+            InstructionWriter writer) 
         {
             if (TryGenerateOperatorInstructions(out MemoryData returnData, node, writer)) 
             {

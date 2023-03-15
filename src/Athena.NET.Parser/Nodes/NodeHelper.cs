@@ -104,7 +104,7 @@ namespace Athena.NET.Parser.Nodes
             for (int i = 0; i < nodeInstancesLength; i++)
             {
                 INode currentInstance = nodeInstances[i];
-                if (currentInstance.NodeToken == currentToken.TokenId) 
+                if (currentInstance.NodeToken == currentToken.TokenId)
                 {
                     node = currentInstance;
                     return true;
