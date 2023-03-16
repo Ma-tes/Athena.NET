@@ -19,7 +19,6 @@ namespace Athena.NET.Compiler.Instructions
         public NativeMemoryList<uint> InstructionList { get; }
             = new();
 
-
         //TODO: Change the exception to a proper
         //error message
         public void CreateInstructions(ReadOnlySpan<INode> nodes)

@@ -33,6 +33,9 @@ namespace Athena.NET.Compiler.Instructions
             {
                 OperatorCodes instructionOperator = GetOperatorNodeCode(operatorNode);
                 var currentInstructions = new NativeMemoryStack<uint>();
+                //DataSize is equal to 16 bit, because
+                //temporary register size needs to be
+                //bigger then any 4 bit value
                 returnData = writer.TemporaryRegisterTM.AddRegisterData(new char[1], 16);
 
                 currentInstructions.AddRange((uint)OperatorCodes.Nop,

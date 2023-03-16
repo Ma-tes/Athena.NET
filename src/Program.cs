@@ -4,10 +4,7 @@ using Athena.NET.Lexer;
 using Athena.NET.Lexer.LexicalAnalyzer;
 using Athena.NET.Lexer.Structures;
 using Athena.NET.Parser.Nodes;
-using Athena.NET.ParseViewer;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
-using System.Drawing.Imaging;
 
 //This is here just for easy and fast
 //debugging, it will changed as soon
