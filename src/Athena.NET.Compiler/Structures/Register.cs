@@ -48,12 +48,6 @@ namespace Athena.NET.Compiler.Structures
             return false;
         }
 
-        public bool TryGetMemoryData([NotNullWhen(true)]out MemoryData resultData, ReadOnlyMemory<char> identifierName)
-        {
-            uint identiferId = MemoryData.CalculateIdentifierId(identifierName);
-            return TryGetMemoryData(out resultData, identiferId);
-        }
-
         public int CalculateByteSize(int data)
         {
             int currentOffset = 0;
