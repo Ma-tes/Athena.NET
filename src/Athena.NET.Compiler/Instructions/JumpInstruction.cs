@@ -40,9 +40,9 @@ namespace Athena.NET.Compiler.Instructions
             OperatorCodes registerCode = memoryDataRegister is not null ?
                 memoryDataRegister.RegisterCode : OperatorCodes.TM;
 
-            writer.InstructionList.AddRange((uint)memoryData.Offset,
+            writer.InstructionList.AddRange((uint)registerCode,
                 (uint)memoryData.Size,
-                (uint)registerCode);
+                (uint)memoryData.Offset);
         }
 
         private MemoryData GetMemoryData(INode node, InstructionWriter writer)

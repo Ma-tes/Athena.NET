@@ -5,14 +5,13 @@ using System.Runtime.InteropServices;
 namespace Athena.NET.Compiler.Structures
 {
     /// <summary>
-    /// Is a specific memory manager, that can be created
-    /// by single <see cref="RegisterCode"/> and
-    /// <see cref="TypeSize"/>.
+    /// Is a specific memory manager, that can be created by single 
+    /// <see cref="RegisterCode"/> and <see cref="TypeSize"/>.
     /// </summary>
     /// <remarks>
-    /// For memory managment is used <see langword="unmanaged"/>  
-    /// <see cref="NativeMemoryList{T}"/> of <see cref="MemoryData"/> that contains<br/>
-    /// <see cref="MemoryData.IdentifierId"/>,
+    /// For memory managment is used <see langword="unmanaged"/>
+    /// <see cref="NativeMemoryList{T}"/> of <see cref="MemoryData"/>
+    /// that contains<br/> <see cref="MemoryData.IdentifierId"/>,
     /// <see cref="MemoryData.Size"/> and <see cref="MemoryData.Offset"/>.
     /// </remarks>
     internal sealed class Register : IDisposable

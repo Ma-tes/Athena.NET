@@ -8,14 +8,15 @@ using Athena.NET.Parser.Nodes.StatementNodes.BodyStatements;
 namespace Athena.NET.Compiler.Instructions
 {
     /// <summary>
-    /// Provides a generation of raw byte code, by <see cref="OperatorCodes"/>
-    /// [custom instructions]
+    /// Provides a generation of raw byte code, 
+    /// by <see cref="OperatorCodes"/> [custom instructions]
     /// </summary>
     /// <remarks>
-    /// This implementation
-    /// isn't that fully autonomous, because it requires adding every single
-    /// <see cref="Register"/> to individual methods.<br/>Due to the compilation speed of
-    /// reflection, this class must be hand coded as much as possible.
+    /// This implementation isn't that fully autonomous, 
+    /// because it requires adding every single
+    /// <see cref="Register"/> to individual methods.<br/>
+    /// Due to the compilation speed of reflection, 
+    /// this class must be hand coded as much as possible.
     /// </remarks>
     public sealed class InstructionWriter : IDisposable
     {
@@ -63,9 +64,8 @@ namespace Athena.NET.Compiler.Instructions
         }
 
         /// <summary>
-        /// Executes a related instruction
-        /// to a specific node that was derived
-        /// from <see cref="INode"/>
+        /// Executes a related instruction to a specific 
+        /// node that was derived from <see cref="INode"/>
         /// </summary>
         /// <returns>
         /// Specific <see cref="bool"/> state of a
@@ -83,6 +83,11 @@ namespace Athena.NET.Compiler.Instructions
             _ => false
         };
 
+        /// <summary>
+        /// Choose maching <see cref="Register"/> from current
+        /// <see cref="InstructionWriter"/>, by size of data
+        /// </summary>
+        /// <returns>Specific register for current data size</returns>
         internal Register? GetEmitIntRegister(int data)
         {
             if (RegisterAH.CalculateByteSize(data) != RegisterAH.TypeSize) { return RegisterAH; }
@@ -90,6 +95,13 @@ namespace Athena.NET.Compiler.Instructions
             return null;
         }
 
+        /// <summary>
+        /// Choose maching <see cref="Register"/> and get <see cref="MemoryData"/>
+        /// from current <see cref="InstructionWriter"/>, by indetifier id
+        /// </summary>
+        /// <returns>Specific register and coresponding
+        /// <see langword="out"/> <see cref="MemoryData"/>
+        /// </returns>
         internal Register? GetIdentifierData(out MemoryData returnData, uint identifierId)
         {
             if (RegisterAH.TryGetMemoryData(out MemoryData AHData, identifierId)) { returnData = AHData; return RegisterAH; }
@@ -98,6 +110,13 @@ namespace Athena.NET.Compiler.Instructions
             return null;
         }
 
+        /// <summary>
+        /// Choose maching <see cref="Register"/> and get <see cref="MemoryData"/>
+        /// from current <see cref="InstructionWriter"/>, by indetifier name
+        /// </summary>
+        /// <returns>Specific register and coresponding
+        /// <see langword="out"/> <see cref="MemoryData"/>
+        /// </returns>
         internal Register? GetIdentifierData(out MemoryData returnData, ReadOnlyMemory<char> identifierName)
         {
             uint identiferId = MemoryData.CalculateIdentifierId(identifierName);
