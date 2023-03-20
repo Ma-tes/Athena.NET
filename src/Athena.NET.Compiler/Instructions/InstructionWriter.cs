@@ -14,12 +14,8 @@ namespace Athena.NET.Compiler.Instructions
         internal Register RegisterAX { get; }
             = new(OperatorCodes.AX, typeof(short));
 
-        /// <summary>
-        /// Implementation of a <see cref="Register"/> class as
-        /// a 32 bit register with a code <see cref="OperatorCodes.EAX"/>.
-        /// </summary>
         internal Register RegisterEAX { get; }
-            = new(OperatorCodes.EAX, typeof(Int32));
+            = new(OperatorCodes.EAX, typeof(int));
 
         internal Register TemporaryRegisterTM { get; }
             = new(OperatorCodes.TM, typeof(short));
