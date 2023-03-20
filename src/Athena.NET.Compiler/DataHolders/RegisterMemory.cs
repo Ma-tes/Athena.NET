@@ -1,6 +1,7 @@
 ﻿using Athena.NET.Athena.NET.Compiler.Structures;
 using Athena.NET.Compiler;
 using Athena.NET.Compiler.DataHolders;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Athena.NET.Athena.NET.Compiler.DataHolders
@@ -29,13 +30,24 @@ namespace Athena.NET.Athena.NET.Compiler.DataHolders
         public void AddData(RegisterData registerData, int value) 
         {
             int totalMemorySize = registerData.Offset + registerData.Size;
-            int currentCount = registerMemoryList.Count;
-
-            if (currentCount == 0 ||
+            if (registerMemoryList.Count == 0 ||
                 totalMemorySize > RegisterSize)
                 registerMemoryList.Add(default);
 
-            registerMemoryList.Span[currentCount - 1] += (ulong)(value >> registerData.Offset);
+            registerMemoryList.Span[registerMemoryList.Count - 1] += (ulong)(value << registerData.Offset);
+        }
+
+        public T GetData(RegisterData registerData) 
+        {
+            int totalMemorySize = registerData.Offset + registerData.Size;
+            int registerIndex = totalMemorySize / RegisterSize;
+
+            ulong currentRegister = registerMemoryList.Span[registerIndex];
+            int currentOffset = totalMemorySize - (registerIndex * RegisterSize);
+
+            int typeSize = (int)Math.Pow(2, registerData.Size) - 1;
+            var returnData = (int)(((long)(currentRegister >> currentOffset) & (typeSize)) & (typeSize));
+            return (T)(dynamic)returnData;
         }
 
         public void Dispose() 
