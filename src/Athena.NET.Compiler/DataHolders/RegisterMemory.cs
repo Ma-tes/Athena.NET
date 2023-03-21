@@ -1,7 +1,6 @@
 ﻿using Athena.NET.Athena.NET.Compiler.Structures;
 using Athena.NET.Compiler;
 using Athena.NET.Compiler.DataHolders;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Athena.NET.Athena.NET.Compiler.DataHolders
@@ -46,8 +45,8 @@ namespace Athena.NET.Athena.NET.Compiler.DataHolders
             int currentOffset = totalMemorySize - (registerIndex * RegisterSize);
 
             int typeSize = (int)Math.Pow(2, registerData.Size) - 1;
-            var returnData = (int)(((long)(currentRegister >> currentOffset) & (typeSize)) & (typeSize));
-            return (T)(dynamic)returnData;
+            var returnData = (int)((long)(currentRegister >> currentOffset) & (typeSize) & (typeSize));
+            return (T)(dynamic)returnData; //TODO: Make sure, to avoid the dynamic cast
         }
 
         public void Dispose() 
