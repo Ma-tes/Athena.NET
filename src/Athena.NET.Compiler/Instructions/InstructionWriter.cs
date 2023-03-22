@@ -50,7 +50,7 @@ namespace Athena.NET.Compiler.Instructions
         /// <summary>
         /// Creates individual instructions 
         /// from nodes, which are then stored
-        /// in a <see cref="InstructionWriter.InstructionList"/>.
+        /// in a <see cref="InstructionList"/>.
         /// </summary>
         public void CreateInstructions(ReadOnlySpan<INode> nodes)
         {
@@ -125,7 +125,7 @@ namespace Athena.NET.Compiler.Instructions
 
         /// <summary>
         /// Manage disposes for every <see cref="Register"/>
-        /// and the <see cref="InstructionWriter.InstructionList"/>
+        /// and the <see cref="InstructionList"/>
         /// </summary>
         public void Dispose()
         {

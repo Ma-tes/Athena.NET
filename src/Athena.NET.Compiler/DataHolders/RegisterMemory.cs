@@ -20,7 +20,7 @@ namespace Athena.NET.Athena.NET.Compiler.DataHolders
             RegisterSize = Marshal.SizeOf<T>() * 8;
         }
 
-        public RegisterMemory(OperatorCodes registerCode, int allocationSize) 
+        public RegisterMemory(OperatorCodes registerCode, int allocationSize)
         {
             RegisterCode = registerCode;
             RegisterSize = allocationSize;
