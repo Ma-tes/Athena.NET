@@ -33,13 +33,16 @@ namespace Athena.NET.Compiler.Instructions
             {
                 OperatorCodes instructionOperator = GetOperatorNodeCode(operatorNode);
                 var currentInstructions = new NativeMemoryStack<uint>();
+                //DataSize is equal to 16 bit, because
+                //temporary register size needs to be
+                //bigger then any 4 bit value
                 returnData = writer.TemporaryRegisterTM.AddRegisterData(new char[1], 16);
 
                 currentInstructions.AddRange((uint)OperatorCodes.Nop,
                     (uint)instructionOperator,
+                    (uint)OperatorCodes.TM,
                     (uint)returnData.Size,
-                    (uint)returnData.Offset,
-                    (uint)OperatorCodes.TM);
+                    (uint)returnData.Offset);
 
                 WriteMemoryDataInstructions(currentInstructions, childrenNodes.LeftNode, writer); 
                 WriteMemoryDataInstructions(currentInstructions, childrenNodes.RightNode, writer);
@@ -66,9 +69,9 @@ namespace Athena.NET.Compiler.Instructions
                 OperatorCodes registerCode = node is IdentifierNode identifierNode ?
                     writer.GetIdentifierData(out _, identifierNode.NodeData)!.RegisterCode :
                     OperatorCodes.TM;
-                nativeInstructions.AddRange((uint)returnData.Size,
-                    (uint)returnData.Offset,
-                    (uint)registerCode);
+                nativeInstructions.AddRange((uint)registerCode,
+                    (uint)returnData.Size,
+                    (uint)returnData.Offset);
             }
             else
                 nativeInstructions.Add((uint)((DataNode<int>)node).NodeData);

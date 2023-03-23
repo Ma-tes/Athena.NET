@@ -91,9 +91,9 @@ namespace Athena.NET.Compiler.Instructions
 
         private void AddMemoryDataInstructions(OperatorCodes registerCode, MemoryData memoryData, InstructionWriter writer)
         {
-            writer.InstructionList.AddRange((uint)memoryData.Size,
-                (uint)memoryData.Offset,
-                (uint)registerCode);
+            writer.InstructionList.AddRange((uint)registerCode,
+                (uint)memoryData.Size,
+                (uint)memoryData.Offset);
         }
     }
 }
