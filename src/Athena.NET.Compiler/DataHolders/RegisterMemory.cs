@@ -29,11 +29,15 @@ namespace Athena.NET.Athena.NET.Compiler.DataHolders
         public void AddData(RegisterData registerData, int value) 
         {
             int totalMemorySize = registerData.Offset + registerData.Size;
+
+            ulong finalValue = (ulong)(value) << registerData.Offset;
             if (registerMemoryList.Count == 0 ||
                 totalMemorySize > RegisterSize)
+            {
                 registerMemoryList.Add(default);
-
-            registerMemoryList.Span[registerMemoryList.Count - 1] += (ulong)(value << registerData.Offset);
+                finalValue = (ulong)(value);
+            }
+            registerMemoryList.Span[registerMemoryList.Count - 1] += finalValue;
         }
 
         public T GetData(RegisterData registerData) 
@@ -42,10 +46,11 @@ namespace Athena.NET.Athena.NET.Compiler.DataHolders
             int registerIndex = totalMemorySize / RegisterSize;
 
             ulong currentRegister = registerMemoryList.Span[registerIndex];
-            int currentOffset = totalMemorySize - (registerIndex * RegisterSize);
+            int currentOffset = registerData.Offset - (registerIndex * RegisterSize);
 
             int typeSize = (int)Math.Pow(2, registerData.Size) - 1;
-            var returnData = (int)((long)(currentRegister >> currentOffset) & (typeSize) & (typeSize));
+            int returnData = (int)((long)(currentRegister >> ((Math.Abs(currentOffset) + currentOffset) / 2))
+                & (typeSize) & (typeSize));
             return (T)(dynamic)returnData; //TODO: Make sure, to avoid the dynamic cast
         }
 

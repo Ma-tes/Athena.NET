@@ -1,4 +1,5 @@
-﻿using Athena.NET.Compiler;
+﻿using Athena.NET.Athena.NET.Compiler.DataHolders;
+using Athena.NET.Compiler;
 using Athena.NET.Compiler.Instructions;
 using Athena.NET.Lexer;
 using Athena.NET.Lexer.LexicalAnalyzer;
@@ -9,6 +10,17 @@ using System.Diagnostics.CodeAnalysis;
 //This is here just for easy and fast
 //debugging, it will changed as soon
 //as possible
+var currentRegister = new RegisterMemory<short>(OperatorCodes.AX);
+currentRegister.AddData(new(0, 8), 28);
+currentRegister.AddData(new(8, 4), 10);
+currentRegister.AddData(new(12, 16), 1000);
+currentRegister.AddData(new(12, 16), 2000);
+
+short firstValue = currentRegister.GetData(new(0, 8));
+short secondValue = currentRegister.GetData(new(8, 4));
+short thirdValue = currentRegister.GetData(new(12, 16));
+short quadValue = currentRegister.GetData(new(28, 16));
+
 using (var tokenReader = new TokenReader
     (File.Open(@"C:\Users\uzivatel\source\repos\Athena.NET\examples\ByteCodeProgram.ath", FileMode.Open)))
 {
