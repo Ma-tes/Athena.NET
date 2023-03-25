@@ -1,4 +1,5 @@
-﻿using Athena.NET.Compiler.Structures;
+﻿using Athena.NET.Compiler.Interpreter;
+using Athena.NET.Compiler.Structures;
 using Athena.NET.Parser;
 using Athena.NET.Parser.Interfaces;
 using Athena.NET.Parser.Nodes;
@@ -49,6 +50,11 @@ namespace Athena.NET.Compiler.Instructions
                 emitRegister.CalculateByteSize(nodeData), writer);
             writer.InstructionList.Add((uint)nodeData);
             return writeInstructions;
+        }
+
+        public bool InterpretInstruction(ReadOnlySpan<uint> instructions, VirtualMachine writer) 
+        {
+            return true;
         }
 
         private bool TryEmitDataNodeChildrens([NotNullWhen(true)]out Register returnRegister, OperatorNode operatorNode,

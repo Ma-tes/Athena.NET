@@ -1,4 +1,5 @@
-﻿using Athena.NET.Compiler.Structures;
+﻿using Athena.NET.Compiler.Interpreter;
+using Athena.NET.Compiler.Structures;
 using Athena.NET.Lexer;
 using Athena.NET.Parser;
 using Athena.NET.Parser.Interfaces;
@@ -25,6 +26,10 @@ namespace Athena.NET.Compiler.Instructions
             BodyNode bodyNode = (BodyNode)node.ChildNodes.RightNode;
             writer.InstructionList.Add((uint)bodyNode.NodeData.Length);
             writer.CreateInstructions(bodyNode.NodeData.Span);
+            return true;
+        }
+        public bool InterpretInstruction(ReadOnlySpan<uint> instructions, VirtualMachine writer) 
+        {
             return true;
         }
 

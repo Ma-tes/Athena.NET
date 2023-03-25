@@ -1,9 +1,8 @@
 ﻿using Athena.NET.Athena.NET.Compiler.Structures;
-using Athena.NET.Compiler;
 using Athena.NET.Compiler.DataHolders;
 using System.Runtime.InteropServices;
 
-namespace Athena.NET.Athena.NET.Compiler.Interpreter
+namespace Athena.NET.Compiler.Interpreter
 {
     internal sealed class RegisterMemory<T> : IDisposable
         where T : unmanaged
@@ -40,7 +39,7 @@ namespace Athena.NET.Athena.NET.Compiler.Interpreter
             registerMemoryList.Span[registerMemoryList.Count - 1] += finalValue;
         }
 
-        public void SetData(RegisterData registerData, int value) 
+        public void SetData(RegisterData registerData, int value)
         {
             int typeSize = (int)Math.Pow(2, registerData.Size) - 1;
             int registerIndex = CalculateMemoryIndex(registerData);
