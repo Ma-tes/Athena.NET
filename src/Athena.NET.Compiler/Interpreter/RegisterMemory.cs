@@ -40,18 +40,39 @@ namespace Athena.NET.Athena.NET.Compiler.Interpreter
             registerMemoryList.Span[registerMemoryList.Count - 1] += finalValue;
         }
 
+        public void SetData(RegisterData registerData, int value) 
+        {
+            int typeSize = (int)Math.Pow(2, registerData.Size) - 1;
+            int registerIndex = CalculateMemoryIndex(registerData);
+
+            int currentOffset = CalculateRelativeOffset(registerData.Offset, registerIndex);
+            registerMemoryList.Span[registerIndex] =
+                (registerMemoryList.Span[registerIndex] ^ (((ulong)value ^ ((registerMemoryList.Span[registerIndex] >> currentOffset)
+                & (ulong)typeSize)) << currentOffset));
+        }
+
         public T GetData(RegisterData registerData)
         {
-            int totalMemorySize = registerData.Offset + registerData.Size;
-            int registerIndex = totalMemorySize / RegisterSize;
-
+            int registerIndex = CalculateMemoryIndex(registerData);
             ulong currentRegister = registerMemoryList.Span[registerIndex];
-            int currentOffset = registerData.Offset - registerIndex * RegisterSize;
+            int currentOffset = CalculateRelativeOffset(registerData.Offset, registerIndex);
 
             int typeSize = (int)Math.Pow(2, registerData.Size) - 1;
-            int returnData = (int)((long)(currentRegister >> (Math.Abs(currentOffset) + currentOffset) / 2)
+            int returnData = (int)((long)(currentRegister >> currentOffset)
                 & typeSize & typeSize);
             return (T)(dynamic)returnData; //TODO: Make sure, to avoid the dynamic cast
+        }
+
+        private int CalculateMemoryIndex(RegisterData registerData) 
+        {
+            int totalMemorySize = registerData.Offset + registerData.Size;
+            return totalMemorySize / RegisterSize;
+        }
+
+        private int CalculateRelativeOffset(int offset, int registerIndex) 
+        {
+            int currentOffset = offset - registerIndex * RegisterSize;
+            return (Math.Abs(currentOffset) + currentOffset) / 2;
         }
 
         public void Dispose()
