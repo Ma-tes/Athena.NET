@@ -10,30 +10,21 @@ using System.Diagnostics.CodeAnalysis;
 //This is here just for easy and fast
 //debugging, it will changed as soon
 //as possible
-var registerMemory = new RegisterMemory<short>(OperatorCodes.AX);
-registerMemory.AddData(new(0, 4), 8);
-registerMemory.AddData(new(4, 4), 9);
-registerMemory.AddData(new(8, 4), 10);
-registerMemory.AddData(new(12, 8), 128);
-int oldSecondData = registerMemory.GetData(new(4, 4));
-int oldThirdData = registerMemory.GetData(new(12, 8));
-
-registerMemory.SetData(new(4, 4), 7);
-registerMemory.SetData(new(12, 8), 254);
-int newSecondData = registerMemory.GetData(new(4, 4));
-int newThirdData = registerMemory.GetData(new(12, 8));
-
 using (var tokenReader = new TokenReader
-    (File.Open(@"C:\Users\uzivatel\source\repos\Athena.NET\examples\ByteCodeProgram.ath", FileMode.Open)))
+    (File.Open(@"C:\Users\uzivatel\source\repos\Athena.NET\examples\StoreInstructionsProgram.ath", FileMode.Open)))
 {
     var tokens = await tokenReader.ReadTokensAsync();
     var nodes = tokens.Span.CreateNodes();
+
     using (var instructionWriter = new InstructionWriter()) 
     {
         instructionWriter.CreateInstructions(nodes.Span);
         WriteInstructions(instructionWriter.InstructionList.Span);
+        using (var virtualMachine = new VirtualMachine()) 
+        {
+            virtualMachine.CreateInterpretation(instructionWriter.InstructionList.Span);
+        }
     }
-
     //using (var nodeViewer = new NodeViewer(nodes, new Size(4000, 4000)))
     //{
         //Image nodeImage = nodeViewer.CreateImage();

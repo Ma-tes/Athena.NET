@@ -1,4 +1,5 @@
-﻿using Athena.NET.Compiler.Interpreter;
+﻿using Athena.NET.Athena.NET.Compiler.Structures;
+using Athena.NET.Compiler.Interpreter;
 using Athena.NET.Compiler.Structures;
 using Athena.NET.Parser;
 using Athena.NET.Parser.Interfaces;
@@ -54,7 +55,20 @@ namespace Athena.NET.Compiler.Instructions
 
         public bool InterpretInstruction(ReadOnlySpan<uint> instructions, VirtualMachine writer) 
         {
-            return true;
+            int currentData = writer.TryGetRegisterMemory(out RegisterMemory? dataMemory, (OperatorCodes)instructions[3]) ?
+                (int)dataMemory.GetData(new(instructions[5], instructions[4])) : (int)instructions[3];
+
+            var storeRegister = new RegisterData(instructions[2], instructions[1]);
+            if (writer.TryGetRegisterMemory(out RegisterMemory? storeMemory, (OperatorCodes)instructions[0])) 
+            {
+                if (storeMemory.LastOffset < storeRegister.Offset ||
+                    storeMemory.LastOffset == 0)
+                    storeMemory.AddData(storeRegister, currentData);
+                else
+                    storeMemory.SetData(storeRegister, currentData);
+                return true;
+            }
+            return false;
         }
 
         private bool TryEmitDataNodeChildrens([NotNullWhen(true)]out Register returnRegister, OperatorNode operatorNode,

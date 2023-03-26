@@ -10,5 +10,10 @@
             Offset = offset;
             Size = size;
         }
+        public RegisterData(uint offset, uint size) 
+        {
+            Offset = (int)offset;
+            Size = (int)size;
+        }
     }
 }

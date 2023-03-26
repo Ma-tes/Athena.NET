@@ -4,19 +4,19 @@ using System.Runtime.InteropServices;
 
 namespace Athena.NET.Compiler.Interpreter
 {
-    internal sealed class RegisterMemory<T> : IDisposable
-        where T : unmanaged
+    internal sealed class RegisterMemory : IDisposable
     {
         private readonly NativeMemoryList<ulong> registerMemoryList
             = new();
 
         public OperatorCodes RegisterCode { get; }
         public int RegisterSize { get; }
+        public int LastOffset { get; private set; }
 
-        public RegisterMemory(OperatorCodes registerCode)
+        public RegisterMemory(OperatorCodes registerCode, Type type)
         {
             RegisterCode = registerCode;
-            RegisterSize = Marshal.SizeOf<T>() * 8;
+            RegisterSize = Marshal.SizeOf(type) * 8;
         }
 
         public RegisterMemory(OperatorCodes registerCode, int allocationSize)
@@ -37,6 +37,7 @@ namespace Athena.NET.Compiler.Interpreter
                 finalValue = (ulong)value;
             }
             registerMemoryList.Span[registerMemoryList.Count - 1] += finalValue;
+            LastOffset = registerData.Offset;
         }
 
         public void SetData(RegisterData registerData, int value)
@@ -50,7 +51,7 @@ namespace Athena.NET.Compiler.Interpreter
                 & (ulong)typeSize)) << currentOffset));
         }
 
-        public T GetData(RegisterData registerData)
+        public ulong GetData(RegisterData registerData)
         {
             int registerIndex = CalculateMemoryIndex(registerData);
             ulong currentRegister = registerMemoryList.Span[registerIndex];
@@ -59,7 +60,7 @@ namespace Athena.NET.Compiler.Interpreter
             int typeSize = (int)Math.Pow(2, registerData.Size) - 1;
             int returnData = (int)((long)(currentRegister >> currentOffset)
                 & typeSize & typeSize);
-            return (T)(dynamic)returnData; //TODO: Make sure, to avoid the dynamic cast
+            return (ulong)(dynamic)returnData; //TODO: Make sure, to avoid the dynamic cast
         }
 
         private int CalculateMemoryIndex(RegisterData registerData) 
