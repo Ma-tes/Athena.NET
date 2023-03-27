@@ -34,6 +34,7 @@ namespace Athena.NET.Compiler.Instructions
                 return instructionResult;
             }
 
+            writer.InstructionList.Add((uint)OperatorCodes.Nop);
             if (childrenNodes.RightNode is IdentifierNode identifierNode) 
             {
                 Register? identifierRegister = writer.GetIdentifierData(out MemoryData rightData, identifierNode.NodeData);

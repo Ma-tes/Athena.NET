@@ -44,14 +44,11 @@ static void WriteInstructions(Span<uint> instructionsSpan)
     for (int i = 0; i < instructionsSpan.Length; i++)
     {
         isInstruction = instructionsSpan[i] == (uint)OperatorCodes.Nop;
-        if (!isInstruction)
-        {
-            string instructionValue = TryGetOperatorCode(out OperatorCodes returnCode, instructionsSpan[i]) ?
-                Enum.GetName(returnCode)! : $"0x{instructionsSpan[i]:X}";
-            Console.Write($"{instructionValue} ");
-        }
-        else
+        if (isInstruction)
             Console.WriteLine();
+         string instructionValue = TryGetOperatorCode(out OperatorCodes returnCode, instructionsSpan[i]) ?
+            Enum.GetName(returnCode)! : $"0x{instructionsSpan[i]:X}";
+         Console.Write($"{instructionValue} ");
     }
 }
 

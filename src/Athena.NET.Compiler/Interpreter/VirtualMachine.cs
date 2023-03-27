@@ -65,22 +65,25 @@ namespace Athena.NET.Compiler.Interpreter
             return -1;
         }
 
-        private bool TryInterpretInstruction(OperatorCodes instructionCode, ReadOnlySpan<uint> instructionData) => instructionCode switch
+        //TODO: Create a propriete factory pattern calling
+        //for every instruction
+        private bool TryInterpretInstruction(OperatorCodes instructionCode, ReadOnlySpan<uint> instructionData)
         {
-            OperatorCodes.Store => new StoreInstruction()
-                .InterpretInstruction(instructionData, this),
-            OperatorCodes.JumpE | OperatorCodes.JumpNE |
-            OperatorCodes.JumpG | OperatorCodes.JumpGE |
-            OperatorCodes.JumpL | OperatorCodes.JumpLE 
-                => new JumpInstruction()
-                    .InterpretInstruction(instructionData, this),
+            if (instructionCode == OperatorCodes.Store)
+                return new StoreInstruction()
+                    .InterpretInstruction(instructionData, this);
 
-            OperatorCodes.Add | OperatorCodes.Sub |
-            OperatorCodes.Mul | OperatorCodes.Div
-            => new OperatorInstruction()
-                .InterpretInstruction(instructionData, this),
-            _ => false
-        };
+            if (instructionCode >= OperatorCodes.JumpE &&
+               instructionCode <= OperatorCodes.JumpLE)
+                return new JumpInstruction()
+                    .InterpretInstruction(instructionData, this);
+
+            if (instructionCode >= OperatorCodes.Add &&
+               instructionCode <= OperatorCodes.Div)
+                return new OperatorInstruction()
+                .InterpretInstruction(instructionData, this);
+            return false;
+        }
 
         //TODO: Dispose memory registers with more elegant way,
         //then using for loop
