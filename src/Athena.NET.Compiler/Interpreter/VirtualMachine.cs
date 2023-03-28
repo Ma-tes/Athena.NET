@@ -1,4 +1,5 @@
-﻿using Athena.NET.Compiler.Instructions;
+﻿using Athena.NET.Compiler.DataHolders;
+using Athena.NET.Compiler.Instructions;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 
@@ -35,6 +36,27 @@ namespace Athena.NET.Compiler.Interpreter
                 lastNopInstruction = nextNopInstruction;
                 instructionCount += currentInstructions.Length + 2;
             }
+        }
+
+        //TODO: This implementation needs to
+        //be reimplemented as soon as possible
+        internal ReadOnlySpan<int> GetInstructionData(ReadOnlySpan<uint> instructions)
+        {
+            var returnData = new NativeMemoryList<int>(6);
+            int instructionCount = 0;
+            while (instructionCount != instructions.Length) 
+            {
+                uint firstInstruction = instructions[instructionCount];
+                bool isRegisterMemory = TryGetRegisterMemory(out RegisterMemory? dataMemory, (OperatorCodes)firstInstruction);
+
+                int currentData = isRegisterMemory && instructions.Length > 2 ?
+                    (int)dataMemory!.GetData(new(instructions[instructionCount + 2],
+                    instructions[instructionCount + 1])) : (int)firstInstruction;
+                returnData.Add(currentData);
+                instructionCount = isRegisterMemory ?
+                    instructionCount + 3 : instructionCount + 1;
+            }
+            return returnData.Span;
         }
 
         public bool TryGetRegisterMemory([NotNullWhen(true)]out RegisterMemory? registerMemory, OperatorCodes operatorCode) 

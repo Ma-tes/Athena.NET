@@ -54,11 +54,12 @@ namespace Athena.NET.Compiler.Instructions
             return writeInstructions;
         }
 
-        public bool InterpretInstruction(ReadOnlySpan<uint> instructions, VirtualMachine writer) 
+        //TODO: In a future, I would like
+        //to implement more cohesive way
+        //of tokenizing those instructions
+        public bool InterpretInstruction(ReadOnlySpan<uint> instructions, VirtualMachine writer)
         {
-            int currentData = writer.TryGetRegisterMemory(out RegisterMemory? dataMemory, (OperatorCodes)instructions[3]) ?
-                (int)dataMemory.GetData(new(instructions[5], instructions[4])) : (int)instructions[3];
-
+            int currentData = writer.GetInstructionData(instructions[3..])[0];
             var storeRegister = new RegisterData(instructions[2], instructions[1]);
             if (writer.TryGetRegisterMemory(out RegisterMemory? storeMemory, (OperatorCodes)instructions[0])) 
             {
