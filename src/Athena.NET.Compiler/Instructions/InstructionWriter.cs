@@ -101,6 +101,7 @@ namespace Athena.NET.Compiler.Instructions
         {
             if (RegisterAH.CalculateByteSize(data) != RegisterAH.TypeSize) { return RegisterAH; }
             if (RegisterAX.CalculateByteSize(data) != RegisterAX.TypeSize) { return RegisterAX; }
+            if (RegisterEAX.CalculateByteSize(data) != RegisterEAX.TypeSize) { return RegisterEAX; }
             return null;
         }
 
@@ -115,6 +116,7 @@ namespace Athena.NET.Compiler.Instructions
         {
             if (RegisterAH.TryGetMemoryData(out MemoryData AHData, identifierId)) { returnData = AHData; return RegisterAH; }
             if (RegisterAX.TryGetMemoryData(out MemoryData AXData, identifierId)) { returnData = AXData; return RegisterAX; }
+            if (RegisterEAX.TryGetMemoryData(out MemoryData EAXData, identifierId)) { returnData = EAXData; return RegisterEAX; }
             returnData = default!;
             return null;
         }
