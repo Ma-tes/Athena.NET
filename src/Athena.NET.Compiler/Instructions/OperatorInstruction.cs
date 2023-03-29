@@ -26,8 +26,11 @@ namespace Athena.NET.Compiler.Instructions
             return isInstruction;
         }
 
-        public bool InterpretInstruction(ReadOnlySpan<uint> instructions, VirtualMachine writer) 
+        //TODO: Calculate relative value of operator instruction
+        //to be coresponding with a TokenIndentificator
+        public bool InterpretInstruction(ReadOnlySpan<uint> instructions, VirtualMachine writer)
         {
+            ReadOnlySpan<int> registerData = writer.GetInstructionData(instructions[3..]);
             return true;
         }
 
