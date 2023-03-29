@@ -1,4 +1,6 @@
-﻿using Athena.NET.Compiler.Structures;
+﻿using Athena.NET.Athena.NET.Compiler.Structures;
+using Athena.NET.Compiler.Interpreter;
+using Athena.NET.Compiler.Structures;
 using Athena.NET.Parser;
 using Athena.NET.Parser.Interfaces;
 using Athena.NET.Parser.Nodes;
@@ -32,6 +34,7 @@ namespace Athena.NET.Compiler.Instructions
                 return instructionResult;
             }
 
+            writer.InstructionList.Add((uint)OperatorCodes.Nop);
             if (childrenNodes.RightNode is IdentifierNode identifierNode) 
             {
                 Register? identifierRegister = writer.GetIdentifierData(out MemoryData rightData, identifierNode.NodeData);
@@ -49,6 +52,25 @@ namespace Athena.NET.Compiler.Instructions
                 emitRegister.CalculateByteSize(nodeData), writer);
             writer.InstructionList.Add((uint)nodeData);
             return writeInstructions;
+        }
+
+        //TODO: In a future, I would like
+        //to implement more cohesive way
+        //of tokenizing those instructions
+        public bool InterpretInstruction(ReadOnlySpan<uint> instructions, VirtualMachine writer)
+        {
+            int currentData = writer.GetInstructionData(instructions[3..])[0];
+            var storeRegister = new RegisterData(instructions[2], instructions[1]);
+            if (writer.TryGetRegisterMemory(out RegisterMemory? storeMemory, (OperatorCodes)instructions[0])) 
+            {
+                if (storeMemory.LastOffset < storeRegister.Offset ||
+                    storeMemory.LastOffset == 0)
+                    storeMemory.AddData(storeRegister, currentData);
+                else
+                    storeMemory.SetData(storeRegister, currentData);
+                return true;
+            }
+            return false;
         }
 
         private bool TryEmitDataNodeChildrens([NotNullWhen(true)]out Register returnRegister, OperatorNode operatorNode,

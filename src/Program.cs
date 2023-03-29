@@ -1,5 +1,6 @@
 ﻿using Athena.NET.Compiler;
 using Athena.NET.Compiler.Instructions;
+using Athena.NET.Compiler.Interpreter;
 using Athena.NET.Lexer;
 using Athena.NET.Lexer.LexicalAnalyzer;
 using Athena.NET.Lexer.Structures;
@@ -10,16 +11,20 @@ using System.Diagnostics.CodeAnalysis;
 //debugging, it will changed as soon
 //as possible
 using (var tokenReader = new TokenReader
-    (File.Open(@"C:\Users\uzivatel\source\repos\Athena.NET\examples\ByteCodeProgram.ath", FileMode.Open)))
+    (File.Open(@"C:\Users\uzivatel\source\repos\Athena.NET\examples\StoreInstructionsProgram.ath", FileMode.Open)))
 {
     var tokens = await tokenReader.ReadTokensAsync();
     var nodes = tokens.Span.CreateNodes();
+
     using (var instructionWriter = new InstructionWriter()) 
     {
         instructionWriter.CreateInstructions(nodes.Span);
         WriteInstructions(instructionWriter.InstructionList.Span);
+        using (var virtualMachine = new VirtualMachine()) 
+        {
+            virtualMachine.CreateInterpretation(instructionWriter.InstructionList.Span);
+        }
     }
-
     //using (var nodeViewer = new NodeViewer(nodes, new Size(4000, 4000)))
     //{
         //Image nodeImage = nodeViewer.CreateImage();
@@ -39,14 +44,11 @@ static void WriteInstructions(Span<uint> instructionsSpan)
     for (int i = 0; i < instructionsSpan.Length; i++)
     {
         isInstruction = instructionsSpan[i] == (uint)OperatorCodes.Nop;
-        if (!isInstruction)
-        {
-            string instructionValue = TryGetOperatorCode(out OperatorCodes returnCode, instructionsSpan[i]) ?
-                Enum.GetName(returnCode)! : $"0x{instructionsSpan[i]:X}";
-            Console.Write($"{instructionValue} ");
-        }
-        else
+        if (isInstruction)
             Console.WriteLine();
+         string instructionValue = TryGetOperatorCode(out OperatorCodes returnCode, instructionsSpan[i]) ?
+            Enum.GetName(returnCode)! : $"0x{instructionsSpan[i]:X}";
+         Console.Write($"{instructionValue} ");
     }
 }
 

@@ -6,6 +6,7 @@ using Athena.NET.Parser.Interfaces;
 using Athena.NET.Parser.Nodes;
 using Athena.NET.Parser.Nodes.DataNodes;
 using Athena.NET.Parser.Nodes.OperatorNodes;
+using Athena.NET.Compiler.Interpreter;
 
 namespace Athena.NET.Compiler.Instructions
 {
@@ -23,6 +24,11 @@ namespace Athena.NET.Compiler.Instructions
  
             operatorInstructions.Dispose();
             return isInstruction;
+        }
+
+        public bool InterpretInstruction(ReadOnlySpan<uint> instructions, VirtualMachine writer) 
+        {
+            return true;
         }
 
         private bool TryGenerateOperatorInstructions(out MemoryData returnData, INode node,

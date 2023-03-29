@@ -67,7 +67,6 @@ namespace Athena.NET.Compiler.Instructions
             int nodesLength = nodes.Length;
             for (int i = 0; i < nodesLength; i++)
             {
-                InstructionList.Add((uint)OperatorCodes.Nop);
                 if (!TryGetEmitInstruction(nodes[i]))
                     throw new Exception("Instruction wasn't completed or found");
             }
