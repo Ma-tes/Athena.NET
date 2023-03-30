@@ -59,9 +59,9 @@ namespace Athena.NET.Compiler.Instructions
         //of tokenizing those instructions
         public bool InterpretInstruction(ReadOnlySpan<uint> instructions, VirtualMachine writer)
         {
-            int currentData = writer.GetInstructionData(instructions[3..])[0];
-            var storeRegister = new RegisterData(instructions[2], instructions[1]);
-            if (writer.TryGetRegisterMemory(out RegisterMemory? storeMemory, (OperatorCodes)instructions[0])) 
+            int currentData = writer.GetInstructionData(instructions[4..])[0];
+            var storeRegister = new RegisterData(instructions[3], instructions[2]);
+            if (writer.TryGetRegisterMemory(out RegisterMemory? storeMemory, (OperatorCodes)instructions[1])) 
             {
                 if (storeMemory.LastOffset < storeRegister.Offset ||
                     storeMemory.LastOffset == 0)

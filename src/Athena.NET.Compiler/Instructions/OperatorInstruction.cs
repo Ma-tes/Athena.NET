@@ -7,6 +7,7 @@ using Athena.NET.Parser.Nodes;
 using Athena.NET.Parser.Nodes.DataNodes;
 using Athena.NET.Parser.Nodes.OperatorNodes;
 using Athena.NET.Compiler.Interpreter;
+using Athena.NET.Athena.NET.Compiler.Structures;
 
 namespace Athena.NET.Compiler.Instructions
 {
@@ -26,11 +27,19 @@ namespace Athena.NET.Compiler.Instructions
             return isInstruction;
         }
 
-        //TODO: Calculate relative value of operator instruction
-        //to be coresponding with a TokenIndentificator
         public bool InterpretInstruction(ReadOnlySpan<uint> instructions, VirtualMachine writer)
         {
-            ReadOnlySpan<int> registerData = writer.GetInstructionData(instructions[3..]);
+            TokenIndentificator operatorInstruction = (TokenIndentificator)((instructions[0] ^ (0xffee << 8)) - 2);
+            if (!OperatorHelper.TryGetOperator(out OperatorNode instructionNode, operatorInstruction))
+                return false;
+
+            ReadOnlySpan<int> registerData = writer.GetInstructionData(instructions[4..]);
+            int temporaryData = instructionNode.CalculateData(registerData[0], registerData[1]);
+            if (writer.TryGetRegisterMemory(out RegisterMemory? registerMemory, OperatorCodes.TM))
+            {
+                var temporaryRegisterData = new RegisterData(instructions[3], instructions[2]);
+                registerMemory.AddData(temporaryRegisterData, temporaryData);
+            }
             return true;
         }
 
@@ -42,19 +51,23 @@ namespace Athena.NET.Compiler.Instructions
             {
                 OperatorCodes instructionOperator = GetOperatorNodeCode(operatorNode);
                 var currentInstructions = new NativeMemoryStack<uint>();
+
+                WriteMemoryDataInstructions(currentInstructions, childrenNodes.LeftNode, writer); 
+                WriteMemoryDataInstructions(currentInstructions, childrenNodes.RightNode, writer);
+
                 //DataSize is equal to 16 bit, because
                 //temporary register size needs to be
                 //bigger then any 4 bit value
                 returnData = writer.TemporaryRegisterTM.AddRegisterData(new char[1], 16);
 
-                currentInstructions.AddRange((uint)OperatorCodes.Nop,
-                    (uint)instructionOperator,
-                    (uint)OperatorCodes.TM,
-                    (uint)returnData.Size,
-                    (uint)returnData.Offset);
-
-                WriteMemoryDataInstructions(currentInstructions, childrenNodes.LeftNode, writer); 
-                WriteMemoryDataInstructions(currentInstructions, childrenNodes.RightNode, writer);
+                //TODO: Add PushRange method into coresponding
+                //NativeMemoryStack, that will also prevent any
+                //memory leak
+                currentInstructions.Push((uint)returnData.Offset);
+                currentInstructions.Push((uint)returnData.Size);
+                currentInstructions.Push((uint)OperatorCodes.TM);
+                currentInstructions.Push((uint)instructionOperator);
+                currentInstructions.Push((uint)OperatorCodes.Nop);
 
                 operatorInstructions.AddRange(currentInstructions.Span);
                 currentInstructions.Dispose();

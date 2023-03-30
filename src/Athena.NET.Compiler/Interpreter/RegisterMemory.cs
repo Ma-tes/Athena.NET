@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace Athena.NET.Compiler.Interpreter
 {
-    internal sealed class RegisterMemory : IDisposable
+    internal class RegisterMemory : IDisposable
     {
         private readonly NativeMemoryList<ulong> registerMemoryList
             = new();
@@ -66,10 +66,10 @@ namespace Athena.NET.Compiler.Interpreter
         private int CalculateMemoryIndex(RegisterData registerData) 
         {
             int totalMemorySize = registerData.Offset + registerData.Size;
-            return totalMemorySize / RegisterSize;
+            return totalMemorySize / (RegisterSize + 1);
         }
 
-        private int CalculateRelativeOffset(int offset, int registerIndex) 
+        protected virtual int CalculateRelativeOffset(int offset, int registerIndex)
         {
             int currentOffset = offset - registerIndex * RegisterSize;
             return (Math.Abs(currentOffset) + currentOffset) / 2;
