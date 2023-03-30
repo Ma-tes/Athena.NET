@@ -1,5 +1,4 @@
-﻿using Athena.NET.Athena.NET.Compiler.Structures;
-using Athena.NET.Compiler.Interpreter;
+﻿using Athena.NET.Compiler.Interpreter;
 using Athena.NET.Compiler.Structures;
 using Athena.NET.Parser;
 using Athena.NET.Parser.Interfaces;

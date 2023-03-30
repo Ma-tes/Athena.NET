@@ -7,7 +7,6 @@ using Athena.NET.Parser.Nodes;
 using Athena.NET.Parser.Nodes.DataNodes;
 using Athena.NET.Parser.Nodes.OperatorNodes;
 using Athena.NET.Compiler.Interpreter;
-using Athena.NET.Athena.NET.Compiler.Structures;
 
 namespace Athena.NET.Compiler.Instructions
 {

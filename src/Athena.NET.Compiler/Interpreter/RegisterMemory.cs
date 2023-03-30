@@ -1,10 +1,10 @@
-﻿using Athena.NET.Athena.NET.Compiler.Structures;
+﻿using Athena.NET.Compiler.Structures;
 using Athena.NET.Compiler.DataHolders;
 using System.Runtime.InteropServices;
 
 namespace Athena.NET.Compiler.Interpreter
 {
-    internal class RegisterMemory : IDisposable
+    internal sealed class RegisterMemory : IDisposable
     {
         private readonly NativeMemoryList<ulong> registerMemoryList
             = new();
@@ -17,12 +17,6 @@ namespace Athena.NET.Compiler.Interpreter
         {
             RegisterCode = registerCode;
             RegisterSize = Marshal.SizeOf(type) * 8;
-        }
-
-        public RegisterMemory(OperatorCodes registerCode, int allocationSize)
-        {
-            RegisterCode = registerCode;
-            RegisterSize = allocationSize;
         }
 
         public void AddData(RegisterData registerData, int value)
@@ -69,7 +63,7 @@ namespace Athena.NET.Compiler.Interpreter
             return totalMemorySize / (RegisterSize + 1);
         }
 
-        protected virtual int CalculateRelativeOffset(int offset, int registerIndex)
+        private int CalculateRelativeOffset(int offset, int registerIndex)
         {
             int currentOffset = offset - registerIndex * RegisterSize;
             return (Math.Abs(currentOffset) + currentOffset) / 2;
