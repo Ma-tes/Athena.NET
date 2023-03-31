@@ -11,5 +11,16 @@
             memoryBuffer[0] = data;
             Count++;
         }
+
+        public void PushRange(Span<T> data) 
+        {
+            int dataLength = data.Length;
+            int countDifference = allocationLength - Count;
+            if (dataLength > countDifference)
+                MemoryPointer = ReallocateMemory(dataLength - countDifference);
+
+            memoryBuffer[..Count].CopyTo(memoryBuffer[countDifference..]);
+            data.CopyTo(memoryBuffer[..Count]);
+        } 
     }
 }
