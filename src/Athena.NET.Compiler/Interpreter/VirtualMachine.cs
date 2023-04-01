@@ -18,23 +18,25 @@ namespace Athena.NET.Compiler.Interpreter
                 new RegisterMemory(OperatorCodes.TM, typeof(short))
             );
 
+        public int LastInstructionNopIndex { get; internal set; }
+
         public void CreateInterpretation(ReadOnlySpan<uint> instructions)
         {
-            int lastNopInstruction = IndexOfNopInstruction(instructions);
-            int instructionCount = 0;
-            while (instructionCount < instructions.Length)
+            LastInstructionNopIndex = IndexOfNopInstruction(instructions);
+            int instructionIndex = 0;
+            while (LastInstructionNopIndex != instructions.Length)
             {
-                OperatorCodes currentInstructionCode = (OperatorCodes)instructions[lastNopInstruction + 1];
-                int nextNopInstruction = IndexOfNopInstruction(instructions[(lastNopInstruction + 1)..]);
+                OperatorCodes currentInstructionCode = (OperatorCodes)instructions[LastInstructionNopIndex + 1];
+                int nextNopInstruction = IndexOfNopInstruction(instructions[(LastInstructionNopIndex + 1)..]);
                 nextNopInstruction = nextNopInstruction == -1 ? instructions.Length :
-                    nextNopInstruction + (lastNopInstruction + 1);
+                    nextNopInstruction + (LastInstructionNopIndex + 1);
 
-                ReadOnlySpan<uint> currentInstructions = instructions[(lastNopInstruction + 1)..(nextNopInstruction)];
+                ReadOnlySpan<uint> currentInstructions = instructions[(LastInstructionNopIndex + 1)..(nextNopInstruction)];
+                LastInstructionNopIndex = nextNopInstruction;
+
+                instructionIndex += currentInstructions.Length;
                 if(!TryInterpretInstruction(currentInstructionCode, currentInstructions))
                     throw new Exception("Instruction wasn't completed or found");
-
-                lastNopInstruction = nextNopInstruction;
-                instructionCount += currentInstructions.Length + 2;
             }
         }
 

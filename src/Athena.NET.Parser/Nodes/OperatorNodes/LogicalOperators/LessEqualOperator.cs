@@ -5,7 +5,7 @@ namespace Athena.NET.Parser.Nodes.OperatorNodes.LogicalOperators
     internal sealed class LessEqualOperator : LogicalOperator
     {
         public override TokenIndentificator NodeToken { get; } =
-            TokenIndentificator.LessThan;
+            TokenIndentificator.LessEqual;
 
         public LessEqualOperator() 
         {

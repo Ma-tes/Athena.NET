@@ -24,12 +24,24 @@ namespace Athena.NET.Compiler.Instructions
             WriteMemoryDataInstruction(rightData, leftChildrenNodes.RightNode, writer);
  
             BodyNode bodyNode = (BodyNode)node.ChildNodes.RightNode;
-            writer.InstructionList.Add((uint)bodyNode.NodeData.Length);
+            writer.InstructionList.Add(0);
+            int currentInstructionLength = writer.InstructionList.Count;
+
             writer.CreateInstructions(bodyNode.NodeData.Span);
+            writer.InstructionList.Span[currentInstructionLength - 1] = (uint)(writer.InstructionList.Count - currentInstructionLength);
             return true;
         }
+
         public bool InterpretInstruction(ReadOnlySpan<uint> instructions, VirtualMachine writer) 
         {
+            TokenIndentificator operatorInstruction = (TokenIndentificator)((instructions[0] ^ (0xffeec << 4)) + 5);
+            if (!OperatorHelper.TryGetOperator(out OperatorNode instructionNode, operatorInstruction))
+                return false;
+
+            var operatorData = writer.GetInstructionData(instructions[1..]);
+            int operatorResult = instructionNode.CalculateData(operatorData[0], operatorData[1]);
+            if (operatorResult == 1)
+                writer.LastInstructionNopIndex += operatorData[2];
             return true;
         }
 

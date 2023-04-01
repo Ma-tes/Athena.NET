@@ -14,13 +14,13 @@ namespace Athena.NET.Lexer
         Mul = 3,
         Div = 4,
         //Relation operators
-        LessThan = 5,
-        LessEqual = 6,
+        EqualLogical = 5,
+        NotEqual = 6,
         GreaterThan = 7,
         GreaterEqual = 8,
-        EqualLogical = 9,
-        EqualAssignment = 10,
-        NotEqual = 11,
+        LessThan = 9,
+        LessEqual = 10,
+        EqualAssignment = 11,
 
         //TODO: This part is really temporary
         //I would really want something more

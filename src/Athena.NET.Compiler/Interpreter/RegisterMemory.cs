@@ -11,7 +11,9 @@ namespace Athena.NET.Compiler.Interpreter
 
         public OperatorCodes RegisterCode { get; }
         public int RegisterSize { get; }
-        public int LastOffset { get; private set; }
+
+        public RegisterData LastRegisterData { get; private set; } =
+            new(0, 0);
 
         public RegisterMemory(OperatorCodes registerCode, Type type)
         {
@@ -21,17 +23,18 @@ namespace Athena.NET.Compiler.Interpreter
 
         public void AddData(RegisterData registerData, int value)
         {
-            int totalMemorySize = registerData.Offset + registerData.Size;
+            //TODO: Calculate relative offset for a new register value
+            ulong finalValue = (ulong)value << (registerData.Offset - LastRegisterData.Offset);
 
-            ulong finalValue = (ulong)value << registerData.Offset;
+            int totalMemorySize = registerData.Offset + registerData.Size;
             if (registerMemoryList.Count == 0 ||
-                totalMemorySize > RegisterSize)
+                totalMemorySize >= RegisterSize * registerMemoryList.Count)
             {
                 registerMemoryList.Add(default);
                 finalValue = (ulong)value;
             }
             registerMemoryList.Span[registerMemoryList.Count - 1] += finalValue;
-            LastOffset = registerData.Offset;
+            LastRegisterData = registerData;
         }
 
         public void SetData(RegisterData registerData, int value)

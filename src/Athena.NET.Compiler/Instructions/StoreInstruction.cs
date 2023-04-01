@@ -62,8 +62,9 @@ namespace Athena.NET.Compiler.Instructions
             var storeRegister = new RegisterData(instructions[3], instructions[2]);
             if (writer.TryGetRegisterMemory(out RegisterMemory? storeMemory, (OperatorCodes)instructions[1])) 
             {
-                if (storeMemory.LastOffset < storeRegister.Offset ||
-                    storeMemory.LastOffset == 0)
+                RegisterData lastRegisterData = storeMemory.LastRegisterData;
+                if (lastRegisterData.Offset < storeRegister.Offset
+                    || (lastRegisterData.Offset + lastRegisterData.Size) == 0)
                     storeMemory.AddData(storeRegister, currentData);
                 else
                     storeMemory.SetData(storeRegister, currentData);

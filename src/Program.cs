@@ -1,6 +1,7 @@
 ﻿using Athena.NET.Compiler;
 using Athena.NET.Compiler.Instructions;
 using Athena.NET.Compiler.Interpreter;
+using Athena.NET.Compiler.Structures;
 using Athena.NET.Lexer;
 using Athena.NET.Lexer.LexicalAnalyzer;
 using Athena.NET.Lexer.Structures;
@@ -23,8 +24,12 @@ using (var tokenReader = new TokenReader
         using (var virtualMachine = new VirtualMachine()) 
         {
             virtualMachine.CreateInterpretation(instructionWriter.InstructionList.Span);
+            if (virtualMachine.TryGetRegisterMemory(out RegisterMemory? axRegister, OperatorCodes.AX))
+                WriteRegisterData(axRegister,
+                    new RegisterData(0, 8), new RegisterData(8, 16), new RegisterData(24, 8), new RegisterData(32, 8));
         }
     }
+
     //using (var nodeViewer = new NodeViewer(nodes, new Size(4000, 4000)))
     //{
         //Image nodeImage = nodeViewer.CreateImage();
@@ -37,6 +42,17 @@ using (var tokenReader = new TokenReader
 }
 Console.ReadLine();
 
+
+static void WriteRegisterData(RegisterMemory memory, params RegisterData[] registerData) 
+{
+    int dataLength = registerData.Length;
+    for (int i = 0; i < registerData.Length; i++)
+    {
+        RegisterData currentRegister = registerData[i];
+        int currentData = (int)memory.GetData(currentRegister);
+        Console.Write($"\n[{memory.RegisterCode}]: ({currentRegister.Size}, {currentRegister.Offset}) = {currentData}");
+    }
+}
 
 static void WriteInstructions(Span<uint> instructionsSpan) 
 {
