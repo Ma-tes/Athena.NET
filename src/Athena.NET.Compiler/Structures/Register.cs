@@ -56,6 +56,11 @@ namespace Athena.NET.Compiler.Structures
             return returnData;
         }
 
+        /// <summary>
+        /// If identificator exists, then it removes a coresponding
+        /// <see cref="MemoryData"/> by identifier id.
+        /// </summary>
+        /// <param name="identifierId">Identificator of a specific identifier</param>
         public void RemoveRegisterData(uint identifierId) 
         {
             if (TryGetIndexOfIdentifier(out int identifierIndex, identifierId))
@@ -63,7 +68,7 @@ namespace Athena.NET.Compiler.Structures
         }
 
         /// <summary>
-        /// Tries to get a corespoding <see cref="MemoryData"/> by indetifier id.
+        /// Tries to get a corespoding <see cref="MemoryData"/> by identifier id.
         /// </summary>
         /// <returns>
         /// Coresponding <see cref="bool"/>, if <see cref="MemoryData"/> was found, with
@@ -81,6 +86,14 @@ namespace Athena.NET.Compiler.Structures
             return false;
         }
 
+        /// <summary>
+        /// Tries to a get a value index from <see cref="NativeMemoryList{T}"/>
+        /// <see cref="memoryData"/> by identifier id.
+        /// </summary>
+        /// <param name="returnIndex"><see langword="out"/> return value</param>
+        /// <param name="identifierId">Identificator of a specific identifier</param>
+        /// <returns>Coresponding <see cref="bool"/>, if indetificator in
+        /// <see cref="MemoryData"/> was found</returns>
         private bool TryGetIndexOfIdentifier(out int returnIndex, uint identifierId)
         {
             Span<MemoryData> memoryDataSpan = memoryData.Span;
@@ -95,7 +108,6 @@ namespace Athena.NET.Compiler.Structures
             returnIndex = -1;
             return false;
         }
-
 
         /// <summary>
         /// Calculates the maximum offset for
