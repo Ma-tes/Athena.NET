@@ -24,7 +24,8 @@ namespace Athena.NET.Compiler.Interpreter
         public void AddData(RegisterData registerData, int value)
         {
             //TODO: Calculate relative offset for a new register value
-            ulong finalValue = (ulong)value << (registerData.Offset - LastRegisterData.Offset);
+            int finalOffset = CalculateRelativeOffset(registerData, registerMemoryList.Count - 1);
+            ulong finalValue = (ulong)value << finalOffset;
 
             int totalMemorySize = registerData.Offset + registerData.Size;
             if (registerMemoryList.Count == 0 ||
@@ -42,7 +43,7 @@ namespace Athena.NET.Compiler.Interpreter
             int typeSize = (int)Math.Pow(2, registerData.Size) - 1;
             int registerIndex = CalculateMemoryIndex(registerData);
 
-            int currentOffset = CalculateRelativeOffset(registerData.Offset, registerIndex);
+            int currentOffset = CalculateRelativeOffset(registerData, registerIndex);
             registerMemoryList.Span[registerIndex] =
                 (registerMemoryList.Span[registerIndex] ^ (((ulong)value ^ ((registerMemoryList.Span[registerIndex] >> currentOffset)
                 & (ulong)typeSize)) << currentOffset));
@@ -52,7 +53,7 @@ namespace Athena.NET.Compiler.Interpreter
         {
             int registerIndex = CalculateMemoryIndex(registerData);
             ulong currentRegister = registerMemoryList.Span[registerIndex];
-            int currentOffset = CalculateRelativeOffset(registerData.Offset, registerIndex);
+            int currentOffset = CalculateRelativeOffset(registerData, registerIndex);
 
             int typeSize = (int)Math.Pow(2, registerData.Size) - 1;
             int returnData = (int)((long)(currentRegister >> currentOffset)
@@ -62,14 +63,18 @@ namespace Athena.NET.Compiler.Interpreter
 
         private int CalculateMemoryIndex(RegisterData registerData) 
         {
+            if (registerData.Offset == 0)
+                return 0;
             int totalMemorySize = registerData.Offset + registerData.Size;
-            return totalMemorySize / (RegisterSize + 1);
+            return totalMemorySize / (RegisterSize + (RegisterSize / registerData.Offset));
         }
 
-        private int CalculateRelativeOffset(int offset, int registerIndex)
+        private int CalculateRelativeOffset(RegisterData registerData, int registerIndex)
         {
-            int currentOffset = offset - registerIndex * RegisterSize;
-            return (Math.Abs(currentOffset) + currentOffset) / 2;
+            if (registerIndex < 0)
+                return 0;
+            int relativeOffset = (registerData.Size / RegisterSize) ^ 1;
+            return (registerData.Offset - ((RegisterSize * (registerIndex - relativeOffset)) + registerData.Size)) * relativeOffset;
         }
 
         public void Dispose()

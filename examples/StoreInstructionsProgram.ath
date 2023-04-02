@@ -4,5 +4,9 @@ int thirdValue = (firstValue + 25) * secondValue;
 int currentIndex = 7;
 int lastIndex = 16;
 int previousIndex = 17;
+int secondLast = 248;
+int secondPreviousIndex = 83;
+int thirdPreviousIndex = 16;
+int thirdLast = 111;
 
 
