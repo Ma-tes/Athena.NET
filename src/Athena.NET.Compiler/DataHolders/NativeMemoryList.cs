@@ -49,6 +49,13 @@ namespace Athena.NET.Compiler.DataHolders
             AddRange(dataSpan);
         }
 
+        public void RemoveOn(int index) 
+        {
+            memoryBuffer[(index + 1)..].CopyTo(memoryBuffer[index..]);
+            ReallocateMemory(-1);
+            Count--;
+        }
+
         protected void* ReallocateMemory(int size)
         {
             allocationLength = allocationLength + size;

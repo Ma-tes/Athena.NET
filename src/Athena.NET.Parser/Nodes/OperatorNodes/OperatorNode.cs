@@ -27,7 +27,7 @@ namespace Athena.NET.Parser.Nodes.OperatorNodes
         {
             ReadOnlySpan<Token> leftTokens = tokens[..nodeIndex];
             int semicolonIndex = tokens.IndexOfToken(TokenIndentificator.Semicolon);
-            int rightLength = semicolonIndex != -1 ? semicolonIndex : tokens.Length;
+            int rightLength = semicolonIndex > nodeIndex ? semicolonIndex : tokens.Length;
 
             ReadOnlySpan<Token> rightTokens = tokens[(nodeIndex + 1)..(rightLength)];
             INode leftNode = GetChildrenNode(leftTokens);

@@ -1,12 +1,15 @@
-int firstValue = 83;
-int secondValue = 3;
-int thirdValue = (firstValue + 25) * secondValue;
-int currentIndex = 7;
-int lastIndex = 16;
-int previousIndex = 17;
-int secondLast = 248;
-int secondPreviousIndex = 83;
-int thirdPreviousIndex = 16;
-int thirdLast = 111;
+int positionX = 25;
+int positionY = 16;
+if(positionX + positionY > 25) ->
+	positionX = positionX * 2;
+	positionY = positionY * 2;
+int positionDifference = positionX + positionY;
+if(positionX > 25) ->
+	positionX = positionX + 10;
+if(positionY > 25) ->
+	positionY = positionY + 10;
+int firstValue = 0;
+if(positionDifference > 25) ->
+	positionDifference = positionDifference + 10;
 
 

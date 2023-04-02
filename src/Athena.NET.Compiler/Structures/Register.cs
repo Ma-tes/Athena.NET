@@ -56,6 +56,12 @@ namespace Athena.NET.Compiler.Structures
             return returnData;
         }
 
+        public void RemoveRegisterData(uint identifierId) 
+        {
+            if (TryGetIndexOfIdentifier(out int identifierIndex, identifierId))
+                memoryData.RemoveOn(identifierIndex);
+        }
+
         /// <summary>
         /// Tries to get a corespoding <see cref="MemoryData"/> by indetifier id.
         /// </summary>
@@ -65,19 +71,31 @@ namespace Athena.NET.Compiler.Structures
         /// </returns>
         public bool TryGetMemoryData([NotNullWhen(true)]out MemoryData resultData, uint identiferId)
         {
-            var memoryDataSpan = memoryData.Span;
-            for (int i = 0; i < memoryDataSpan.Length; i++)
+            if (TryGetIndexOfIdentifier(out int identifierIndex, identiferId)) 
             {
-                MemoryData currentData = memoryDataSpan[i];
-                if (identiferId == currentData.IdentifierId)
-                {
-                    resultData = currentData;
-                    return true;
-                }
+                resultData = memoryData.Span[identifierIndex];
+                return true;
             }
+
             resultData = default;
             return false;
         }
+
+        private bool TryGetIndexOfIdentifier(out int returnIndex, uint identifierId)
+        {
+            Span<MemoryData> memoryDataSpan = memoryData.Span;
+            for (int i = 0; i < memoryDataSpan.Length; i++)
+            {
+                if (identifierId == memoryDataSpan[i].IdentifierId) 
+                {
+                    returnIndex = i;
+                    return true;
+                }
+            }
+            returnIndex = -1;
+            return false;
+        }
+
 
         /// <summary>
         /// Calculates the maximum offset for

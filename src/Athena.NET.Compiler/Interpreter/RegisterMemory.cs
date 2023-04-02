@@ -23,13 +23,11 @@ namespace Athena.NET.Compiler.Interpreter
 
         public void AddData(RegisterData registerData, int value)
         {
-            //TODO: Calculate relative offset for a new register value
             int finalOffset = CalculateRelativeOffset(registerData, registerMemoryList.Count - 1);
             ulong finalValue = (ulong)value << finalOffset;
 
             int totalMemorySize = registerData.Offset + registerData.Size;
-            if (registerMemoryList.Count == 0 ||
-                totalMemorySize >= RegisterSize * registerMemoryList.Count)
+            if (registerMemoryList.Count == 0 || totalMemorySize > RegisterSize * registerMemoryList.Count)
             {
                 registerMemoryList.Add(default);
                 finalValue = (ulong)value;
@@ -63,15 +61,18 @@ namespace Athena.NET.Compiler.Interpreter
 
         private int CalculateMemoryIndex(RegisterData registerData) 
         {
-            if (registerData.Offset == 0)
-                return 0;
+            if (registerData.Offset == 0 || RegisterCode == OperatorCodes.TM)
+                return registerData.Offset / RegisterSize;
+
             int totalMemorySize = registerData.Offset + registerData.Size;
             return totalMemorySize / (RegisterSize + (RegisterSize / registerData.Offset));
         }
 
         private int CalculateRelativeOffset(RegisterData registerData, int registerIndex)
         {
-            if (registerIndex < 0)
+            if (registerIndex == 0)
+                return registerData.Offset;
+            if (registerIndex < 0 || registerData.Offset % RegisterSize == 0)
                 return 0;
             int relativeOffset = (registerData.Size / RegisterSize) ^ 1;
             return (registerData.Offset - ((RegisterSize * (registerIndex - relativeOffset)) + registerData.Size)) * relativeOffset;

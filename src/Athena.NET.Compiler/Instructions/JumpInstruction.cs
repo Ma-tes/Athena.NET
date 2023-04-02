@@ -47,7 +47,7 @@ namespace Athena.NET.Compiler.Instructions
 
         private void WriteMemoryDataInstruction(MemoryData memoryData, INode node, InstructionWriter writer)
         {
-            if (memoryData.Equals(default) && node is DataNode<int> dataNode) 
+            if (node is DataNode<int> dataNode)
             {
                 writer.InstructionList.Add((uint)dataNode.NodeData);
                 return;
