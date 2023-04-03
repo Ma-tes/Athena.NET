@@ -8,8 +8,11 @@ if(positionX > 25) ->
 	positionX = positionX + 10;
 if(positionY > 25) ->
 	positionY = positionY + 10;
-int firstValue = 0;
+int firstValue = 16;
 if(positionDifference > 25) ->
-	positionDifference = positionDifference + 10;
+	positionDifference = (positionDifference) + 10;
+	positionDifference = positionDifference - (positionX / positionY);
+int secondValue = positionDifference + 3;
+
 
 

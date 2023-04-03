@@ -72,7 +72,9 @@ namespace Athena.NET.Compiler.Interpreter
         {
             if (registerIndex == 0)
                 return registerData.Offset;
-            if (registerIndex < 0 || registerData.Offset % RegisterSize == 0)
+
+            int offsetShift = (registerData.Offset / RegisterSize) >> 1;
+            if (registerIndex < 0 || registerData.Offset >> offsetShift == RegisterSize)
                 return 0;
             int relativeOffset = (registerData.Size / RegisterSize) ^ 1;
             return (registerData.Offset - ((RegisterSize * (registerIndex - relativeOffset)) + registerData.Size)) * relativeOffset;
