@@ -5,6 +5,11 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Athena.NET.Compiler.Interpreter
 {
+    /// <summary>
+    /// Provides a complete interpretation
+    /// of generated instructions, that are
+    /// specifically created from <see cref="OperatorCodes"/>
+    /// </summary>
     internal sealed class VirtualMachine : IDisposable
     {
         private ImmutableArray<RegisterMemory> virtualRegisters =
@@ -18,30 +23,55 @@ namespace Athena.NET.Compiler.Interpreter
                 new RegisterMemory(OperatorCodes.TM, typeof(short))
             );
 
+        /// <summary>
+        /// Index of a last found <see cref="OperatorCodes.Nop"/>
+        /// instruction, that could be internally changed in a runtime
+        /// </summary>
         public int LastInstructionNopIndex { get; internal set; }
 
+        /// <summary>
+        /// Creates virtualized interpretation of
+        /// setted instructions
+        /// </summary>
+        /// <param name="instructions">
+        /// <see cref="OperatorCodes"/> instructions
+        /// for creating an intepretation
+        /// </param>
+        /// <exception cref="Exception">
+        /// Temporary <see cref="Exception"/> for
+        /// failed interpretion of a instruction
+        /// </exception>
         public void CreateInterpretation(ReadOnlySpan<uint> instructions)
         {
             LastInstructionNopIndex = IndexOfNopInstruction(instructions);
             int instructionIndex = 0;
             while (LastInstructionNopIndex != instructions.Length)
             {
-                OperatorCodes currentInstructionCode = (OperatorCodes)instructions[LastInstructionNopIndex + 1];
-                int nextNopInstruction = IndexOfNopInstruction(instructions[(LastInstructionNopIndex + 1)..]);
+                int nextInstructionIndex = LastInstructionNopIndex + 1;
+                int nextNopInstruction = IndexOfNopInstruction(instructions[nextInstructionIndex..]);
                 nextNopInstruction = nextNopInstruction == -1 ? instructions.Length :
-                    nextNopInstruction + (LastInstructionNopIndex + 1);
+                    nextNopInstruction + nextInstructionIndex;
 
-                ReadOnlySpan<uint> currentInstructions = instructions[(LastInstructionNopIndex + 1)..(nextNopInstruction)];
-                LastInstructionNopIndex = nextNopInstruction;
-
-                instructionIndex += currentInstructions.Length;
+                OperatorCodes currentInstructionCode = (OperatorCodes)instructions[nextInstructionIndex];
+                ReadOnlySpan<uint> currentInstructions = instructions[(nextInstructionIndex)..(nextNopInstruction)];
                 if(!TryInterpretInstruction(currentInstructionCode, currentInstructions))
                     throw new Exception("Instruction wasn't completed or found");
+
+                LastInstructionNopIndex = nextNopInstruction;
+                instructionIndex += currentInstructions.Length;
             }
         }
 
-        //TODO: This implementation needs to
-        //be reimplemented as soon as possible
+        /// <summary>
+        /// Provides parsing of a possible <see cref="Structures.RegisterData"/> instruction
+        /// or already determined values
+        /// </summary>
+        /// <param name="instructions">
+        /// <see cref="OperatorCodes"/> instructions for parsing values
+        /// </param>
+        /// <returns>
+        /// Values from instructions in a <see cref="ReadOnlySpan{T}"/> <see langword="int"/>
+        /// </returns>
         internal ReadOnlySpan<int> GetInstructionData(ReadOnlySpan<uint> instructions)
         {
             var returnData = new NativeMemoryList<int>(6);
@@ -55,12 +85,29 @@ namespace Athena.NET.Compiler.Interpreter
                     (int)dataMemory!.GetData(new(instructions[instructionCount + 2],
                     instructions[instructionCount + 1])) : (int)firstInstruction;
                 returnData.Add(currentData);
-                instructionCount = isRegisterMemory ?
-                    instructionCount + 3 : instructionCount + 1;
+
+                instructionCount += isRegisterMemory ? 3 : 1;
             }
+            returnData.Dispose();
             return returnData.Span;
         }
 
+        /// <summary>
+        /// Tries to get a coresponding <see langword="out"/>
+        /// <see cref="RegisterMemory"/> <paramref name="registerMemory"/>,
+        /// from <see cref="OperatorCodes"/> <paramref name="operatorCode"/>
+        /// </summary>
+        /// <param name="registerMemory">
+        /// Coresponding <see langword="out"/> <see cref="RegisterMemory"/>,
+        /// that was choosed by <see cref="OperatorCodes"/> <paramref name="operatorCode"/>
+        /// </param>
+        /// <param name="instructions">
+        /// <see cref="OperatorCodes"/> instruction for specifing type of a register
+        /// </param>
+        /// <returns>
+        /// A <see langword="bool"/> value, if register with
+        /// <see cref="OperatorCodes"/> <paramref name="operatorCode"/> was found
+        /// </returns>
         public bool TryGetRegisterMemory([NotNullWhen(true)]out RegisterMemory? registerMemory, OperatorCodes operatorCode) 
         {
             int registerCount = virtualRegisters.Length;
@@ -77,6 +124,10 @@ namespace Athena.NET.Compiler.Interpreter
             return false;
         }
 
+        /// <summary>
+        /// Finds index of a <see cref="OperatorCodes.Nop"/>
+        /// instruction, from <paramref name="instructions"/>
+        /// </summary>
         private int IndexOfNopInstruction(ReadOnlySpan<uint> instructions)
         {
             int instructionCount = instructions.Length;
@@ -109,10 +160,19 @@ namespace Athena.NET.Compiler.Interpreter
             return false;
         }
 
-        //TODO: Dispose memory registers with more elegant way,
-        //then using for loop
+        /// <summary>
+        /// Manages a dispose for every single
+        /// inicialized <see cref="RegisterMemory"/>
+        /// of a <see cref="virtualRegisters"/>
+        /// </summary>
         public void Dispose() 
         {
+            int registerMemoryCount = virtualRegisters.Length;
+            for (int i = 0; i < registerMemoryCount; i++)
+            {
+                RegisterMemory currentMemory = virtualRegisters[i];
+                currentMemory.Dispose();
+            }
         }
     }
 }
