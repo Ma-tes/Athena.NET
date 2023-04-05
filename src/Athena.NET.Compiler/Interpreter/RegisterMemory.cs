@@ -11,8 +11,7 @@ namespace Athena.NET.Compiler.Interpreter
     /// </summary>
     internal sealed class RegisterMemory : IDisposable
     {
-        private readonly NativeMemoryList<ulong> registerMemoryList
-            = new();
+        private readonly NativeMemoryList<ulong> registerMemoryList = new();
 
         /// <summary>
         /// Register code of choosed register
@@ -55,7 +54,7 @@ namespace Athena.NET.Compiler.Interpreter
             ulong finalValue = (ulong)value << finalOffset;
 
             int totalMemorySize = registerData.Offset + registerData.Size;
-            if (registerMemoryList.Count == 0 || totalMemorySize > RegisterSize * registerMemoryList.Count)
+            if (totalMemorySize > (RegisterSize * registerMemoryList.Count))
             {
                 registerMemoryList.Add(default);
                 finalValue = (ulong)value;
@@ -83,8 +82,10 @@ namespace Athena.NET.Compiler.Interpreter
             int registerIndex = CalculateMemoryIndex(registerData);
 
             int currentOffset = CalculateRelativeOffset(registerData, registerIndex);
-            registerMemoryList.Span[registerIndex] =
-                (registerMemoryList.Span[registerIndex] ^ (((ulong)value ^ ((registerMemoryList.Span[registerIndex] >> currentOffset)
+            ref ulong currentRegisterValue = ref registerMemoryList.Span[registerIndex];
+
+            currentRegisterValue =
+                (currentRegisterValue ^ (((ulong)value ^ ((currentRegisterValue >> currentOffset)
                 & (ulong)typeSize)) << currentOffset));
         }
 
@@ -107,11 +108,12 @@ namespace Athena.NET.Compiler.Interpreter
             int currentOffset = CalculateRelativeOffset(registerData, registerIndex);
 
             int typeSize = (int)Math.Pow(2, registerData.Size) - 1;
-            int returnData = (int)((long)(currentRegister >> currentOffset)
-                & typeSize & typeSize);
+            int returnData = (int)((long)(currentRegister >> currentOffset) & typeSize);
             return (ulong)(dynamic)returnData; //TODO: Make sure, to avoid the dynamic cast
         }
 
+        // This method will provide you an exact
+        // index value of a RegisterData in a memory.
         private int CalculateMemoryIndex(RegisterData registerData) 
         {
             if (registerData.Offset == 0 || RegisterCode == OperatorCodes.TM)
@@ -121,6 +123,8 @@ namespace Athena.NET.Compiler.Interpreter
             return totalMemorySize / (RegisterSize + (RegisterSize / registerData.Offset));
         }
 
+        // This method will recalculate your offset
+        // in a relative way to your RegisterSize
         private int CalculateRelativeOffset(RegisterData registerData, int registerIndex)
         {
             if (registerIndex == 0)
@@ -133,6 +137,10 @@ namespace Athena.NET.Compiler.Interpreter
             return (registerData.Offset - ((RegisterSize * (registerIndex - relativeOffset)) + registerData.Size)) * relativeOffset;
         }
 
+        /// <summary>
+        /// Manage dispose for a <see cref="NativeMemoryList{T}"/> 
+        /// <see cref="registerMemoryList"/>
+        /// </summary>
         public void Dispose()
         {
             registerMemoryList.Dispose();
