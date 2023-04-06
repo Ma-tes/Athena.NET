@@ -26,8 +26,10 @@ using (var tokenReader = new TokenReader
             virtualMachine.CreateInterpretation(instructionWriter.InstructionList.Span);
             if (virtualMachine.TryGetRegisterMemory(out RegisterMemory? axRegister, OperatorCodes.AX))
                 WriteRegisterData(axRegister,
+                    new RegisterData(0, 8),
+                    new RegisterData(8, 8),
                     new RegisterData(16, 8),
-                    new RegisterData(32, 8)
+                    new RegisterData(24, 8)
                     );
         }
     }

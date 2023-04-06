@@ -1,18 +1,4 @@
-int positionX = 25;
+int positionX = 25 * (0 - 1);
 int positionY = 16;
-if(positionX + positionY > 25) ->
-	positionX = positionX * 2;
-	positionY = positionY * 2;
-int positionDifference = positionX + positionY;
-if(positionX > 25) ->
-	positionX = positionX + 10;
-if(positionY > 25) ->
-	positionY = positionY + 10;
-int firstValue = 16;
-if(positionDifference > 25) ->
-	positionDifference = (positionDifference) + 10;
-	positionDifference = positionDifference - (positionX / positionY);
-int secondValue = positionDifference + 3;
-
-
-
+int positionScaler = 83;
+int result = positionX + positionY;

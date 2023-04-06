@@ -12,6 +12,7 @@ namespace Athena.NET.Compiler.Interpreter
     internal sealed class RegisterMemory : IDisposable
     {
         private readonly NativeMemoryList<ulong> registerMemoryList = new();
+        private readonly NativeMemoryList<int> offsetIndexList = new();
 
         /// <summary>
         /// Register code of choosed register
@@ -50,6 +51,9 @@ namespace Athena.NET.Compiler.Interpreter
         /// <param name="value">Value that will be stored in a memory</param>
         public void AddData(RegisterData registerData, int value)
         {
+            offsetIndexList.Add(CalculateOffsetIndex(value));
+            value = Math.Abs(value);
+
             int finalOffset = CalculateRelativeOffset(registerData, registerMemoryList.Count - 1);
             ulong finalValue = (ulong)value << finalOffset;
 
@@ -82,11 +86,14 @@ namespace Athena.NET.Compiler.Interpreter
             int registerIndex = CalculateMemoryIndex(registerData);
 
             int currentOffset = CalculateRelativeOffset(registerData, registerIndex);
+            int offsetIndex = registerIndex + (currentOffset / (RegisterSize >> 1));
+
+            offsetIndexList.Span[offsetIndex] = CalculateOffsetIndex(value);
+            value = Math.Abs(value);
             ref ulong currentRegisterValue = ref registerMemoryList.Span[registerIndex];
 
-            currentRegisterValue =
-                (currentRegisterValue ^ (((ulong)value ^ ((currentRegisterValue >> currentOffset)
-                & (ulong)typeSize)) << currentOffset));
+            currentRegisterValue = currentRegisterValue ^ (((ulong)value ^ ((currentRegisterValue >> currentOffset)
+                & (ulong)typeSize)) << currentOffset);
         }
 
         /// <summary>
@@ -109,7 +116,12 @@ namespace Athena.NET.Compiler.Interpreter
 
             int typeSize = (int)Math.Pow(2, registerData.Size) - 1;
             int returnData = (int)((long)(currentRegister >> currentOffset) & typeSize);
-            return (ulong)(dynamic)returnData; //TODO: Make sure, to avoid the dynamic cast
+
+            int registerOffsetIndex = ((currentOffset / (RegisterSize >> 1)));
+            int relativeIndex = ((registerData.Offset + registerData.Size) / RegisterSize);
+
+            int offsetIndex = relativeIndex == 0 || (registerIndex == 0 && registerData.Size != RegisterSize) ? relativeIndex : relativeIndex - 1;
+            return (ulong)(dynamic)(returnData - ((returnData * 2) * offsetIndexList.Span[offsetIndex]));
         }
 
         // This method will provide you an exact
@@ -136,6 +148,9 @@ namespace Athena.NET.Compiler.Interpreter
             int relativeOffset = (registerData.Size / RegisterSize) ^ 1;
             return (registerData.Offset - ((RegisterSize * (registerIndex - relativeOffset)) + registerData.Size)) * relativeOffset;
         }
+
+        private int CalculateOffsetIndex(int value) =>
+           (((Math.Abs(value) + value) >> 1) / value) ^ 1;
 
         /// <summary>
         /// Manage dispose for a <see cref="NativeMemoryList{T}"/> 

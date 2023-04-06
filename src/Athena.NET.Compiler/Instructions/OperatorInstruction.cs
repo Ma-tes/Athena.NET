@@ -83,7 +83,7 @@ namespace Athena.NET.Compiler.Instructions
         }
 
         public void WriteMemoryDataInstructions(NativeMemoryList<uint> nativeInstructions, INode node,
-            InstructionWriter writer) 
+            InstructionWriter writer)
         {
             if (TryGenerateOperatorInstructions(out MemoryData returnData, node, writer)) 
             {
