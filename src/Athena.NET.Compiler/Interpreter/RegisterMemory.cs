@@ -123,8 +123,10 @@ namespace Athena.NET.Compiler.Interpreter
             return (ulong)(dynamic)(returnData - ((returnData * 2) * offsetIndex));
         }
 
-        // This method will provide you an exact
-        // index value of a RegisterData in a memory.
+        /// <summary>
+        /// This method will provide you an exact
+        /// index value of a <see cref="RegisterData"/> in a memory.
+        /// </summary>
         private int CalculateMemoryIndex(RegisterData registerData) 
         {
             if (registerData.Offset == 0 || RegisterCode == OperatorCodes.TM)
@@ -135,8 +137,11 @@ namespace Athena.NET.Compiler.Interpreter
             return totalMemorySize / (RegisterSize + ((RegisterSize * (currentOffsetSize)) / registerData.Offset));
         }
 
-        // This method will recalculate your offset
-        // in a relative way to your RegisterSize
+
+        /// <summary>
+        /// This method will recalculate your <see cref="RegisterData.Offset"/>
+        /// in a relative way to your <see cref="RegisterData.Size"/>
+        /// </summary>
         private int CalculateRelativeOffset(RegisterData registerData, int registerIndex)
         {
             if (registerIndex == 0)
@@ -149,19 +154,33 @@ namespace Athena.NET.Compiler.Interpreter
             return (registerData.Offset - ((RegisterSize * (registerIndex - relativeOffset)) + registerData.Size)) * relativeOffset;
         }
 
+        /// <summary>
+        /// Calculates index of a <paramref name="value"/>
+        /// </summary>
+        /// <returns>
+        /// If <see langword="int"/> <paramref name="value"/> is
+        /// greater then 0, it will returns one, otherwise zero
+        /// </returns>
         private int CalculateOffsetIndex(int value) =>
            (((Math.Abs(value) + value) >> 1) / value) ^ 1;
 
+        /// <summary>
+        /// Provides calculation of original value from <paramref name="registerData"/>,
+        /// that is shifted by <paramref name="offset"/> and reduced by
+        /// calculation of mask from <paramref name="size"/>
+        /// </summary>
         private ulong GetRegisterValue(ulong registerData, int offset, int size) =>
             (ulong)((long)(registerData >> offset) & ((int)Math.Pow(2, size) - 1));
 
         /// <summary>
-        /// Manage dispose for a <see cref="NativeMemoryList{T}"/> 
-        /// <see cref="registerMemoryList"/>
+        /// Manage dispose for all <see cref="NativeMemoryList{T}"/> such as,
+        /// <br/><see cref="registerMemoryList"/>
+        /// <br/><see cref="offsetIndexList"/>
         /// </summary>
         public void Dispose()
         {
             registerMemoryList.Dispose();
+            offsetIndexList.Dispose();
         }
     }
 }
