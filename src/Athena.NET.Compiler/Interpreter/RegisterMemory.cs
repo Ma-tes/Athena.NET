@@ -41,8 +41,7 @@ namespace Athena.NET.Compiler.Interpreter
         /// a coresponding <see cref="RegisterData"/>
         /// </summary>
         /// <remarks>
-        /// This solutions is going to be
-        /// fully generics
+        /// This solutions is going to be fully generics
         /// </remarks>
         /// <param name="registerData">
         /// Valid <see cref="RegisterData"/> with specified
@@ -60,12 +59,11 @@ namespace Athena.NET.Compiler.Interpreter
         }
 
         /// <summary>
-        /// Provides setting an a <see langword="int"/> value to
+        /// Provides setting an a <see langword="int"/> <paramref name="value"/> to
         /// a coresponding <see cref="RegisterData"/>
         /// </summary>
         /// <remarks>
-        /// This solutions is going to be
-        /// fully generics
+        /// This solutions is going to be fully generics
         /// </remarks>
         /// <param name="registerData">
         /// Valid and already added <see cref="RegisterData"/> with specified
@@ -86,8 +84,7 @@ namespace Athena.NET.Compiler.Interpreter
         /// a coresponding <see cref="RegisterData"/>
         /// </summary>
         /// <remarks>
-        /// This solutions is going to be
-        /// fully generics
+        /// This solutions is going to be fully generics
         /// </remarks>
         /// <param name="registerData">
         /// Valid and already added <see cref="RegisterData"/> with specified
@@ -118,7 +115,7 @@ namespace Athena.NET.Compiler.Interpreter
         }
 
         /// <summary>
-        /// Provides adding a value to a specified, <see cref="NativeMemoryList{T}"/>
+        /// Add a value to a specified, <see cref="NativeMemoryList{T}"/>
         /// <paramref name="registerMemory"/>, that could be potentially shifted
         /// </summary>
         private void AddRegisterData(NativeMemoryList<ulong> registerMemory, int totalMemorySize, int offset, ulong value)
@@ -134,15 +131,15 @@ namespace Athena.NET.Compiler.Interpreter
         }
 
         /// <summary>
-        /// Provides setting a new <paramref name="registerData"/> by shifting <paramref name="value"/> 
-        /// with coresponding <paramref name="size"/> mask to a <paramref name="registerData"/> 
+        /// Set a new <paramref name="registerData"/> by shifting <see langword="int"/>
+        /// <paramref name="value"/> with coresponding <paramref name="size"/> mask
         /// </summary>
         private ulong SetRegisterData(ulong registerData, int size, int offset, int value) =>
             registerData ^ (((ulong)value ^ ((registerData >> offset)
                 & (ulong)((int)Math.Pow(2, size) - 1))) << offset);
 
         /// <summary>
-        /// This method will recalculate your <see cref="RegisterData.Offset"/>
+        /// Recalculates your <see cref="RegisterData.Offset"/>
         /// in a relative way to your <see cref="RegisterData.Size"/>
         /// </summary>
         private int CalculateRelativeOffset(RegisterData registerData, int registerIndex)

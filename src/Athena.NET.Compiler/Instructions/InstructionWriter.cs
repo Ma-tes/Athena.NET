@@ -48,7 +48,7 @@ namespace Athena.NET.Compiler.Instructions
             = new();
 
         /// <summary>
-        /// Creates individual instructions 
+        /// Creates an individual instructions
         /// from nodes, which are then stored
         /// in a <see cref="InstructionList"/>.
         /// </summary>
@@ -83,10 +83,10 @@ namespace Athena.NET.Compiler.Instructions
         };
 
         /// <summary>
-        /// Choose maching <see cref="Register"/> from current
-        /// <see cref="InstructionWriter"/>, by size of data
+        /// Chooses maching <see cref="Register"/> from current
+        /// <see cref="InstructionWriter"/>, by size of <paramref name="data"/>
         /// </summary>
-        /// <returns>Specific register for current data size</returns>
+        /// <returns>Specific <see cref="Register"/> for current <paramref name="data"/> size</returns>
         internal Register? GetEmitIntRegister(int data)
         {
             if (RegisterAH.CalculateByteSize(data) != RegisterAH.TypeSize) { return RegisterAH; }
@@ -95,10 +95,10 @@ namespace Athena.NET.Compiler.Instructions
         }
 
         /// <summary>
-        /// Choose maching <see cref="Register"/> and get <see cref="MemoryData"/>
-        /// from current <see cref="InstructionWriter"/>, by indetifier id
+        /// Chooses maching <see cref="Register"/> and <see cref="MemoryData"/>
+        /// from current <see cref="InstructionWriter"/>, by <paramref name="identifierId"/>
         /// </summary>
-        /// <returns>Specific register and coresponding
+        /// <returns>Specific <see cref="Register"/> and coresponding
         /// <see langword="out"/> <see cref="MemoryData"/>
         /// </returns>
         internal Register? GetIdentifierData(out MemoryData returnData, uint identifierId)
@@ -110,10 +110,10 @@ namespace Athena.NET.Compiler.Instructions
         }
 
         /// <summary>
-        /// Choose maching <see cref="Register"/> and get <see cref="MemoryData"/>
-        /// from current <see cref="InstructionWriter"/>, by indetifier name
+        /// Chooses maching <see cref="Register"/> and <see cref="MemoryData"/>
+        /// from current <see cref="InstructionWriter"/>, by <paramref name="identifierName"/>
         /// </summary>
-        /// <returns>Specific register and coresponding
+        /// <returns>Specific <see cref="Register"/> and coresponding
         /// <see langword="out"/> <see cref="MemoryData"/>
         /// </returns>
         internal Register? GetIdentifierData(out MemoryData returnData, ReadOnlyMemory<char> identifierName)

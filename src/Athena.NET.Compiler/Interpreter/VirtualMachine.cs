@@ -24,14 +24,16 @@ namespace Athena.NET.Compiler.Interpreter
             );
 
         /// <summary>
-        /// Index of a last found <see cref="OperatorCodes.Nop"/>
-        /// instruction, that could be internally changed in a runtime
+        /// Index of a last found <see cref="OperatorCodes.Nop"/> instruction
         /// </summary>
+        /// <remarks>
+        /// It could be internally changed in a runtime
+        /// </remarks>
         public int LastInstructionNopIndex { get; internal set; }
 
         /// <summary>
         /// Creates virtualized interpretation of
-        /// setted instructions
+        /// already set instructions
         /// </summary>
         /// <param name="instructions">
         /// <see cref="OperatorCodes"/> instructions
@@ -104,7 +106,7 @@ namespace Athena.NET.Compiler.Interpreter
         /// <see cref="OperatorCodes"/> instruction for specifing type of a register
         /// </param>
         /// <returns>
-        /// A <see langword="bool"/> value, if register with
+        /// A <see langword="bool"/> value, if <see cref="Structures.Register"/> with
         /// <see cref="OperatorCodes"/> <paramref name="operatorCode"/> was found
         /// </returns>
         public bool TryGetRegisterMemory([NotNullWhen(true)]out RegisterMemory? registerMemory, OperatorCodes operatorCode) 
@@ -139,8 +141,11 @@ namespace Athena.NET.Compiler.Interpreter
             return -1;
         }
 
-        //TODO: Create a propriete factory pattern calling
-        //for every instruction
+        /// <summary>
+        /// Executes interpretation of <paramref name="instructionCode"/>
+        /// and it will return a <see langword="bool"/> value, if was
+        /// succesful
+        /// </summary>
         private bool TryInterpretInstruction(OperatorCodes instructionCode, ReadOnlySpan<uint> instructionData)
         {
             if (instructionCode == OperatorCodes.Store)
