@@ -52,22 +52,11 @@ namespace Athena.NET.Compiler.Interpreter
         public void AddData(RegisterData registerData, int value)
         {
             int absoluteValue = Math.Abs(value);
-
             int finalOffset = CalculateRelativeOffset(registerData, registerMemoryList.Count - 1);
-            ulong finalValue = (ulong)absoluteValue << finalOffset;
-            ulong offsetIndex = (ulong)(CalculateOffsetIndex(value) << finalOffset);
-
             int totalMemorySize = registerData.Offset + registerData.Size;
-            if (totalMemorySize > (RegisterSize * registerMemoryList.Count))
-            {
-                registerMemoryList.Add(default);
-                offsetIndexList.Add(default);
-                finalValue = (ulong)absoluteValue;
-                offsetIndex = (byte)CalculateOffsetIndex(value);
-            }
 
-            registerMemoryList.Span[registerMemoryList.Count - 1] += finalValue;
-            offsetIndexList.Span[offsetIndexList.Count - 1] += offsetIndex;
+            AddRegisterData(registerMemoryList, totalMemorySize, finalOffset, (ulong)absoluteValue);
+            AddRegisterData(offsetIndexList, totalMemorySize, finalOffset, (ulong)CalculateOffsetIndex(value));
             LastRegisterData = registerData;
         }
 
@@ -90,8 +79,7 @@ namespace Athena.NET.Compiler.Interpreter
             int registerIndex = CalculateMemoryIndex(registerData);
 
             int currentOffset = CalculateRelativeOffset(registerData, registerIndex);
-            ulong offsetIndex = (ulong)(CalculateOffsetIndex(value) << currentOffset);
-            offsetIndexList.Span[registerIndex] = offsetIndex;
+            offsetIndexList.Span[registerIndex] = (ulong)(CalculateOffsetIndex(value) << currentOffset);
 
             int absoluteValue = Math.Abs(value);
             ref ulong currentRegisterValue = ref registerMemoryList.Span[registerIndex];
@@ -114,12 +102,10 @@ namespace Athena.NET.Compiler.Interpreter
         public ulong GetData(RegisterData registerData)
         {
             int registerIndex = CalculateMemoryIndex(registerData);
-            ulong currentRegister = registerMemoryList.Span[registerIndex];
             int currentOffset = CalculateRelativeOffset(registerData, registerIndex);
 
-            int returnData = (int)GetRegisterValue(currentRegister, currentOffset, registerData.Size);
+            int returnData = (int)GetRegisterValue(registerMemoryList.Span[registerIndex], currentOffset, registerData.Size);
             int offsetIndex = (int)GetRegisterValue(offsetIndexList.Span[registerIndex], currentOffset, 4);
-
             return (ulong)(dynamic)(returnData - ((returnData * 2) * offsetIndex));
         }
 
@@ -137,6 +123,21 @@ namespace Athena.NET.Compiler.Interpreter
             return totalMemorySize / (RegisterSize + ((RegisterSize * (currentOffsetSize)) / registerData.Offset));
         }
 
+        /// <summary>
+        /// Provides adding a value to a specified, <see cref="NativeMemoryList{T}"/>
+        /// <paramref name="registerMemory"/>, that could be potentially shifted
+        /// </summary>
+        private void AddRegisterData(NativeMemoryList<ulong> registerMemory, int totalMemorySize, int offset, ulong value)
+        {
+            ulong resultValue = value << offset;
+            if (totalMemorySize > (RegisterSize * registerMemory.Count)) 
+            {
+                registerMemory.Add(default);
+                resultValue = value;
+            }
+            int lastIndex = registerMemory.Count - 1;
+            registerMemory.Span[lastIndex] += resultValue;
+        }
 
         /// <summary>
         /// This method will recalculate your <see cref="RegisterData.Offset"/>
