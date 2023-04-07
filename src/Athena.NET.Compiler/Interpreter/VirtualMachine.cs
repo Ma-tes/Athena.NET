@@ -54,11 +54,11 @@ namespace Athena.NET.Compiler.Interpreter
 
                 OperatorCodes currentInstructionCode = (OperatorCodes)instructions[nextInstructionIndex];
                 ReadOnlySpan<uint> currentInstructions = instructions[(nextInstructionIndex)..(nextNopInstruction)];
-                if(!TryInterpretInstruction(currentInstructionCode, currentInstructions))
-                    throw new Exception("Instruction wasn't completed or found");
 
                 LastInstructionNopIndex = nextNopInstruction;
                 instructionIndex += currentInstructions.Length;
+                if(!TryInterpretInstruction(currentInstructionCode, currentInstructions))
+                    throw new Exception("Instruction wasn't completed or found");
             }
         }
 
@@ -88,7 +88,6 @@ namespace Athena.NET.Compiler.Interpreter
 
                 instructionCount += isRegisterMemory ? 3 : 1;
             }
-            returnData.Dispose();
             return returnData.Span;
         }
 

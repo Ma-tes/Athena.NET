@@ -51,11 +51,10 @@ namespace Athena.NET.Compiler.Interpreter
         /// <param name="value">Value that will be stored in a memory</param>
         public void AddData(RegisterData registerData, int value)
         {
-            int absoluteValue = Math.Abs(value);
             int finalOffset = CalculateRelativeOffset(registerData, registerMemoryList.Count - 1);
             int totalMemorySize = registerData.Offset + registerData.Size;
 
-            AddRegisterData(registerMemoryList, totalMemorySize, finalOffset, (ulong)absoluteValue);
+            AddRegisterData(registerMemoryList, totalMemorySize, finalOffset, (ulong)Math.Abs(value));
             AddRegisterData(offsetIndexList, totalMemorySize, finalOffset, (ulong)CalculateOffsetIndex(value));
             LastRegisterData = registerData;
         }
@@ -75,16 +74,11 @@ namespace Athena.NET.Compiler.Interpreter
         /// <param name="value">Value that will be replaces in a memory</param>
         public void SetData(RegisterData registerData, int value)
         {
-            int typeSize = (int)Math.Pow(2, registerData.Size) - 1;
             int registerIndex = CalculateMemoryIndex(registerData);
-
             int currentOffset = CalculateRelativeOffset(registerData, registerIndex);
-            offsetIndexList.Span[registerIndex] = (ulong)(CalculateOffsetIndex(value) << currentOffset);
 
-            int absoluteValue = Math.Abs(value);
-            ref ulong currentRegisterValue = ref registerMemoryList.Span[registerIndex];
-            currentRegisterValue = currentRegisterValue ^ (((ulong)absoluteValue ^ ((currentRegisterValue >> currentOffset)
-                & (ulong)typeSize)) << currentOffset);
+            registerMemoryList.Span[registerIndex] = SetRegisterData(registerMemoryList.Span[registerIndex], registerData.Size, currentOffset, Math.Abs(value));
+            offsetIndexList.Span[registerIndex] = SetRegisterData(offsetIndexList.Span[registerIndex], 4, currentOffset, CalculateOffsetIndex(value));
         }
 
         /// <summary>
@@ -138,6 +132,14 @@ namespace Athena.NET.Compiler.Interpreter
             int lastIndex = registerMemory.Count - 1;
             registerMemory.Span[lastIndex] += resultValue;
         }
+
+        /// <summary>
+        /// Provides setting a new <paramref name="registerData"/> by shifting <paramref name="value"/> 
+        /// with coresponding <paramref name="size"/> mask to a <paramref name="registerData"/> 
+        /// </summary>
+        private ulong SetRegisterData(ulong registerData, int size, int offset, int value) =>
+            registerData ^ (((ulong)value ^ ((registerData >> offset)
+                & (ulong)((int)Math.Pow(2, size) - 1))) << offset);
 
         /// <summary>
         /// This method will recalculate your <see cref="RegisterData.Offset"/>

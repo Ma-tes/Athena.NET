@@ -2,4 +2,10 @@ int positionX = 25 * (0 - 1);
 int positionY = 16;
 int positionScaler = 83;
 int result = positionX + positionY;
-result = (result + (positionScaler * (0 - 1))) * (0 - 2) - 200;
+result = (result + (positionScaler * (0 - 1))) * (0 - 2) + 20;
+if(result >= 0) ->
+	result = result * (0 - 1);
+	positionX = positionX - 1;
+	positionY = positionY + 1;
+
+
