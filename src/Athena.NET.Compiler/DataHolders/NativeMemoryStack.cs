@@ -12,15 +12,22 @@
             Count++;
         }
 
+        public void PushRange(params T[] data) 
+        {
+            Span<T> dataSpan = data.AsSpan();
+            PushRange(dataSpan);
+        }
+
         public void PushRange(Span<T> data) 
         {
             int dataLength = data.Length;
             int countDifference = allocationLength - Count;
-            if (dataLength > countDifference)
-                MemoryPointer = ReallocateMemory(dataLength - countDifference);
+            if (dataLength > countDifference) 
+                MemoryPointer = ReallocateMemory(dataLength);
 
-            memoryBuffer[..Count].CopyTo(memoryBuffer[countDifference..]);
-            data.CopyTo(memoryBuffer[..Count]);
+            memoryBuffer[..Count].CopyTo(memoryBuffer[dataLength..]);
+            data.CopyTo(memoryBuffer[..dataLength]);
+            Count += dataLength;
         } 
     }
 }

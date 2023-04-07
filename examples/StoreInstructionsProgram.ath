@@ -7,5 +7,11 @@ if(result >= 0) ->
 	result = result * (0 - 1);
 	positionX = positionX - 1;
 	positionY = positionY + 1;
+	if(positionX < positionY) ->
+		positionX = 83;
+		if(positionY > ((positionX * (0 - 1)) - positionY)) ->
+			positionY = positionY * 2;
+
+
 
 
