@@ -1,5 +1,6 @@
 ﻿using Athena.NET.Lexer;
 using Athena.NET.Lexer.Structures;
+using Athena.NET.Parser.Interfaces;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Athena.NET.Parser.Nodes.OperatorNodes
@@ -21,6 +22,18 @@ namespace Athena.NET.Parser.Nodes.OperatorNodes
             }
 
             return operatorNode is not null;
+        }
+
+        public static bool TryGetOperatorResult(out NodeResult<INode> operatorResult, ReadOnlySpan<Token> tokens) 
+        {
+            int operatorIndex = IndexOfOperator(tokens);
+            if (operatorIndex != -1 && TryGetOperator(out OperatorNode operatorNode, tokens[operatorIndex].TokenId))
+            {
+                operatorResult = operatorNode.CreateStatementResult(tokens, operatorIndex);
+                return operatorResult.ResultMessage != StatementResultMessage.Error;
+            }
+            operatorResult = new ErrorNodeResult<INode>("Any valid operator node wasn't found");
+            return false;
         }
 
         //Value -1 means that wasn't found

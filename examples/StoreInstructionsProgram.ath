@@ -11,6 +11,15 @@ if(result >= 0) ->
 		positionX = 83;
 		if(positionY > ((positionX * (0 - 1)) - positionY)) ->
 			positionY = positionY * 2;
+print positionX;
+print positionY;
+print positionScaler;
+print result;
+print (positionX + positionY) * positionScaler;
+
+
+
+
 
 
 

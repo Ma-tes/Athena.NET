@@ -151,6 +151,9 @@ namespace Athena.NET.Compiler.Interpreter
             if (instructionCode == OperatorCodes.Store)
                 return new StoreInstruction()
                     .InterpretInstruction(instructionData, this);
+            if (instructionCode == OperatorCodes.Print)
+                return new PrintInstruction()
+                    .InterpretInstruction(instructionData, this);
 
             if (instructionCode >= OperatorCodes.JumpE &&
                instructionCode <= OperatorCodes.JumpLE)

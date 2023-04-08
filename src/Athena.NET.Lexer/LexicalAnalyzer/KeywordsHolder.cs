@@ -31,6 +31,7 @@ namespace Athena.NET.Lexer.LexicalAnalyzer
                 new (TokenIndentificator.LessEqual, "<="),
                 new (TokenIndentificator.LessThan, "<"),
                 new (TokenIndentificator.Invoker, "->"),
+                new (TokenIndentificator.Print, "print"),
 
                 //I know this implementation is actually
                 //horrible, but for now is somehow acceptable

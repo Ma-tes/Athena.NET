@@ -98,6 +98,17 @@ namespace Athena.NET.Parser.Nodes
             }
         }
 
+        public static INode GetDataNode(this ReadOnlySpan<Token> tokens) 
+        {
+            int identifierIndex = tokens.IndexOfToken(TokenIndentificator.Identifier);
+            if (identifierIndex != -1)
+                return new IdentifierNode(tokens[identifierIndex].Data);
+            int tokenTypeIndex = tokens.IndexOfTokenType();
+            if (tokenTypeIndex != -1)
+                return new DataNode<int>(tokens[tokenTypeIndex].TokenId, int.Parse(tokens[tokenTypeIndex].Data.Span));
+            return null!;
+        }
+
         private static bool TryGetNodeInstance([NotNullWhen(true)]out INode node, Token currentToken) 
         {
             int nodeInstancesLength = nodeInstances.Length;

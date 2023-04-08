@@ -75,6 +75,8 @@ namespace Athena.NET.Compiler.Instructions
         {
             EqualAssignStatement equalNode => new StoreInstruction()
                 .EmitInstruction(equalNode, this),
+            PrintStatement printNode => new PrintInstruction()
+                .EmitInstruction(printNode, this),
             BodyStatement bodyNode => new JumpInstruction()
                 .EmitInstruction(bodyNode, this),
             OperatorNode operatorNode => new OperatorInstruction()
@@ -120,6 +122,13 @@ namespace Athena.NET.Compiler.Instructions
         {
             uint identiferId = MemoryData.CalculateIdentifierId(identifierName);
             return GetIdentifierData(out returnData, identiferId);
+        }
+
+        internal void AddMemoryDataInstructions(OperatorCodes registerCode, MemoryData memoryData)
+        {
+            InstructionList.AddRange((uint)registerCode,
+                (uint)memoryData.Size,
+                (uint)memoryData.Offset);
         }
 
         /// <summary>

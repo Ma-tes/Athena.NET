@@ -9,6 +9,7 @@
 
         Store = 0xffee01,
         Load = 0xffee02,
+        Print = 0xffee08,
         //For now, it's being used for determine
         //whetever current uint is a instruction
         Nop = 0xffee07,
@@ -39,6 +40,6 @@
         JumpG = 0xffeeC2,
         JumpGE = 0xffeeC3,
         JumpL = 0xffeeC4,
-        JumpLE = 0xffeeC5
+        JumpLE = 0xffeeC5,
     }
 }

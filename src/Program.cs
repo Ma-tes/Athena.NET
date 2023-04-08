@@ -20,18 +20,11 @@ using (var tokenReader = new TokenReader
     using (var instructionWriter = new InstructionWriter()) 
     {
         instructionWriter.CreateInstructions(nodes.Span);
-        WriteInstructions(instructionWriter.InstructionList.Span);
-        using (var virtualMachine = new VirtualMachine()) 
-        {
+        using var virtualMachine = new VirtualMachine();
             virtualMachine.CreateInterpretation(instructionWriter.InstructionList.Span);
-            if (virtualMachine.TryGetRegisterMemory(out RegisterMemory? axRegister, OperatorCodes.AX))
-                WriteRegisterData(axRegister,
-                    new RegisterData(0, 8),
-                    new RegisterData(8, 8),
-                    new RegisterData(16, 8),
-                    new RegisterData(24, 8)
-                    );
-        }
+#if DEBUG 
+        WriteInstructions(instructionWriter.InstructionList.Span);
+#endif
     }
 
     //using (var nodeViewer = new NodeViewer(nodes, new Size(4000, 4000)))

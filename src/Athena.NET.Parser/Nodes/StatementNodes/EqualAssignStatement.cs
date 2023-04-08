@@ -31,25 +31,10 @@ namespace Athena.NET.Parser.Nodes.StatementNodes
         protected override bool TryParseRigthNode(out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens)
         {
             int semicolonIndex = tokens.IndexOfToken(TokenIndentificator.Semicolon);
-            int operatorIndex = OperatorHelper.IndexOfOperator(tokens[..semicolonIndex]);
-            if (operatorIndex != -1 && OperatorHelper.TryGetOperator(out OperatorNode operatorNode, tokens[operatorIndex].TokenId))
-            {
-                var operatorResult = operatorNode.CreateStatementResult(tokens, operatorIndex);
-                nodeResult = operatorResult;
-                return operatorResult.ResultMessage != StatementResultMessage.Error;
-            }
+            if (OperatorHelper.TryGetOperatorResult(out nodeResult, tokens[..semicolonIndex]))
+                return true;
 
-            INode resultNode = null!;
-            int identifierIndex = tokens.IndexOfToken(TokenIndentificator.Identifier);
-            int tokenTypeIndex = tokens.IndexOfTokenType();
-            if (identifierIndex != -1)
-                resultNode = new IdentifierNode(tokens[identifierIndex].Data);
-            if (tokenTypeIndex != -1) 
-            {
-                int currentData = int.Parse(tokens[tokenTypeIndex].Data.Span);
-                resultNode = new DataNode<int>(tokens[tokenTypeIndex].TokenId, currentData);
-            }
-
+            INode resultNode = tokens[..semicolonIndex].GetDataNode();
             nodeResult = resultNode is not null ? new SuccessulNodeResult<INode>(resultNode) :
                 new ErrorNodeResult<INode>("Any valid node wasn't found");
             return resultNode is not null;

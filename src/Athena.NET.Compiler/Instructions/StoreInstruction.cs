@@ -29,7 +29,7 @@ namespace Athena.NET.Compiler.Instructions
                     operatorInstruction.EmitMemoryData.Size)!;
 
                 bool instructionResult = TryWriteStoreInstruction(childrenNodes.LeftNode, currentRegister, currentRegister.TypeSize / 2, writer);
-                AddMemoryDataInstructions(OperatorCodes.TM, operatorInstruction.EmitMemoryData, writer);
+                writer.AddMemoryDataInstructions(OperatorCodes.TM, operatorInstruction.EmitMemoryData);
                 return instructionResult;
             }
 
@@ -40,8 +40,8 @@ namespace Athena.NET.Compiler.Instructions
                 if (identifierRegister is null)
                     return false;
 
-                bool instructionResult =  TryWriteStoreInstruction(childrenNodes.LeftNode, identifierRegister, rightData.Size, writer);
-                AddMemoryDataInstructions(identifierRegister.RegisterCode, rightData, writer);
+                bool instructionResult = TryWriteStoreInstruction(childrenNodes.LeftNode, identifierRegister, rightData.Size, writer);
+                writer.AddMemoryDataInstructions(identifierRegister.RegisterCode, rightData);
                 return instructionResult;
             }
 
@@ -110,15 +110,8 @@ namespace Athena.NET.Compiler.Instructions
                 currentMemoryData = register.AddRegisterData(instanceNode.NodeData, size);
 
             writer.InstructionList.Add((uint)OperatorCodes.Store);
-            AddMemoryDataInstructions(register.RegisterCode, currentMemoryData, writer);
+            writer.AddMemoryDataInstructions(register.RegisterCode, currentMemoryData);
             return true;
-        }
-
-        private void AddMemoryDataInstructions(OperatorCodes registerCode, MemoryData memoryData, InstructionWriter writer)
-        {
-            writer.InstructionList.AddRange((uint)registerCode,
-                (uint)memoryData.Size,
-                (uint)memoryData.Offset);
         }
     }
 }
