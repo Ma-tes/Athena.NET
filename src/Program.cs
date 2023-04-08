@@ -22,7 +22,7 @@ using (var tokenReader = new TokenReader
         instructionWriter.CreateInstructions(nodes.Span);
         using var virtualMachine = new VirtualMachine();
             virtualMachine.CreateInterpretation(instructionWriter.InstructionList.Span);
-#if DEBUG 
+#if DEBUG
         WriteInstructions(instructionWriter.InstructionList.Span);
 #endif
     }

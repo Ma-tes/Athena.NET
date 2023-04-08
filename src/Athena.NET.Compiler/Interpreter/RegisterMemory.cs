@@ -106,12 +106,18 @@ namespace Athena.NET.Compiler.Interpreter
         /// </summary>
         private int CalculateMemoryIndex(RegisterData registerData) 
         {
-            if (registerData.Offset == 0 || RegisterCode == OperatorCodes.TM)
-                return registerData.Offset / RegisterSize;
+            //TODO: Try to avoid this expensive if statement
+            if (registerData.Offset == 0 || RegisterCode == OperatorCodes.TM) 
+            {
+                int returnMemoryIndex = registerData.Offset / RegisterSize;
+                return returnMemoryIndex > registerMemoryList.Count ? registerMemoryList.Count - 1 : returnMemoryIndex;
+            }
 
             int totalMemorySize = registerData.Offset + registerData.Size;
             int currentOffsetSize = registerData.Offset > RegisterSize ? (registerData.Offset + registerData.Size) / RegisterSize : 1;
-            return totalMemorySize / (RegisterSize + ((RegisterSize * (currentOffsetSize)) / registerData.Offset));
+
+            int returnIndex = totalMemorySize / (RegisterSize + ((RegisterSize * (currentOffsetSize)) / registerData.Offset));
+            return returnIndex > registerMemoryList.Count ? registerMemoryList.Count - 1 : returnIndex;
         }
 
         /// <summary>
