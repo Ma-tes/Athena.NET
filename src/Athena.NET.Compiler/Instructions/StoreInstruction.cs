@@ -28,7 +28,7 @@ namespace Athena.NET.Compiler.Instructions
                 Register currentRegister = writer.GetEmitIntRegister(
                     operatorInstruction.EmitMemoryData.Size)!;
 
-                bool instructionResult = TryWriteStoreInstruction(childrenNodes.LeftNode, currentRegister, currentRegister.TypeSize / 2, writer);
+                bool instructionResult = TryWriteStoreInstruction(childrenNodes.LeftNode, currentRegister, currentRegister.TypeSize, writer);
                 writer.AddMemoryDataInstructions(OperatorCodes.TM, operatorInstruction.EmitMemoryData);
                 return instructionResult;
             }

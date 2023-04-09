@@ -51,7 +51,7 @@ namespace Athena.NET.Compiler.Interpreter
         public void AddData(RegisterData registerData, int value)
         {
             int memoryIndex = CalculateMemoryIndex(registerData);
-            int finalOffset = CalculateRelativeOffset(registerData, memoryIndex);
+            int finalOffset = CalculateRelativeOffset(registerData, registerMemoryList.Count - 1);
             int totalMemorySize = registerData.Offset + registerData.Size;
 
             AddRegisterData(registerMemoryList, totalMemorySize, finalOffset, (ulong)Math.Abs(value));
@@ -108,17 +108,16 @@ namespace Athena.NET.Compiler.Interpreter
         private int CalculateMemoryIndex(RegisterData registerData) 
         {
             //TODO: Try to avoid this expensive if statement
-            if (registerData.Offset == 0 || RegisterCode == OperatorCodes.TM) 
+            if (registerData.Offset == 0 || registerData.Size == RegisterSize || RegisterCode == OperatorCodes.TM)
             {
-                int returnMemoryIndex = registerData.Offset / RegisterSize;
-                return returnMemoryIndex > registerMemoryList.Count ? registerMemoryList.Count - 1 : returnMemoryIndex;
+                int returnMemoryIndex = ((registerData.Offset + (registerData.Size / 2)) / RegisterSize);
+                return returnMemoryIndex > registerMemoryList.Count - 1 ? registerMemoryList.Count - 1 : returnMemoryIndex;
             }
+            int registerDifference = (registerData.Offset - RegisterSize);
+            int sizeIndex = ((Math.Abs(registerDifference) + registerDifference) >> 1) / (registerDifference - 1);
+            int offsetIndex = ((registerData.Offset / RegisterSize) - ((registerData.Offset - registerData.Size) / RegisterSize)) ^ 1;
 
-            int totalMemorySize = registerData.Offset + registerData.Size;
-            int currentOffsetSize = registerData.Offset > RegisterSize ? (registerData.Offset + registerData.Size) / RegisterSize : 1;
-
-            int returnIndex = totalMemorySize / (RegisterSize + ((RegisterSize * (currentOffsetSize)) / registerData.Offset));
-            return returnIndex > registerMemoryList.Count ? registerMemoryList.Count - 1 : returnIndex;
+            return (registerData.Offset - (registerData.Size * sizeIndex * offsetIndex)) / RegisterSize;
         }
 
         /// <summary>
@@ -154,7 +153,7 @@ namespace Athena.NET.Compiler.Interpreter
             if (registerIndex == 0)
                 return registerData.Offset;
 
-            if (registerIndex < 0 || (RegisterSize * (registerIndex)) == registerData.Offset)
+            if (registerIndex < 0 || (RegisterSize * (registerIndex)) >= registerData.Offset)
                 return 0;
             int relativeOffset = (registerData.Size / RegisterSize) ^ 1;
             return (registerData.Offset - ((RegisterSize * (registerIndex - relativeOffset)) + registerData.Size)) * relativeOffset;
