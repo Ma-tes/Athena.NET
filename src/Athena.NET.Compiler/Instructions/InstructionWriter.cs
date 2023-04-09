@@ -32,10 +32,20 @@ namespace Athena.NET.Compiler.Instructions
         /// </summary>
         internal Register RegisterAX { get; }
             = new(OperatorCodes.AX, typeof(short));
+
+        /// <summary>
+        /// Implementation of a <see cref="Register"/> class as
+        /// a 32-bit register with a code <see cref="OperatorCodes.EAX"/>.
+        /// </summary>
+        internal Register RegisterEAX { get; }
+            = new(OperatorCodes.EAX, typeof(int));
+
+
         /// <summary>
         /// Implementation of a <see cref="Register"/> class as
         /// a 16-bit temporary register with a code <see cref="OperatorCodes.TM"/>.
         /// </summary>
+
         internal Register TemporaryRegisterTM { get; }
             = new(OperatorCodes.TM, typeof(short));
 
@@ -93,6 +103,7 @@ namespace Athena.NET.Compiler.Instructions
         {
             if (RegisterAH.CalculateByteSize(data) != RegisterAH.TypeSize) { return RegisterAH; }
             if (RegisterAX.CalculateByteSize(data) != RegisterAX.TypeSize) { return RegisterAX; }
+            if (RegisterEAX.CalculateByteSize(data) != RegisterEAX.TypeSize) { return RegisterEAX; }
             return null;
         }
 
@@ -107,6 +118,7 @@ namespace Athena.NET.Compiler.Instructions
         {
             if (RegisterAH.TryGetMemoryData(out MemoryData AHData, identifierId)) { returnData = AHData; return RegisterAH; }
             if (RegisterAX.TryGetMemoryData(out MemoryData AXData, identifierId)) { returnData = AXData; return RegisterAX; }
+            if (RegisterEAX.TryGetMemoryData(out MemoryData EAXData, identifierId)) { returnData = EAXData; return RegisterEAX; }
             returnData = default!;
             return null;
         }

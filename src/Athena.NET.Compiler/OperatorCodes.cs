@@ -19,6 +19,7 @@
         //24 bits
         AH = 0xffeeA0, //Register of 8 bits
         AX = 0xffeeB0, //Register of 16 bits
+        EAX = 0xffeeC0, // Register of 32 bits
         TM = 0xffeeB1, //Temporary access memory
 
         //Arithmetic and logic instruction
