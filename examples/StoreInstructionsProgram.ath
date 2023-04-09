@@ -3,8 +3,9 @@ int positionY = 16;
 int positionScaler = 83;
 int result = positionX + positionY;
 result = (result + (positionScaler * (0 - 1))) * (0 - 2) + 20;
-if(result < 0) ->
+if(result > 0) ->
 	int positionZ = 83;
+	int positionH = 33;
 	result = result * (0 - 1);
 	positionX = positionX - 1;
 	positionY = positionY + 1;
@@ -14,11 +15,24 @@ if(result < 0) ->
 		positionX = 83;
 		if(positionY > ((positionX * (0 - 1)) - positionY)) ->
 			positionY = positionY * 2;
-int newValue = 99;
+int newValue = 120;
+print newValue;
+int a = 18;
+int aa = 19;
+int aaa = 20;
+int aaaa = 21;
+int aaaaa = 22;
+int secondNewValue = 23;
+print a;
+print aa;
+print aaa;
+print aaaa;
+print aaaaa;
+print secondNewValue;
 print positionX;
 print positionY;
 print positionScaler;
-print result + newValue;
+print result + (newValue + secondNewValue);
 print (positionX + positionY) * positionScaler;
 
 

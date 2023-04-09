@@ -50,7 +50,8 @@ namespace Athena.NET.Compiler.Interpreter
         /// <param name="value">Value that will be stored in a memory</param>
         public void AddData(RegisterData registerData, int value)
         {
-            int finalOffset = CalculateRelativeOffset(registerData, registerMemoryList.Count - 1);
+            int memoryIndex = CalculateMemoryIndex(registerData);
+            int finalOffset = CalculateRelativeOffset(registerData, memoryIndex);
             int totalMemorySize = registerData.Offset + registerData.Size;
 
             AddRegisterData(registerMemoryList, totalMemorySize, finalOffset, (ulong)Math.Abs(value));
@@ -127,7 +128,7 @@ namespace Athena.NET.Compiler.Interpreter
         private void AddRegisterData(NativeMemoryList<ulong> registerMemory, int totalMemorySize, int offset, ulong value)
         {
             ulong resultValue = value << offset;
-            if (totalMemorySize > (RegisterSize * registerMemory.Count)) 
+            if (totalMemorySize > (RegisterSize * registerMemory.Count))
             {
                 registerMemory.Add(default);
                 resultValue = value;
@@ -153,8 +154,7 @@ namespace Athena.NET.Compiler.Interpreter
             if (registerIndex == 0)
                 return registerData.Offset;
 
-            int offsetShift = (registerData.Offset / RegisterSize) >> 1;
-            if (registerIndex < 0 || registerData.Offset >> offsetShift == RegisterSize)
+            if (registerIndex < 0 || (RegisterSize * (registerIndex)) == registerData.Offset)
                 return 0;
             int relativeOffset = (registerData.Size / RegisterSize) ^ 1;
             return (registerData.Offset - ((RegisterSize * (registerIndex - relativeOffset)) + registerData.Size)) * relativeOffset;
@@ -168,7 +168,7 @@ namespace Athena.NET.Compiler.Interpreter
         /// greater then 0, it will returns one, otherwise zero
         /// </returns>
         private int CalculateOffsetIndex(int value) =>
-           (((Math.Abs(value) + value) >> 1) / value) ^ 1;
+           (((Math.Abs(value) + value) >> 1) / value) ^ 1; 
 
         /// <summary>
         /// Provides calculation of original value from <paramref name="registerData"/>,

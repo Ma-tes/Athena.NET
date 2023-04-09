@@ -20,11 +20,11 @@ using (var tokenReader = new TokenReader
     using (var instructionWriter = new InstructionWriter()) 
     {
         instructionWriter.CreateInstructions(nodes.Span);
-        using var virtualMachine = new VirtualMachine();
-            virtualMachine.CreateInterpretation(instructionWriter.InstructionList.Span);
 #if DEBUG
         WriteInstructions(instructionWriter.InstructionList.Span);
 #endif
+        using var virtualMachine = new VirtualMachine();
+            virtualMachine.CreateInterpretation(instructionWriter.InstructionList.Span);
     }
 
     //using (var nodeViewer = new NodeViewer(nodes, new Size(4000, 4000)))
