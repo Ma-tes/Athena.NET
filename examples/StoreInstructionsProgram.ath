@@ -1,6 +1,6 @@
 int positionX = 20;
 int positionY = 20;
-if(positionX + 10 > positionY) ->
+if(positionX + 10 < positionY) ->
 	print positionX;
 	print positionY;
 	int positionMultiplier = 100;
@@ -14,24 +14,23 @@ if(positionX + 10 > positionY) ->
 int positionScaler = 150;
 int positionScalerTwo = 20;
 int positionScalerThree = 30;
-int positionScalerFour = 40;
-int positionScalerFive = 50;
-int positionSix = positionScalerFive + positionScalerTwo + positionScalerThree + positionScalerFour;
-int positionSeven = positionSix - 11;
+int positionScalerFour = 31;
+int positionScalerOne = 150;
+int positionScalerTwoOne = 20;
+int positionScalerThreeOne = 30;
+int positionScalerFourOne = 31;
 print positionScaler;
 print positionScalerTwo;
 print positionScalerThree;
 print positionScalerFour;
-print positionScalerFive;
-print positionSix;
-print positionSeven;
-print positionX;
-print positionY;
-int scaler = 18;
-positionX = positionX * scaler;
-positionY = positionY * scaler;
-print positionX;
-print positionY;
+print positionScalerOne;
+print positionScalerTwoOne;
+print positionScalerThreeOne;
+print positionScalerFourOne;
+
+
+
+
 
 
 

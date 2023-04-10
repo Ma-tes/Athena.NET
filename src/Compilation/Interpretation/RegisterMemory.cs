@@ -1,5 +1,5 @@
-﻿using Athena.NET.Compilation.DataHolders;
-using Athena.NET.Compilation.Structures;
+﻿using Athena.NET.Compilation.Structures;
+using Athena.NET.Compilation.DataHolders;
 using System.Runtime.InteropServices;
 
 namespace Athena.NET.Compilation.Interpretation;
@@ -51,12 +51,12 @@ internal sealed class RegisterMemory : IDisposable
     public void AddData(RegisterData registerData, int value)
     {
         int memoryIndex = CalculateMemoryIndex(registerData);
-        int finalOffset = CalculateRelativeOffset(registerData, registerMemoryList.Count - 1);
+        int finalOffset = CalculateRelativeOffset(registerData, memoryIndex);
         int totalMemorySize = registerData.Offset + registerData.Size;
 
         AddRegisterData(registerMemoryList, totalMemorySize, finalOffset, (ulong)Math.Abs(value));
         AddRegisterData(offsetIndexList, totalMemorySize, finalOffset, (ulong)CalculateOffsetIndex(value));
-        LastRegisterData = registerData;
+        LastRegisterData = new RegisterData((uint)finalOffset, (uint)registerData.Size);
     }
 
     /// <summary>
@@ -96,6 +96,7 @@ internal sealed class RegisterMemory : IDisposable
         int registerIndex = CalculateMemoryIndex(registerData);
         int currentOffset = CalculateRelativeOffset(registerData, registerIndex);
 
+        registerIndex = registerIndex >= registerMemoryList.Count ? registerIndex - (registerMemoryList.Count - 1) : registerIndex;
         int returnData = (int)GetRegisterValue(registerMemoryList.Span[registerIndex], currentOffset, registerData.Size);
         int offsetIndex = (int)GetRegisterValue(offsetIndexList.Span[registerIndex], currentOffset, 4);
         return (ulong)(dynamic)(returnData - returnData * 2 * offsetIndex);
@@ -127,7 +128,7 @@ internal sealed class RegisterMemory : IDisposable
     private void AddRegisterData(NativeMemoryList<ulong> registerMemory, int totalMemorySize, int offset, ulong value)
     {
         ulong resultValue = value << offset;
-        if (totalMemorySize > RegisterSize * registerMemory.Count)
+        if (registerMemory.Count == 0 || (LastRegisterData.Offset + LastRegisterData.Size) / RegisterSize == 1)
         {
             registerMemory.Add(default);
             resultValue = value;
@@ -156,7 +157,7 @@ internal sealed class RegisterMemory : IDisposable
         if (registerIndex < 0 || RegisterSize * registerIndex >= registerData.Offset)
             return 0;
         int relativeOffset = registerData.Size / RegisterSize ^ 1;
-        return (registerData.Offset - (RegisterSize * (registerIndex - relativeOffset) + registerData.Size)) * relativeOffset;
+        return (registerData.Offset - (RegisterSize * (registerIndex - relativeOffset) + registerData.Size)) * relativeOffset / (RegisterSize / registerData.Size);
     }
 
     /// <summary>
