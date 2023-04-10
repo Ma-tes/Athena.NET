@@ -1,7 +1,6 @@
-﻿namespace Athena.NET.Attributes
+﻿namespace Athena.NET.Attributes;
+
+[AttributeUsage(AttributeTargets.Field)]
+internal class TokenTypeAttribute : Attribute
 {
-    [AttributeUsage(AttributeTargets.Field)]
-    internal class TokenTypeAttribute : Attribute
-    {
-    }
 }
