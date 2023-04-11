@@ -9,9 +9,7 @@ internal abstract class LogicalOperator : OperatorNode
 
     public sealed override int CalculateData(int firstData, int secondData)
     {
-        //Actually, I'm really emberrased by this
-        //solution, so I would like to change to
-        //something more better
+        //TODO: Improve this
         return CalculateLogicalBool(firstData, secondData) ? 1 : 0;
     }
 }

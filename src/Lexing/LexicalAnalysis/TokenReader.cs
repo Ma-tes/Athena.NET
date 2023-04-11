@@ -18,8 +18,7 @@ internal sealed class TokenReader : LexicalTokenReader
     {
     }
 
-    //This is a temporary and testing solution,
-    //it will be a much safer implementation
+    //TODO: Refactor
     protected override Token GetToken(ReadOnlyMemory<char> data)
     {
         var reservedKeyword = FindReservedKeyword(data);
@@ -31,8 +30,7 @@ internal sealed class TokenReader : LexicalTokenReader
         return new(GetPrimitiveToken(resultData, primitiveTypes), resultData);
     }
 
-    //Actually I have no idea if the reflection
-    //with attributes was a good choice.
+    //TODO: Reconsider design choices (reflection)
     private TokenIndentificator GetPrimitiveToken(ReadOnlyMemory<char> data, ReadOnlyMemory<PrimitiveType> primitiveTypes)
     {
         string dataString = data.ToString();

@@ -15,8 +15,7 @@ internal sealed class DivOperator : OperatorNode
 
     public override int CalculateData(int firstData, int secondData)
     {
-        //TODO: Recreate this to something
-        //more usable in the future
+        //TODO: Make more flexible
         if (secondData == 0)
             throw new DivideByZeroException("Divided by zero exception");
         return firstData / secondData;

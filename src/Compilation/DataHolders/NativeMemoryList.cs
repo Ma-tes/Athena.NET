@@ -42,7 +42,7 @@ public unsafe class NativeMemoryList<T> : IDisposable where T : struct //TODO: I
         Count += dataLength;
     }
 
-    //TODO: Create Span<T> params in .NET 7
+    //TODO: Create Span<T> params in .NET 8
     public void AddRange(params T[] data)
     {
         Span<T> dataSpan = data.AsSpan();

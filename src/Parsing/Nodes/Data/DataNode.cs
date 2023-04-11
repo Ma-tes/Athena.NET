@@ -4,10 +4,7 @@ using Athena.NET.Parsing.Interfaces;
 
 namespace Athena.NET.Parsing.Nodes.Data;
 
-//I'm still not sure about
-//this implementation, maybe I should
-//create a different implementation
-//of this data holding node
+//TODO: Consider reimplementing this
 public class DataNode<T> : INode
 {
     public TokenIndentificator NodeToken { get; }

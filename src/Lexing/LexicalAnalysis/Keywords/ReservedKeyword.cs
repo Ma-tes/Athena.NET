@@ -21,9 +21,7 @@ internal sealed class ReservedKeyword : IKeyword<ReadOnlyMemory<char>, ReadOnlyM
         LiteralConnect = literalConnect;
     }
 
-    //Actually I'am not happy with this
-    //solution, I hope, that I will fix
-    //it as soon as possible
+    //TODO: Refactor
     public bool TryGetKeyword([NotNullWhen(true)] out ReservedKeyword returnData, ReadOnlyMemory<char> source)
     {
         if (ParseFunction is not null)

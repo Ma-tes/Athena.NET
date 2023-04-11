@@ -36,8 +36,7 @@ internal static class OperatorHelper
         return false;
     }
 
-    //Value -1 means that wasn't found
-    //any operator token that in span
+    //If no operator is found, returns -1
     public static int IndexOfOperator(ReadOnlySpan<Token> tokens)
     {
         int lastOperatorWeight = 0;
