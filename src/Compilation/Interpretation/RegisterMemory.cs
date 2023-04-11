@@ -7,7 +7,7 @@ namespace Athena.NET.Compilation.Interpretation;
 /// <summary>
 /// A custom register memory manager, that will provide storing
 /// specific values in a single <see langword="long"/>,
-/// that can be changed by <see cref="RegisterData"/>
+/// that can be changed by <see cref="RegisterData"/>.
 /// </summary>
 internal sealed class RegisterMemory : IDisposable
 {
@@ -16,16 +16,16 @@ internal sealed class RegisterMemory : IDisposable
 
     /// <summary>
     /// Register code of choosed register
-    /// from a <see cref="OperatorCodes"/>
+    /// from a <see cref="OperatorCodes"/>.
     /// </summary>
     public OperatorCodes RegisterCode { get; }
     /// <summary>
-    /// Size of a one element in memory
+    /// Size of a single element in memory.
     /// </summary>
     public int RegisterSize { get; }
     /// <summary>
     /// Last added <see cref="RegisterData"/> into
-    /// a <see cref="NativeMemoryList{T}"/>
+    /// a <see cref="NativeMemoryList{T}"/>.
     /// </summary>
     public RegisterData LastRegisterData { get; private set; } =
         new(0, 0);
@@ -36,18 +36,16 @@ internal sealed class RegisterMemory : IDisposable
         RegisterSize = Marshal.SizeOf(type) * 8;
     }
 
+    //TODO: Make generic
     /// <summary>
-    /// Provides adding an a <see langword="int"/> value with
-    /// a coresponding <see cref="RegisterData"/>
+    /// Provides adding an <see langword="int"/> value with
+    /// a coresponding <see cref="RegisterData"/>.
     /// </summary>
-    /// <remarks>
-    /// This solutions is going to be fully generics
-    /// </remarks>
     /// <param name="registerData">
     /// Valid <see cref="RegisterData"/> with specified
-    /// <see cref="RegisterData.Offset"/> and <see cref="RegisterData.Size"/>
+    /// <see cref="RegisterData.Offset"/> and <see cref="RegisterData.Size"/>.
     /// </param>
-    /// <param name="value">Value that will be stored in a memory</param>
+    /// <param name="value">Value that will be stored in a memory.</param>
     public void AddData(RegisterData registerData, int value)
     {
         int memoryIndex = CalculateMemoryIndex(registerData);
@@ -58,18 +56,16 @@ internal sealed class RegisterMemory : IDisposable
         LastRegisterData = new RegisterData((uint)finalOffset, (uint)registerData.Size);
     }
 
+    //TODO: Make generic
     /// <summary>
     /// Provides setting an a <see langword="int"/> <paramref name="value"/> to
-    /// a coresponding <see cref="RegisterData"/>
+    /// a corresponding <see cref="RegisterData"/>.
     /// </summary>
-    /// <remarks>
-    /// This solutions is going to be fully generics
-    /// </remarks>
     /// <param name="registerData">
     /// Valid and already added <see cref="RegisterData"/> with specified
-    /// <see cref="RegisterData.Offset"/> and <see cref="RegisterData.Size"/>
+    /// <see cref="RegisterData.Offset"/> and <see cref="RegisterData.Size"/>.
     /// </param>
-    /// <param name="value">Value that will be replaces in a memory</param>
+    /// <param name="value">Value that will be replaced in memory.</param>
     public void SetData(RegisterData registerData, int value)
     {
         int registerIndex = CalculateMemoryIndex(registerData);
@@ -80,16 +76,14 @@ internal sealed class RegisterMemory : IDisposable
         offsetIndexList.Span[registerIndex] = SetRegisterData(offsetIndexList.Span[registerIndex], 4, currentOffset, CalculateOffsetIndex(value));
     }
 
+    //TODO: Make generic
     /// <summary>
     /// Provides getting an a <see langword="ulong"/> value by
-    /// a coresponding <see cref="RegisterData"/>
+    /// a corresponding <see cref="RegisterData"/>.
     /// </summary>
-    /// <remarks>
-    /// This solutions is going to be fully generics
-    /// </remarks>
     /// <param name="registerData">
     /// Valid and already added <see cref="RegisterData"/> with specified
-    /// <see cref="RegisterData.Offset"/> and <see cref="RegisterData.Size"/>
+    /// <see cref="RegisterData.Offset"/> and <see cref="RegisterData.Size"/>.
     /// </param>
     public ulong GetData(RegisterData registerData)
     {
@@ -104,7 +98,7 @@ internal sealed class RegisterMemory : IDisposable
 
     /// <summary>
     /// This method will provide you an exact
-    /// index value of a <see cref="RegisterData"/> in a memory.
+    /// index of a <see cref="RegisterData"/> in memory.
     /// </summary>
     private int CalculateMemoryIndex(RegisterData registerData)
     {
@@ -122,8 +116,8 @@ internal sealed class RegisterMemory : IDisposable
     }
 
     /// <summary>
-    /// Add a value to a specified, <see cref="NativeMemoryList{T}"/>
-    /// <paramref name="registerMemory"/>, that could be potentially shifted
+    /// Add a value to the specified <see cref="NativeMemoryList{T}"/>
+    /// <paramref name="registerMemory"/> that could potentially be shifted.
     /// </summary>
     private void AddRegisterData(NativeMemoryList<ulong> registerMemory, int memoryIndex, int offset, int relativeSize, ulong value)
     {
@@ -145,7 +139,7 @@ internal sealed class RegisterMemory : IDisposable
 
     /// <summary>
     /// Set a new <paramref name="registerData"/> by shifting <see langword="int"/>
-    /// <paramref name="value"/> with coresponding <paramref name="size"/> mask
+    /// <paramref name="value"/> with corresponding <paramref name="size"/> mask.
     /// </summary>
     private ulong SetRegisterData(ulong registerData, int size, int offset, int value) =>
         registerData ^ ((ulong)value ^ registerData >> offset
@@ -153,7 +147,7 @@ internal sealed class RegisterMemory : IDisposable
 
     /// <summary>
     /// Recalculates your <see cref="RegisterData.Offset"/>
-    /// in a relative way to your <see cref="RegisterData.Size"/>
+    /// in a relative way to your <see cref="RegisterData.Size"/>.
     /// </summary>
     private int CalculateRelativeOffset(RegisterData registerData, int registerIndex)
     {
@@ -167,28 +161,24 @@ internal sealed class RegisterMemory : IDisposable
     }
 
     /// <summary>
-    /// Calculates index of a <paramref name="value"/>
+    /// Calculates index of a <paramref name="value"/>.
     /// </summary>
     /// <returns>
     /// If <see langword="int"/> <paramref name="value"/> is
-    /// greater then 0, it will returns one, otherwise zero
+    /// greater than 0, returns one, otherwise zero.
     /// </returns>
     private int CalculateOffsetIndex(int value) =>
        (Math.Abs(value) + value >> 1) / value ^ 1;
 
     /// <summary>
-    /// Provides calculation of original value from <paramref name="registerData"/>,
+    /// Calculates original value from <paramref name="registerData"/>,
     /// that is shifted by <paramref name="offset"/> and reduced by
-    /// calculation of mask from <paramref name="size"/>
+    /// calculation of mask from <paramref name="size"/>.
     /// </summary>
     private ulong GetRegisterValue(ulong registerData, int offset, int size) =>
         (ulong)((long)(registerData >> offset) & (int)Math.Pow(2, size) - 1);
 
-    /// <summary>
-    /// Manage dispose for all <see cref="NativeMemoryList{T}"/> such as,
-    /// <br/><see cref="registerMemoryList"/>
-    /// <br/><see cref="offsetIndexList"/>
-    /// </summary>
+    /// <inheritdoc/>
     public void Dispose()
     {
         registerMemoryList.Dispose();

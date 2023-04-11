@@ -2,9 +2,7 @@
 
 namespace Athena.NET.Lexing;
 
-//TODO: There are a lot of missing,
-//identificators, but it's just for
-//testing
+//TODO: Add missing identifiers
 public enum TokenIndentificator : uint
 {
     Whitespace = 0,
@@ -13,7 +11,7 @@ public enum TokenIndentificator : uint
     Sub = 2,
     Mul = 3,
     Div = 4,
-    //Relation operators
+    //Relational operators
     EqualLogical = 5,
     NotEqual = 6,
     GreaterThan = 7,
@@ -22,10 +20,7 @@ public enum TokenIndentificator : uint
     LessEqual = 10,
     EqualAssignment = 11,
 
-    //TODO: This part is really temporary
-    //I would really want something more
-    //abstract, but now I need to focus
-    //results
+    //TODO: Improve abstraction of the following
 
     //Possible types
     [PrimitiveType(typeof(int))]

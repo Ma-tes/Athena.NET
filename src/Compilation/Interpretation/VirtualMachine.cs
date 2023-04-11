@@ -7,9 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Athena.NET.Compilation.Interpreter;
 
 /// <summary>
-/// Provides a complete interpretation
-/// of generated instructions, that are
-/// specifically created from <see cref="OperatorCodes"/>
+/// Interprets instructions corresponding to <see cref="OperatorCodes"/>.
 /// </summary>
 internal sealed class VirtualMachine : IDisposable
 {
@@ -25,24 +23,22 @@ internal sealed class VirtualMachine : IDisposable
         );
 
     /// <summary>
-    /// Index of a last found <see cref="OperatorCodes.Nop"/> instruction
+    /// Index of the last <see cref="OperatorCodes.Nop"/> instruction.
     /// </summary>
     /// <remarks>
-    /// It could be internally changed in a runtime
+    /// Value changes during interpretation.
     /// </remarks>
     public int LastInstructionNopIndex { get; internal set; }
 
     /// <summary>
-    /// Creates virtualized interpretation of
-    /// already set instructions
+    /// Performs virtualized interpretation of
+    /// instruction byte-code.
     /// </summary>
     /// <param name="instructions">
-    /// <see cref="OperatorCodes"/> instructions
-    /// for creating an intepretation
+    /// <see cref="OperatorCodes"/> instructions.
     /// </param>
     /// <exception cref="Exception">
-    /// Temporary <see cref="Exception"/> for
-    /// failed interpretion of a instruction
+    /// Interpreting an instruction failed.
     /// </exception>
     public void CreateInterpretation(ReadOnlySpan<uint> instructions)
     {
@@ -67,13 +63,13 @@ internal sealed class VirtualMachine : IDisposable
 
     /// <summary>
     /// Provides parsing of a possible <see cref="Structures.RegisterData"/> instruction
-    /// or already determined values
+    /// or already determined values.
     /// </summary>
     /// <param name="instructions">
-    /// <see cref="OperatorCodes"/> instructions for parsing values
+    /// <see cref="OperatorCodes"/> instructions for parsing values.
     /// </param>
     /// <returns>
-    /// Values from instructions in a <see cref="ReadOnlySpan{T}"/> <see langword="int"/>
+    /// Values from instructions in a <see cref="ReadOnlySpan{T}"/> of <see langword="int"/>.
     /// </returns>
     internal ReadOnlySpan<int> GetInstructionData(ReadOnlySpan<uint> instructions)
     {
@@ -95,20 +91,20 @@ internal sealed class VirtualMachine : IDisposable
     }
 
     /// <summary>
-    /// Tries to get a coresponding <see langword="out"/>
-    /// <see cref="RegisterMemory"/> <paramref name="registerMemory"/>,
-    /// from <see cref="OperatorCodes"/> <paramref name="operatorCode"/>
+    /// Tries to get a corresponding <see langword="out"/>
+    /// <see cref="RegisterMemory"/> <paramref name="registerMemory"/>
+    /// from <see cref="OperatorCodes"/> <paramref name="operatorCode"/>.
     /// </summary>
     /// <param name="registerMemory">
-    /// Coresponding <see langword="out"/> <see cref="RegisterMemory"/>,
-    /// that was choosed by <see cref="OperatorCodes"/> <paramref name="operatorCode"/>
+    /// Corresponding <see langword="out"/> <see cref="RegisterMemory"/>,
+    /// that was chosen by <see cref="OperatorCodes"/> <paramref name="operatorCode"/>.
     /// </param>
     /// <param name="instructions">
-    /// <see cref="OperatorCodes"/> instruction for specifing type of a register
+    /// <see cref="OperatorCodes"/> instruction for specifing type of a register.
     /// </param>
     /// <returns>
-    /// A <see langword="bool"/> value, if <see cref="Structures.Register"/> with
-    /// <see cref="OperatorCodes"/> <paramref name="operatorCode"/> was found
+    /// <see langword="true"/> if <see cref="Structures.Register"/> with
+    /// <see cref="OperatorCodes"/> <paramref name="operatorCode"/> was found, otherwise <see langword="false"/>.
     /// </returns>
     public bool TryGetRegisterMemory([NotNullWhen(true)] out RegisterMemory? registerMemory, OperatorCodes operatorCode)
     {
@@ -127,8 +123,8 @@ internal sealed class VirtualMachine : IDisposable
     }
 
     /// <summary>
-    /// Finds index of a <see cref="OperatorCodes.Nop"/>
-    /// instruction, from <paramref name="instructions"/>
+    /// Finds index of the first <see cref="OperatorCodes.Nop"/>
+    /// instruction in <paramref name="instructions"/>.
     /// </summary>
     private int IndexOfNopInstruction(ReadOnlySpan<uint> instructions)
     {
@@ -143,9 +139,8 @@ internal sealed class VirtualMachine : IDisposable
     }
 
     /// <summary>
-    /// Executes interpretation of <paramref name="instructionCode"/>
-    /// and it will return a <see langword="bool"/> value, if was
-    /// succesful
+    /// Executes interpretation of an <paramref name="instructionCode"/>
+    /// and returns <see langword="true"/>, if successful, otherwise <see langword="false"/>.
     /// </summary>
     private bool TryInterpretInstruction(OperatorCodes instructionCode, ReadOnlySpan<uint> instructionData)
     {
@@ -168,11 +163,7 @@ internal sealed class VirtualMachine : IDisposable
         return false;
     }
 
-    /// <summary>
-    /// Manages a dispose for every single
-    /// inicialized <see cref="RegisterMemory"/>
-    /// of a <see cref="virtualRegisters"/>
-    /// </summary>
+    /// <inheritdoc/>
     public void Dispose()
     {
         int registerMemoryCount = virtualRegisters.Length;

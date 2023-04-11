@@ -55,9 +55,7 @@ public sealed class NodeViewer : IDisposable
         float height = imageSize.Height * (nodes.Length);
         ImageSize = new((int)width, (int)height);
 
-        //TODO: Create better solutions that
-        //will be multiplatform and not just
-        //for windows
+        //TODO: Make crossplatform
         nodeBitmap = new Bitmap(ImageSize.Width, ImageSize.Height)!;
         nodeBitmap.SetResolution(400, 400);
 

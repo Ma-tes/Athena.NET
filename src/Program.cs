@@ -9,9 +9,8 @@ using Athena.NET.Lexing.Structures;
 using Athena.NET.Parsing.Nodes;
 using System.Diagnostics.CodeAnalysis;
 
-//This is here just for easy and fast
-//debugging, it will changed as soon
-//as possible
+//This is here for simple debugging
+//and should be changed in the future
 string solutionPath = Environment.CurrentDirectory[..Environment.CurrentDirectory.LastIndexOf("src")];
 string examplePath = Path.Join(solutionPath, "examples", "StoreInstructionsProgram.ath");
 using (var tokenReader = new TokenReader
