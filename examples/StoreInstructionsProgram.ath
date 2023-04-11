@@ -1,32 +1,39 @@
-int positionX = 20;
-int positionY = 20;
-if(positionX + 10 < positionY) ->
-	print positionX;
-	print positionY;
-	int positionMultiplier = 100;
-	int oldPositionX = positionX;
-	positionX = positionX * positionMultiplier;
-	print positionX;
-	print positionY;
-	if(oldPositionX < positionX) ->
-		print oldPositionX + positionY;
-
-int positionScaler = 150;
-int positionScalerTwo = 20;
-int positionScalerThree = 30;
-int positionScalerFour = 31;
-int positionScalerOne = 150;
-int positionScalerTwoOne = 20;
-int positionScalerThreeOne = 30;
-int positionScalerFourOne = 31;
-print positionScaler;
-print positionScalerTwo;
-print positionScalerThree;
-print positionScalerFour;
-print positionScalerOne;
-print positionScalerTwoOne;
-print positionScalerThreeOne;
-print positionScalerFourOne;
+int firstPositionX = 83;
+int firstPositionY = 38;
+if((firstPositionX + firstPositionY) > 100) ->
+	int secondPositionX = 240;
+	int secondPositionY = 30;
+	if((secondPositionX * secondPositionY) < 10000) ->
+		print firstPositionX;
+		print firstPositionY;
+		int positionSub = 20;
+		int positionSubTwo = 25;
+		print secondPositionX - positionSub;
+		print secondPositionY - positionSub;
+int thirdPositionX = 30;
+int thirdPositionY = 200;
+int thirdPositionDifference = thirdPositionX - thirdPositionY;
+print thirdPositionDifference;
+if(thirdPositionDifference < (0 - 2)) ->
+	int nextValue = 99;
+	print nextValue + 1;
+int lastValue = firstPositionX + firstPositionY;
+print lastValue;
+int secondLastValue = thirdPositionX - 10;
+print secondLastValue;
+print lastValue + secondLastValue;
+int firstValue = 21;
+print firstValue;
+int secondValue = 22;
+print secondValue;
+int thirdValue = 23;
+print thirdValue;
+int quadValue = 24;
+print quadValue;
+int multiplierValue = 100;
+int secondMultiplierValue = 200;
+print multiplierValue;
+print ((thirdValue + quadValue) - (firstValue + secondValue)) * multiplierValue;
 
 
 

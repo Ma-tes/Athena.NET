@@ -52,10 +52,9 @@ internal sealed class RegisterMemory : IDisposable
     {
         int memoryIndex = CalculateMemoryIndex(registerData);
         int finalOffset = CalculateRelativeOffset(registerData, memoryIndex);
-        int totalMemorySize = registerData.Offset + registerData.Size;
 
-        AddRegisterData(registerMemoryList, totalMemorySize, finalOffset, (ulong)Math.Abs(value));
-        AddRegisterData(offsetIndexList, totalMemorySize, finalOffset, (ulong)CalculateOffsetIndex(value));
+        AddRegisterData(registerMemoryList, memoryIndex, finalOffset, registerData.Size, (ulong)Math.Abs(value));
+        AddRegisterData(offsetIndexList, memoryIndex, finalOffset, registerData.Size, (ulong)CalculateOffsetIndex(value));
         LastRegisterData = new RegisterData((uint)finalOffset, (uint)registerData.Size);
     }
 
@@ -75,6 +74,7 @@ internal sealed class RegisterMemory : IDisposable
     {
         int registerIndex = CalculateMemoryIndex(registerData);
         int currentOffset = CalculateRelativeOffset(registerData, registerIndex);
+        registerIndex = registerIndex >= registerMemoryList.Count ? registerIndex - (registerMemoryList.Count - 1) : registerIndex;
 
         registerMemoryList.Span[registerIndex] = SetRegisterData(registerMemoryList.Span[registerIndex], registerData.Size, currentOffset, Math.Abs(value));
         offsetIndexList.Span[registerIndex] = SetRegisterData(offsetIndexList.Span[registerIndex], 4, currentOffset, CalculateOffsetIndex(value));
@@ -96,7 +96,7 @@ internal sealed class RegisterMemory : IDisposable
         int registerIndex = CalculateMemoryIndex(registerData);
         int currentOffset = CalculateRelativeOffset(registerData, registerIndex);
 
-        registerIndex = registerIndex >= registerMemoryList.Count ? registerIndex - (registerMemoryList.Count - 1) : registerIndex;
+        registerIndex = registerIndex >= registerMemoryList.Count ? (registerData.Offset / RegisterSize) - (registerMemoryList.Count) : registerIndex;
         int returnData = (int)GetRegisterValue(registerMemoryList.Span[registerIndex], currentOffset, registerData.Size);
         int offsetIndex = (int)GetRegisterValue(offsetIndexList.Span[registerIndex], currentOffset, 4);
         return (ulong)(dynamic)(returnData - returnData * 2 * offsetIndex);
@@ -125,12 +125,18 @@ internal sealed class RegisterMemory : IDisposable
     /// Add a value to a specified, <see cref="NativeMemoryList{T}"/>
     /// <paramref name="registerMemory"/>, that could be potentially shifted
     /// </summary>
-    private void AddRegisterData(NativeMemoryList<ulong> registerMemory, int totalMemorySize, int offset, ulong value)
+    private void AddRegisterData(NativeMemoryList<ulong> registerMemory, int memoryIndex, int offset, int relativeSize, ulong value)
     {
         ulong resultValue = value << offset;
-        if (registerMemory.Count == 0 || (LastRegisterData.Offset + LastRegisterData.Size) / RegisterSize == 1)
+        if (registerMemory.Count == 0 || RegisterCode == OperatorCodes.TM ||
+            ((LastRegisterData.Offset + LastRegisterData.Size) / RegisterSize == 1 || (LastRegisterData.Size + relativeSize) > RegisterSize))
         {
-            registerMemory.Add(default);
+            int memoryIndexDifference = memoryIndex == (registerMemory.Count - 1)
+                ? 1 : Math.Abs((memoryIndex) - (registerMemory.Count - 1));
+            for (int i = 0; i < memoryIndexDifference; i++)
+            {
+                registerMemory.Add(default);
+            }
             resultValue = value;
         }
         int lastIndex = registerMemory.Count - 1;
