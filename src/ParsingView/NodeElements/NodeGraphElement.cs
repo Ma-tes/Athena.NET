@@ -8,8 +8,7 @@ using System.Runtime.Versioning;
 
 namespace Athena.NET.ParsingView.NodeElements;
 
-//TODO: Make sure that drawing a node
-//tree scheme will be multiplaform
+//TODO: Make drawing tree scheme crossplaform
 [SupportedOSPlatform("windows")]
 public sealed class NodeGraphElement : INodeDrawer
 {

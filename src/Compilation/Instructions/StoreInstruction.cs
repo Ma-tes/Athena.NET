@@ -54,9 +54,8 @@ internal sealed class StoreInstruction : IInstruction<EqualAssignStatement>
         return writeInstructions;
     }
 
-    //TODO: In a future, I would like
-    //to implement more cohesive way
-    //of tokenizing those instructions
+    //TODO: Implement more cohesive way
+    //of tokenizing instructions
     public bool InterpretInstruction(ReadOnlySpan<uint> instructions, VirtualMachine writer)
     {
         int currentData = writer.GetInstructionData(instructions[4..])[0];

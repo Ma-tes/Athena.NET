@@ -8,26 +8,18 @@ namespace Athena.NET.Compilation.Structures;
 /// Is a specific memory manager, that can be created by single 
 /// <see cref="RegisterCode"/> and <see cref="TypeSize"/>.
 /// </summary>
-/// <remarks>
-/// For memory managment is used <see langword="unmanaged"/>
-/// <see cref="NativeMemoryList{T}"/> of <see cref="MemoryData"/>
-/// that contains<br/> <see cref="MemoryData.IdentifierId"/>,
-/// <see cref="MemoryData.Size"/> and <see cref="MemoryData.Offset"/>.
-/// </remarks>
 internal sealed class Register : IDisposable
 {
     private NativeMemoryList<MemoryData> memoryData;
     private int lastOffset = 0;
 
     /// <summary>
-    /// Specified maximum size of current register in bits,
-    /// from <see langword="unmanaged"/> <see cref="Type"/>
-    /// <code><see cref="Marshal.SizeOf{T}"/> * 8;</code>
+    /// Specified maximum size of current register in bits.
+    /// <code><see cref="Marshal.SizeOf{T}"/> * 8</code>
     /// </summary>
     public int TypeSize { get; }
     /// <summary>
-    /// Register code from <see cref="OperatorCodes"/>
-    /// <see langword="enum"/>
+    /// Register code from <see cref="OperatorCodes"/>.
     /// </summary>
     public OperatorCodes RegisterCode { get; }
 
@@ -39,13 +31,13 @@ internal sealed class Register : IDisposable
     }
 
     /// <summary>
-    /// Attach inicialized <see cref="MemoryData"/> into register
-    /// <see cref="NativeMemoryList{T}"/>
+    /// Attach initialized <see cref="MemoryData"/> into
+    /// <see cref="NativeMemoryList{T}"/> register.
     /// </summary>
-    /// <param name="identificatorName">Name of instance or identifier</param>
-    /// <param name="dataSize">Size of data in a bits</param>
+    /// <param name="identificatorName">Name of an instance or an identifier.</param>
+    /// <param name="dataSize">Size of data in a bits.</param>
     /// <returns>
-    /// Coresponding <see cref="MemoryData"/>, that were already attached
+    /// Corresponding <see cref="MemoryData"/>, that were already attached.
     /// </returns>
     public MemoryData AddRegisterData(ReadOnlyMemory<char> identificatorName, int dataSize)
     {
@@ -57,10 +49,10 @@ internal sealed class Register : IDisposable
     }
 
     /// <summary>
-    /// If identificator exists, then it removes a coresponding
+    /// If identificator exists, then it removes corresponding
     /// <see cref="MemoryData"/> by identifier id.
     /// </summary>
-    /// <param name="identifierId">Identificator of a specific identifier</param>
+    /// <param name="identifierId">Identificator of a specific identifier.</param>
     public void RemoveRegisterData(uint identifierId)
     {
         if (TryGetIndexOfIdentifier(out int identifierIndex, identifierId))
@@ -68,11 +60,10 @@ internal sealed class Register : IDisposable
     }
 
     /// <summary>
-    /// Tries to get a corespoding <see cref="MemoryData"/> by identifier id.
+    /// Tries to get a correspoding <see cref="MemoryData"/> by identifier id.
     /// </summary>
     /// <returns>
-    /// Coresponding <see cref="bool"/>, if <see cref="MemoryData"/> was found, with
-    /// particular <see langword="out"/> result
+    /// Coresponding <see cref="bool"/>, whether <see cref="MemoryData"/> was found.
     /// </returns>
     public bool TryGetMemoryData([NotNullWhen(true)] out MemoryData resultData, uint identiferId)
     {
@@ -90,10 +81,10 @@ internal sealed class Register : IDisposable
     /// Tries to a get a value index from <see cref="NativeMemoryList{T}"/>
     /// <see cref="memoryData"/> by identifier id.
     /// </summary>
-    /// <param name="returnIndex"><see langword="out"/> return value</param>
-    /// <param name="identifierId">Identificator of a specific identifier</param>
-    /// <returns>Coresponding <see cref="bool"/>, if indetificator in
-    /// <see cref="MemoryData"/> was found</returns>
+    /// <param name="returnIndex"><see langword="out"/> return value.</param>
+    /// <param name="identifierId">Identificator of a specific identifier.</param>
+    /// <returns>Coresponding <see cref="bool"/>, whether indetificator in
+    /// <see cref="MemoryData"/> was found.</returns>
     private bool TryGetIndexOfIdentifier(out int returnIndex, uint identifierId)
     {
         Span<MemoryData> memoryDataSpan = memoryData.Span;
@@ -110,12 +101,11 @@ internal sealed class Register : IDisposable
     }
 
     /// <summary>
-    /// Calculates the maximum offset for
-    /// current data
+    /// Calculates the maximum offset for current data.
     /// </summary>
     /// <returns>
-    /// If dataOffset isn't greater then <see cref="TypeSize"/> it will return offset as a bit size.<br/>
-    /// Else it will normally return <see cref="TypeSize"/> as a maximum size
+    /// If data offset isn't greater than <see cref="TypeSize"/>, returns offset as bit count,<br/>
+    /// otherwise returns <see cref="TypeSize"/> as a maximum size.
     /// </returns>
     public int CalculateByteSize(int data)
     {
@@ -131,8 +121,7 @@ internal sealed class Register : IDisposable
     }
 
     /// <summary>
-    /// After it calls the <see cref="Dispose"/>,
-    /// it will create a new instance of <see cref="NativeMemoryList{T}"/>
+    /// Disposes and reinitializes its memory.
     /// </summary>
     public void ReDispose()
     {
@@ -140,9 +129,7 @@ internal sealed class Register : IDisposable
         memoryData = new NativeMemoryList<MemoryData>();
     }
 
-    /// <summary>
-    /// Create dispose for <see cref="memoryData"/>, which is <see cref="NativeMemoryList{T}"/>
-    /// </summary>
+    /// <inheritdoc/>
     public void Dispose()
     {
         memoryData.Dispose();

@@ -8,12 +8,11 @@ internal static class KeywordsHolder
     public static LiteralKeyword Digit { get; } =
         new(TokenIndentificator.Int, new LiteralOption('0', '9'));
 
-    //This is here, just for testing
+    //TODO: For testing; remove later
     public static LiteralKeyword Character { get; } =
         new(TokenIndentificator.Char, new LiteralOption('a', 'z'));
 
-    //TODO: I would really like to have a
-    //better storing system for reserved keywords
+    //TODO: Improve storage of reserved keywords
 
     public static ReadOnlyMemory<ReservedKeyword> ReservedKeywords =
         new ReservedKeyword[]
@@ -34,8 +33,7 @@ internal static class KeywordsHolder
             new (TokenIndentificator.Print, "print"),
             new (TokenIndentificator.Definition, "def"),
 
-            //I know this implementation is actually
-            //horrible, but for now is somehow acceptable
+            //TODO: Refactor
             new (TokenIndentificator.EndLine, "\0n", true)
             {
                 ParseFunction = (ReadOnlyMemory<char> data) =>

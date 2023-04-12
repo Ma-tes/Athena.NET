@@ -8,11 +8,11 @@ using Athena.NET.Parsing.Nodes.Statements.Body;
 namespace Athena.NET.Compilation.Instructions;
 
 /// <summary>
-/// Provides a generation of raw byte code, 
-/// by <see cref="OperatorCodes"/> [custom instructions]
+/// Provides generation of raw byte code, 
+/// by <see cref="OperatorCodes"/> (custom instructions).
 /// </summary>
 /// <remarks>
-/// This implementation isn't that fully autonomous, 
+/// This implementation isn't that fully autonomous,
 /// because it requires adding every single
 /// <see cref="Register"/> to individual methods.<br/>
 /// Due to the compilation speed of reflection, 
@@ -41,16 +41,16 @@ public sealed class InstructionWriter : IDisposable
 
     /// <summary>
     /// It's being used for storing individual
-    /// instructions as a <see cref="uint"/> in
+    /// instructions as an <see cref="uint"/> in
     /// a <see cref="NativeMemoryList{T}"/>.
     /// </summary>
     public NativeMemoryList<uint> InstructionList { get; }
         = new();
 
     /// <summary>
-    /// Creates an individual instructions
+    /// Creates individual instructions
     /// from nodes, which are then stored
-    /// in a <see cref="InstructionList"/>.
+    /// in an <see cref="InstructionList"/>.
     /// </summary>
     public void CreateInstructions(ReadOnlySpan<INode> nodes)
     {
@@ -64,12 +64,12 @@ public sealed class InstructionWriter : IDisposable
 
     /// <summary>
     /// Executes a related instruction to a specific 
-    /// node that was derived from <see cref="INode"/>
+    /// node that was derived from <see cref="INode"/>.
     /// </summary>
     /// <returns>
     /// Specific <see cref="bool"/> state of a
     /// <see cref="IInstruction{T}.EmitInstruction(T, InstructionWriter)"/>
-    /// <see langword="where"/> T : <see cref="INode"/>
+    /// <see langword="where"/> T : <see cref="INode"/>.
     /// </returns>
     private bool TryGetEmitInstruction(INode node) => node switch
     {
@@ -85,10 +85,10 @@ public sealed class InstructionWriter : IDisposable
     };
 
     /// <summary>
-    /// Chooses maching <see cref="Register"/> from current
-    /// <see cref="InstructionWriter"/>, by size of <paramref name="data"/>
+    /// Chooses a matching <see cref="Register"/> from current
+    /// <see cref="InstructionWriter"/> by size of <paramref name="data"/>.
     /// </summary>
-    /// <returns>Specific <see cref="Register"/> for current <paramref name="data"/> size</returns>
+    /// <returns>Specific <see cref="Register"/> for current <paramref name="data"/> size.</returns>
     internal Register? GetEmitIntRegister(int data)
     {
         if (RegisterAH.CalculateByteSize(data) != RegisterAH.TypeSize) { return RegisterAH; }
@@ -97,11 +97,11 @@ public sealed class InstructionWriter : IDisposable
     }
 
     /// <summary>
-    /// Chooses maching <see cref="Register"/> and <see cref="MemoryData"/>
-    /// from current <see cref="InstructionWriter"/>, by <paramref name="identifierId"/>
+    /// Chooses a matching <see cref="Register"/> and <see cref="MemoryData"/>
+    /// from current <see cref="InstructionWriter"/> by <paramref name="identifierId"/>.
     /// </summary>
     /// <returns>Specific <see cref="Register"/> and coresponding
-    /// <see langword="out"/> <see cref="MemoryData"/>
+    /// <see langword="out"/> <see cref="MemoryData"/>.
     /// </returns>
     internal Register? GetIdentifierData(out MemoryData returnData, uint identifierId)
     {
@@ -112,11 +112,11 @@ public sealed class InstructionWriter : IDisposable
     }
 
     /// <summary>
-    /// Chooses maching <see cref="Register"/> and <see cref="MemoryData"/>
-    /// from current <see cref="InstructionWriter"/>, by <paramref name="identifierName"/>
+    /// Chooses a matching <see cref="Register"/> and <see cref="MemoryData"/>
+    /// from current <see cref="InstructionWriter"/> by <paramref name="identifierName"/>.
     /// </summary>
     /// <returns>Specific <see cref="Register"/> and coresponding
-    /// <see langword="out"/> <see cref="MemoryData"/>
+    /// <see langword="out"/> <see cref="MemoryData"/>.
     /// </returns>
     internal Register? GetIdentifierData(out MemoryData returnData, ReadOnlyMemory<char> identifierName)
     {
@@ -131,10 +131,7 @@ public sealed class InstructionWriter : IDisposable
             (uint)memoryData.Offset);
     }
 
-    /// <summary>
-    /// Manage disposes for every <see cref="Register"/>
-    /// and the <see cref="InstructionList"/>
-    /// </summary>
+    /// <inheritdoc/>
     public void Dispose()
     {
         RegisterAH.Dispose();
