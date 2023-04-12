@@ -4,36 +4,26 @@ if((firstPositionX + firstPositionY) > 100) ->
 	int secondPositionX = 240;
 	int secondPositionY = 30;
 	if((secondPositionX * secondPositionY) < 10000) ->
-		print firstPositionX;
-		print firstPositionY;
 		int positionSub = 20;
 		int positionSubTwo = 25;
-		print secondPositionX - positionSub;
-		print secondPositionY - positionSub;
 int thirdPositionX = 30;
 int thirdPositionY = 200;
 int thirdPositionDifference = thirdPositionX - thirdPositionY;
-print thirdPositionDifference;
 if(thirdPositionDifference < (0 - 2)) ->
 	int nextValue = 99;
-	print nextValue + 1;
 int lastValue = firstPositionX + firstPositionY;
-print lastValue;
 int secondLastValue = thirdPositionX - 10;
-print secondLastValue;
-print lastValue + secondLastValue;
 int firstValue = 21;
-print firstValue;
 int secondValue = 22;
-print secondValue;
 int thirdValue = 23;
-print thirdValue;
 int quadValue = 24;
-print quadValue;
 int multiplierValue = 100;
 int secondMultiplierValue = 200;
-print multiplierValue;
-print ((thirdValue + quadValue) - (firstValue + secondValue)) * multiplierValue;
+print firstValue;
+print secondValue;
+print thirdValue;
+
+
 
 
 
