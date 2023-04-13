@@ -29,6 +29,8 @@ internal sealed class RegisterMemory : IDisposable
     /// </summary>
     public RegisterData LastRegisterData { get; private set; } =
         new(0, 0);
+    public RegisterData previousRegisterData { get; private set; } =
+        new(0, 0);
 
     public RegisterMemory(OperatorCodes registerCode, Type type)
     {
@@ -48,9 +50,10 @@ internal sealed class RegisterMemory : IDisposable
     /// <param name="value">Value that will be stored in a memory.</param>
     public void AddData(RegisterData registerData, int value)
     {
-        AddRegisterData(registerMemoryList, registerData, (ulong)Math.Abs(value));
-        AddRegisterData(offsetIndexList, registerData, (ulong)CalculateOffsetIndex(value));
-        LastRegisterData = registerData;
+        int lastRegisterOffset = LastRegisterData.Offset;
+        AddRegisterData(registerMemoryList, lastRegisterOffset, registerData, (ulong)Math.Abs(value));
+        AddRegisterData(offsetIndexList, lastRegisterOffset, registerData, (ulong)CalculateOffsetIndex(value));
+        previousRegisterData = registerData;
     }
 
     //TODO: Make generic
@@ -87,7 +90,6 @@ internal sealed class RegisterMemory : IDisposable
         int registerIndex = CalculateMemoryIndex(registerData);
         int currentOffset = CalculateRelativeOffset(registerData, registerIndex);
 
-        registerIndex = registerIndex >= registerMemoryList.Count ? (registerMemoryList.Count - 1) : registerIndex;
         int returnData = (int)GetRegisterValue(registerMemoryList.Span[registerIndex], currentOffset, registerData.Size);
         int offsetIndex = (int)GetRegisterValue(offsetIndexList.Span[registerIndex], currentOffset, 4);
         return (ulong)(dynamic)(returnData - returnData * 2 * offsetIndex);
@@ -99,31 +101,35 @@ internal sealed class RegisterMemory : IDisposable
     /// </summary>
     private int CalculateMemoryIndex(RegisterData registerData)
     {
-        int totalRegisterOffset = registerData.Offset + registerData.Size;
-        if (registerMemoryList.Count == 0 || totalRegisterOffset == RegisterSize)
+        if (registerData.Offset < RegisterSize)
             return 0;
+        if (registerData.Offset >= LastRegisterData.Offset)
+            return registerMemoryList.Count - 1;
 
-        int relativeIndex = (LastRegisterData.Offset + LastRegisterData.Size) / registerMemoryList.Count;
-        return registerData.Offset / relativeIndex;
+        int totalLastOffset = LastRegisterData.Offset + RegisterSize;
+        int currentRegisterOffset = (totalLastOffset - registerData.Offset) / RegisterSize;
+
+        return (registerMemoryList.Count - 1) - (currentRegisterOffset);
     }
 
     /// <summary>
     /// Add a value to the specified <see cref="NativeMemoryList{T}"/>
     /// <paramref name="registerMemory"/> that could potentially be shifted.
     /// </summary>
-    private void AddRegisterData(NativeMemoryList<ulong> registerMemory, RegisterData registerData, ulong value)
+    private void AddRegisterData(NativeMemoryList<ulong> registerMemory, int lastOffset, RegisterData registerData, ulong value)
     {
-        int offsetDifference = registerData.Offset - LastRegisterData.Offset;
+        int offsetDifference = registerData.Offset - lastOffset;
         ulong currentValue = value << offsetDifference;
 
-        int totalMemoryDifference = (registerData.Offset) - (RegisterSize * (registerData.Offset / RegisterSize));
-        if (registerMemory.Count == 0 || registerData.Size == RegisterSize || totalMemoryDifference == 0 || offsetDifference == RegisterSize
-            || (registerData.Offset + registerData.Size) > (RegisterSize * registerMemory.Count))
+        if (registerMemory.Count == 0 || registerData.Size == RegisterSize || offsetDifference == RegisterSize
+            || (registerData.Offset - lastOffset) > RegisterSize)
         {
             int registerOffsetIndex = offsetDifference / RegisterSize;
             registerOffsetIndex = registerOffsetIndex == 0 ? 1 : registerOffsetIndex;
             for (int i = 0; i < registerOffsetIndex; i++) { registerMemory.Add(default); } //TODO: Find a better solution
+
             currentValue = value;
+            LastRegisterData = registerData;
         }
         registerMemory.Span[registerMemory.Count - 1] += currentValue;
     }
@@ -142,14 +148,13 @@ internal sealed class RegisterMemory : IDisposable
     /// </summary>
     private int CalculateRelativeOffset(RegisterData registerData, int registerIndex)
     {
-        if (registerIndex == 0)
+        if (registerData.Size == RegisterSize)
+            return 0;
+        if (registerData.Offset < RegisterSize)
             return registerData.Offset;
 
-        int totalOffset = registerIndex < 1 ? (registerData.Offset + registerData.Size) : registerData.Offset;
-        if (registerIndex < 0 || RegisterSize * registerIndex > totalOffset)
-            return 0;
-        int relativeOffset = RegisterSize * registerIndex;
-        return Math.Abs(registerData.Offset - relativeOffset);
+        int relativeLastIndex = (RegisterSize * ((registerMemoryList.Count - 1) - registerIndex));
+        return Math.Abs(Math.Abs(((LastRegisterData.Offset + RegisterSize) - (registerData.Offset + registerData.Size))) - relativeLastIndex);
     }
 
     /// <summary>

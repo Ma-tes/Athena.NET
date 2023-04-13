@@ -19,9 +19,17 @@ int thirdValue = 23;
 int quadValue = 24;
 int multiplierValue = 100;
 int secondMultiplierValue = 200;
-print firstValue;
-print secondValue;
-print thirdValue;
+print secondMultiplierValue;
+print thirdPositionX;
+print thirdPositionY;
+print firstPositionX;
+print firstPositionY;
+
+
+
+
+
+
 
 
 
