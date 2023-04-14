@@ -6,11 +6,14 @@ if((firstPositionX + firstPositionY) > 100) ->
 	if((secondPositionX * secondPositionY) < 10000) ->
 		int positionSub = 20;
 		int positionSubTwo = 25;
+		print positionSub;
+		print positionSubTwo;
 int thirdPositionX = 30;
 int thirdPositionY = 200;
 int thirdPositionDifference = thirdPositionX - thirdPositionY;
-if(thirdPositionDifference < (0 - 2)) ->
+if(thirdPositionDifference > (0 - 2)) ->
 	int nextValue = 99;
+	print nextValue;
 int lastValue = firstPositionX + firstPositionY;
 int secondLastValue = thirdPositionX - 10;
 int firstValue = 21;

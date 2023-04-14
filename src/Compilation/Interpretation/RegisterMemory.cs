@@ -98,17 +98,24 @@ internal sealed class RegisterMemory : IDisposable
         return (ulong)(dynamic)(returnData - returnData * 2 * offsetIndex);
     }
 
+    //TODO: Try to avoid using for loop statement
     /// <summary>
     /// This method will provide you an exact
     /// index of a <see cref="RegisterData"/> in memory.
     /// </summary>
     private int CalculateMemoryIndex(RegisterData registerData)
     {
-        if (registerData.Offset < RegisterSize)
-            return 0;
-        int registerDifference = ((registerMemoryList.Count * RegisterSize)) - registerData.Offset;
-        int relativeIndex = registerDifference / RegisterSize;
-        return relativeIndex == 0 ? registerMemoryList.Count - 1 : (registerMemoryList.Count) - relativeIndex;
+        int offsetRegisterCount = offsetIndexList.Count;
+        for (int i = 0; i < offsetRegisterCount; i++)
+        {
+            ulong currentRegisterIndex = offsetIndexList.Span[i];
+            int currentRelativeOffset = (int)GetRegisterValue(currentRegisterIndex, 0, RegisterSize);
+
+            int registerDifference = registerData.Offset - currentRelativeOffset;
+            if (registerDifference == 0 || registerDifference < RegisterSize)
+                return i;
+        }
+        return offsetIndexList.Count - 1;
     }
 
     /// <summary>
@@ -123,7 +130,8 @@ internal sealed class RegisterMemory : IDisposable
         if (registerMemory.Count == 0 || registerData.Size == RegisterSize
             || offsetDifference >= RegisterSize)
         {
-            int registerOffsetIndex = (registerData.Offset - previousRegisterData.Offset) <= RegisterSize ? 1 : (offsetDifference / RegisterSize) + 1;
+            int previousOffsetDifference = registerData.Offset - previousRegisterData.Offset;
+            int registerOffsetIndex = previousOffsetDifference <= RegisterSize ? 1 : (previousOffsetDifference / RegisterSize) + 1;
             for (int i = 0; i < registerOffsetIndex; i++) { registerMemory.Add(default); } //TODO: Find a better solution
 
             currentValue = value;
