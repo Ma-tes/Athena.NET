@@ -50,9 +50,12 @@ internal sealed class RegisterMemory : IDisposable
     /// <param name="value">Value that will be stored in a memory.</param>
     public void AddData(RegisterData registerData, int value)
     {
-        int lastRegisterOffset = LastRegisterData.Offset;
-        AddRegisterData(registerMemoryList, lastRegisterOffset, registerData, (ulong)Math.Abs(value));
-        AddRegisterData(offsetIndexList, lastRegisterOffset, registerData, (ulong)CalculateOffsetIndex(value));
+        int lastRegisterIndex = registerMemoryList.Count;
+        AddRegisterData(registerMemoryList, LastRegisterData.Offset, registerData, (ulong)Math.Abs(value));
+        if(registerMemoryList.Count > lastRegisterIndex)
+            AddRegisterData(offsetIndexList, 0, new((uint)registerData.Offset, 0), (ulong)registerData.Offset);
+
+        AddRegisterData(offsetIndexList, LastRegisterData.Offset, new((uint)registerData.Offset, 0), (ulong)CalculateOffsetIndex(value) << RegisterSize);
         previousRegisterData = registerData;
     }
 
@@ -91,7 +94,7 @@ internal sealed class RegisterMemory : IDisposable
         int currentOffset = CalculateRelativeOffset(registerData, registerIndex);
 
         int returnData = (int)GetRegisterValue(registerMemoryList.Span[registerIndex], currentOffset, registerData.Size);
-        int offsetIndex = (int)GetRegisterValue(offsetIndexList.Span[registerIndex], currentOffset, 4);
+        int offsetIndex = (int)GetRegisterValue(offsetIndexList.Span[registerIndex], currentOffset + RegisterSize, 4);
         return (ulong)(dynamic)(returnData - returnData * 2 * offsetIndex);
     }
 
@@ -103,13 +106,9 @@ internal sealed class RegisterMemory : IDisposable
     {
         if (registerData.Offset < RegisterSize)
             return 0;
-        if (registerData.Offset >= LastRegisterData.Offset)
-            return registerMemoryList.Count - 1;
-
-        int totalLastOffset = LastRegisterData.Offset + RegisterSize;
-        int currentRegisterOffset = (totalLastOffset - registerData.Offset) / RegisterSize;
-
-        return (registerMemoryList.Count - 1) - (currentRegisterOffset);
+        int registerDifference = ((registerMemoryList.Count * RegisterSize)) - registerData.Offset;
+        int relativeIndex = registerDifference / RegisterSize;
+        return relativeIndex == 0 ? registerMemoryList.Count - 1 : (registerMemoryList.Count) - relativeIndex;
     }
 
     /// <summary>
@@ -121,11 +120,10 @@ internal sealed class RegisterMemory : IDisposable
         int offsetDifference = registerData.Offset - lastOffset;
         ulong currentValue = value << offsetDifference;
 
-        if (registerMemory.Count == 0 || registerData.Size == RegisterSize || offsetDifference == RegisterSize
-            || (registerData.Offset - lastOffset) > RegisterSize)
+        if (registerMemory.Count == 0 || registerData.Size == RegisterSize
+            || offsetDifference >= RegisterSize)
         {
-            int registerOffsetIndex = offsetDifference / RegisterSize;
-            registerOffsetIndex = registerOffsetIndex == 0 ? 1 : registerOffsetIndex;
+            int registerOffsetIndex = (registerData.Offset - previousRegisterData.Offset) <= RegisterSize ? 1 : (offsetDifference / RegisterSize) + 1;
             for (int i = 0; i < registerOffsetIndex; i++) { registerMemory.Add(default); } //TODO: Find a better solution
 
             currentValue = value;
@@ -148,13 +146,9 @@ internal sealed class RegisterMemory : IDisposable
     /// </summary>
     private int CalculateRelativeOffset(RegisterData registerData, int registerIndex)
     {
-        if (registerData.Size == RegisterSize)
-            return 0;
-        if (registerData.Offset < RegisterSize)
-            return registerData.Offset;
-
-        int relativeLastIndex = (RegisterSize * ((registerMemoryList.Count - 1) - registerIndex));
-        return Math.Abs(Math.Abs(((LastRegisterData.Offset + RegisterSize) - (registerData.Offset + registerData.Size))) - relativeLastIndex);
+        ulong currentOffsetIndex = offsetIndexList.Span[registerIndex];
+        int currentOffset = (int)GetRegisterValue(currentOffsetIndex, 0, RegisterSize);
+        return registerData.Offset - currentOffset;
     }
 
     /// <summary>
