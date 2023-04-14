@@ -32,6 +32,7 @@ internal static class KeywordsHolder
             new (TokenIndentificator.Invoker, "->"),
             new (TokenIndentificator.Print, "print"),
             new (TokenIndentificator.Definition, "def"),
+            new (TokenIndentificator.DefinitionCall, "::"),
 
             //TODO: Refactor
             new (TokenIndentificator.EndLine, "\0n", true)

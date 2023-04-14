@@ -24,8 +24,15 @@ internal sealed class DefinitionStatement : BodyStatement
             return false;
         }
 
-        ReadOnlyMemory<InstanceNode> definitionArguments = GetArgumentInstances(tokens[(definitionTokenIndex + 1)..]);
-        var returnDefinitionNode = new DefinitionNode(definitionType, definitionArguments);
+        Token identifierToken = tokens[definitionTokenIndex + 1];
+        if (identifierToken.TokenId != TokenIndentificator.Identifier) 
+        {
+            nodeResult = new ErrorNodeResult<INode>("Definition identifier token wasn't found");
+            return false;
+        }
+
+        ReadOnlyMemory<InstanceNode> definitionArguments = GetArgumentInstances(tokens[(definitionTokenIndex + 2)..]);
+        var returnDefinitionNode = new DefinitionNode(definitionType, identifierToken, definitionArguments);
         nodeResult = new SuccessulNodeResult<INode>(returnDefinitionNode);
         return true;
     }

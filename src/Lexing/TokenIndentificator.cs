@@ -56,5 +56,6 @@ public enum TokenIndentificator : uint
     Tabulator = 32,
     Invoker = 33,
     Print = 34,
-    Definition = 35
+    Definition = 35,
+    DefinitionCall = 36
 }
