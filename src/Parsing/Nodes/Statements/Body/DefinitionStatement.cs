@@ -24,31 +24,35 @@ internal sealed class DefinitionStatement : BodyStatement
             return false;
         }
 
-        Token identifierToken = tokens[definitionTokenIndex + 1];
-        if (identifierToken.TokenId != TokenIndentificator.Identifier) 
+        int identifierIndex = tokens.IndexOfToken(TokenIndentificator.Identifier);
+        if (identifierIndex == -1) 
         {
             nodeResult = new ErrorNodeResult<INode>("Definition identifier token wasn't found");
             return false;
         }
+        Token identifierToken = tokens[identifierIndex];
 
-        ReadOnlyMemory<InstanceNode> definitionArguments = GetArgumentInstances(tokens[(definitionTokenIndex + 2)..]);
+        ReadOnlyMemory<InstanceNode> definitionArguments = GetArgumentInstances(tokens[(identifierIndex + 1)..]);
         var returnDefinitionNode = new DefinitionNode(definitionType, identifierToken, definitionArguments);
         nodeResult = new SuccessulNodeResult<INode>(returnDefinitionNode);
         return true;
     }
 
+    //TODO: Improve this implementation
     private ReadOnlyMemory<InstanceNode> GetArgumentInstances(ReadOnlySpan<Token> tokens)
     {
         var returnInstances = new List<InstanceNode>();
         int currentTokenTypeIndex = tokens.IndexOfTokenType();
-        while (currentTokenTypeIndex != -1)
+        while (currentTokenTypeIndex != tokens.Length)
         {
-            int nextTokenIndex = currentTokenTypeIndex + 1;
+            int nextTokenIndex = currentTokenTypeIndex + 2;
+            if(nextTokenIndex >= tokens.Length)
+                return returnInstances.ToArray();
+
             Token currentIdentiferToken = tokens[nextTokenIndex];
-            if (currentIdentiferToken.TokenId != TokenIndentificator.Identifier)
-                return null;
-            returnInstances.Add(new(tokens[currentTokenTypeIndex].TokenId, currentIdentiferToken.Data));
-            currentTokenTypeIndex = tokens[nextTokenIndex..].IndexOfTokenType();
+            if (currentIdentiferToken.TokenId == TokenIndentificator.Identifier) 
+                returnInstances.Add(new(tokens[currentTokenTypeIndex].TokenId, currentIdentiferToken.Data));
+            currentTokenTypeIndex = (tokens[nextTokenIndex..].IndexOfTokenType() + nextTokenIndex);
         }
         return returnInstances.ToArray();
     }

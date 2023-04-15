@@ -1,4 +1,5 @@
 ﻿using Athena.NET.Compilation.DataHolders;
+using Athena.NET.Compilation.Instructions.Structures;
 using Athena.NET.Compilation.Structures;
 using Athena.NET.Parsing.Interfaces;
 using Athena.NET.Parsing.Nodes.Operators;
@@ -47,6 +48,15 @@ public sealed class InstructionWriter : IDisposable
     public NativeMemoryList<uint> InstructionList { get; }
         = new();
 
+    //TODO: Improve definition storing
+    /// <summary>
+    /// It's being used for storing individual
+    /// definitions as an <see cref="DefinitionData"/> in
+    /// a <see cref="Memory{T}"/>.
+    /// </summary>
+    public List<DefinitionData> DefinitionList { get; }
+        = new();
+
     /// <summary>
     /// Creates individual instructions
     /// from nodes, which are then stored
@@ -77,8 +87,10 @@ public sealed class InstructionWriter : IDisposable
             .EmitInstruction(equalNode, this),
         PrintStatement printNode => new PrintInstruction()
             .EmitInstruction(printNode, this),
-        BodyStatement bodyNode => new JumpInstruction()
-            .EmitInstruction(bodyNode, this),
+        IfStatement ifNode => new JumpInstruction()
+            .EmitInstruction(ifNode, this),
+        DefinitionStatement definitionNode => new DefinitionInstruction()
+            .EmitInstruction(definitionNode, this),
         OperatorNode operatorNode => new OperatorInstruction()
             .EmitInstruction(operatorNode, this),
         _ => false

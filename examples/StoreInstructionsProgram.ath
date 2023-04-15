@@ -1,40 +1,9 @@
-int firstPositionX = 83;
-int firstPositionY = 38;
-if((firstPositionX + firstPositionY) > 100) ->
-	int secondPositionX = 240;
-	int secondPositionY = 30;
-	if((secondPositionX * secondPositionY) < 10000) ->
-		int positionSub = 20;
-		int positionSubTwo = 25;
-		print positionSub;
-		print positionSubTwo;
-int thirdPositionX = 30;
-int thirdPositionY = 200;
-int thirdPositionDifference = thirdPositionX - thirdPositionY;
-if(thirdPositionDifference > (0 - 2)) ->
-	int nextValue = 99;
-	print nextValue;
-int lastValue = firstPositionX + firstPositionY;
-int secondLastValue = thirdPositionX - 10;
-int firstValue = 21;
-int secondValue = 22;
-int thirdValue = 23;
-int quadValue = 24;
-int multiplierValue = 100;
-int secondMultiplierValue = 200;
-print secondMultiplierValue;
-print firstValue;
-print secondValue;
-print thirdValue;
-print quadValue;
-print multiplierValue;
-print thirdPositionX;
-print thirdPositionY;
-print firstPositionX;
-print firstPositionY;
-
-
-
+def Main() ->
+	int firstValue = 23;
+	int secondValue = 83;
+	print firstValue + secondValue;
+def int PrintAddition(int valueOne, int valueTwo) ->
+	print valueOne + valueTwo;
 
 
 

@@ -1,6 +1,6 @@
 ﻿namespace Athena.NET.Compilation.Structures;
 
-internal readonly struct RegisterData
+public readonly struct RegisterData
 {
     public int Offset { get; }
     public int Size { get; }

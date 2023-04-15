@@ -1,6 +1,6 @@
 ﻿namespace Athena.NET.Compilation.Structures;
 
-internal readonly struct MemoryData
+public readonly struct MemoryData
 {
     public uint IdentifierId { get; }
     public int Offset { get; }
