@@ -1,5 +1,4 @@
-﻿using Athena.NET.Compilation.Instructions.Structures;
-using Athena.NET.Compilation.Interpreter;
+﻿using Athena.NET.Compilation.Interpreter;
 using Athena.NET.Compilation.Structures;
 using Athena.NET.Parsing.Nodes.Data;
 using Athena.NET.Parsing.Nodes.Statements.Body;
@@ -12,13 +11,9 @@ internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
     {
         DefinitionNode leftDefinitionNode = (DefinitionNode)node.ChildNodes.LeftNode;
         uint definitionIdentificator = MemoryData.CalculateIdentifierId(leftDefinitionNode.DefinitionIdentifier.NodeData);
-        var definitionData = new DefinitionData(
-                definitionIdentificator,
-                instructionWriter.InstructionList.Count,
-                CreateArgumentIndetificators(leftDefinitionNode.NodeData, definitionIdentificator)
-            );
+        ReadOnlySpan<MemoryData> argumentsData = GetArgumentsMemoryData(leftDefinitionNode.NodeData, instructionWriter);
+        CreateArgumentsInstructions(argumentsData, instructionWriter);
 
-        instructionWriter.DefinitionList.Add(definitionData);
         instructionWriter.InstructionList.AddRange(
             (uint)OperatorCodes.Nop,
             (uint)OperatorCodes.Definition,
@@ -36,17 +31,32 @@ internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
         return true;
     }
 
-    private ReadOnlyMemory<uint> CreateArgumentIndetificators(ReadOnlyMemory<InstanceNode> argumentInstances, uint definitionIdentificator)
+    private void CreateArgumentsInstructions(ReadOnlySpan<MemoryData> memoryData, InstructionWriter instructionWriter) 
+    {
+        int memoryDataLength = memoryData.Length;
+        for (int i = 0; i < memoryDataLength; i++)
+        {
+            instructionWriter.InstructionList.AddRange((uint)OperatorCodes.Nop,
+                (uint)OperatorCodes.Store);
+            MemoryData currentData = memoryData[i];
+            instructionWriter.AddMemoryDataInstructions(OperatorCodes.TM, currentData);
+            instructionWriter.InstructionList.Add(0);
+        }
+    }
+
+    private ReadOnlySpan<MemoryData> GetArgumentsMemoryData(ReadOnlyMemory<InstanceNode> argumentInstances, InstructionWriter instructionWriter)
     {
         int instancesLength = argumentInstances.Length;
         if (instancesLength == 0)
             return null;
 
-        Memory<uint> returnRegisters = new uint[instancesLength];
+        ReadOnlySpan<InstanceNode> instancesSpan = argumentInstances.Span;
+        Span<MemoryData> returnRegisters = new MemoryData[instancesLength];
         for (int i = 0; i < instancesLength; i++)
         {
-            uint currentIdentificator = MemoryData.CalculateIdentifierId(argumentInstances.Span[i].NodeData) + definitionIdentificator;
-            returnRegisters.Span[i] = currentIdentificator;
+            ReadOnlyMemory<char> argumentIdentificator = instancesSpan[i].NodeData;
+            MemoryData argumentMemoryData = instructionWriter.TemporaryRegisterTM.AddRegisterData(argumentIdentificator, 16);
+            returnRegisters[i] = argumentMemoryData;
         }
         return returnRegisters;
     }

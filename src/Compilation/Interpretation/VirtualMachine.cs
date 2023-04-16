@@ -1,5 +1,6 @@
 ﻿using Athena.NET.Compilation.DataHolders;
 using Athena.NET.Compilation.Instructions;
+using Athena.NET.Compilation.Instructions.Structures;
 using Athena.NET.Compilation.Interpretation;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -21,6 +22,15 @@ internal sealed class VirtualMachine : IDisposable
             ///16-bit temporary register with a code <see cref="OperatorCodes.TM"/>.
             new RegisterMemory(OperatorCodes.TM, typeof(short))
         );
+
+    //TODO: Improve definition storing
+    /// <summary>
+    /// It's being used for storing individual
+    /// definitions as an <see cref="DefinitionData"/> in
+    /// a <see cref="Memory{T}"/>.
+    /// </summary>
+    internal List<DefinitionData> DefinitionList { get; }
+        = new();
 
     /// <summary>
     /// Index of the last <see cref="OperatorCodes.Nop"/> instruction.
@@ -150,12 +160,13 @@ internal sealed class VirtualMachine : IDisposable
         if (instructionCode == OperatorCodes.Print)
             return new PrintInstruction()
                 .InterpretInstruction(instructionData, this);
-
+        if (instructionCode == OperatorCodes.Definition)
+            return new DefinitionInstruction()
+                .InterpretInstruction(instructionData, this);
         if (instructionCode >= OperatorCodes.JumpE &&
            instructionCode <= OperatorCodes.JumpLE)
             return new JumpInstruction()
                 .InterpretInstruction(instructionData, this);
-
         if (instructionCode >= OperatorCodes.Add &&
            instructionCode <= OperatorCodes.Div)
             return new OperatorInstruction()

@@ -30,8 +30,8 @@ internal sealed class DefinitionStatement : BodyStatement
             nodeResult = new ErrorNodeResult<INode>("Definition identifier token wasn't found");
             return false;
         }
-        Token identifierToken = tokens[identifierIndex];
 
+        Token identifierToken = tokens[identifierIndex];
         ReadOnlyMemory<InstanceNode> definitionArguments = GetArgumentInstances(tokens[(identifierIndex + 1)..]);
         var returnDefinitionNode = new DefinitionNode(definitionType, identifierToken, definitionArguments);
         nodeResult = new SuccessulNodeResult<INode>(returnDefinitionNode);

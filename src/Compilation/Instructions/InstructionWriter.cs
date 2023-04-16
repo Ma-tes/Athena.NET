@@ -48,15 +48,6 @@ public sealed class InstructionWriter : IDisposable
     public NativeMemoryList<uint> InstructionList { get; }
         = new();
 
-    //TODO: Improve definition storing
-    /// <summary>
-    /// It's being used for storing individual
-    /// definitions as an <see cref="DefinitionData"/> in
-    /// a <see cref="Memory{T}"/>.
-    /// </summary>
-    public List<DefinitionData> DefinitionList { get; }
-        = new();
-
     /// <summary>
     /// Creates individual instructions
     /// from nodes, which are then stored
@@ -119,6 +110,7 @@ public sealed class InstructionWriter : IDisposable
     {
         if (RegisterAH.TryGetMemoryData(out MemoryData AHData, identifierId)) { returnData = AHData; return RegisterAH; }
         if (RegisterAX.TryGetMemoryData(out MemoryData AXData, identifierId)) { returnData = AXData; return RegisterAX; }
+        if (TemporaryRegisterTM.TryGetMemoryData(out MemoryData TMData, identifierId)) { returnData = TMData; return TemporaryRegisterTM; }
         returnData = default!;
         return null;
     }
