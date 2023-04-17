@@ -166,7 +166,7 @@ internal sealed class RegisterMemory : IDisposable
     /// If <see langword="int"/> <paramref name="value"/> is
     /// greater than 0, returns one, otherwise zero.
     /// </returns>
-    private int CalculateOffsetIndex(int value) =>
+    private int CalculateOffsetIndex(int value) => value == 0 ? 0 :
        (Math.Abs(value) + value >> 1) / value ^ 1;
 
     /// <summary>

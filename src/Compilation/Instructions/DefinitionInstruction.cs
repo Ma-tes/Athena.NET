@@ -26,7 +26,7 @@ internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
         return true;
     }
 
-    public bool InterpretInstruction(ReadOnlySpan<uint> instructions, VirtualMachine writer) 
+    public bool InterpretInstruction(ReadOnlySpan<uint> instructions, VirtualMachine writer)
     {
         return true;
     }

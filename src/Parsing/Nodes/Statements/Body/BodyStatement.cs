@@ -33,6 +33,8 @@ internal abstract class BodyStatement : StatementNode
         return true;
     }
 
+    //TODO: Make sure that sepration is relative to
+    //a tabulator count on the individual body statement
     private ReadOnlySpan<Token> GetBodyTokens(ReadOnlySpan<Token> tokens)
     {
         Span<Token> returnBodyNodes = new Token[tokens.Length];
@@ -41,10 +43,10 @@ internal abstract class BodyStatement : StatementNode
         int currentTabulatorIndex = tokens.IndexOfToken(TokenIndentificator.Tabulator);
         while (currentTabulatorIndex != -1)
         {
-            ReadOnlySpan<Token> shiftedTokens = tokens[(currentTabulatorIndex)..];
+            ReadOnlySpan<Token> shiftedTokens = tokens[currentTabulatorIndex..];
             int nextTabulatorIndex = IndexOfLineTabulator(shiftedTokens);
             ReadOnlySpan<Token> bodyNodes = nextTabulatorIndex != -1 ?
-                shiftedTokens[..(nextTabulatorIndex)] :
+                shiftedTokens[..nextTabulatorIndex] :
                 shiftedTokens[..(shiftedTokens.IndexOfToken(TokenIndentificator.EndLine) + 1)];
 
             bodyNodes.CopyTo(returnBodyNodes[currentBodyLength..]);

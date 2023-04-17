@@ -53,19 +53,17 @@ internal sealed class VirtualMachine : IDisposable
     public void CreateInterpretation(ReadOnlySpan<uint> instructions)
     {
         LastInstructionNopIndex = IndexOfNopInstruction(instructions);
-        int instructionIndex = 0;
         while (LastInstructionNopIndex != instructions.Length)
         {
             int nextInstructionIndex = LastInstructionNopIndex + 1;
             int nextNopInstruction = IndexOfNopInstruction(instructions[nextInstructionIndex..]);
             nextNopInstruction = nextNopInstruction == -1 ? instructions.Length :
-                nextNopInstruction + nextInstructionIndex;
+                nextNopInstruction + (nextInstructionIndex);
 
             OperatorCodes currentInstructionCode = (OperatorCodes)instructions[nextInstructionIndex];
             ReadOnlySpan<uint> currentInstructions = instructions[(nextInstructionIndex)..(nextNopInstruction)];
 
             LastInstructionNopIndex = nextNopInstruction;
-            instructionIndex += currentInstructions.Length;
             if (!TryInterpretInstruction(currentInstructionCode, currentInstructions))
                 throw new Exception("Instruction wasn't completed or found");
         }

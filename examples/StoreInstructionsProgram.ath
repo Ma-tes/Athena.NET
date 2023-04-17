@@ -1,12 +1,11 @@
-def Main() ->
-	int firstValue = 23;
-	int secondValue = 83;
-	print firstValue + secondValue;
-def int PrintAddition(int valueOne, int valueTwo) ->
-	print valueOne + valueTwo;
-
-
-
+int firstValue = 83;
+int secondValue = 38;
+if(firstValue > secondValue) ->
+	int testValue = 22;
+	print testValue;
+if(firstValue + 10 > secondValue) ->
+	print firstValue;
+	print secondValue;
 
 
 
