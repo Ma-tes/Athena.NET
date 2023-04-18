@@ -10,6 +10,8 @@ internal abstract class BodyStatement : StatementNode
 {
     private static readonly TokenIndentificator invokerToken =
         TokenIndentificator.Invoker;
+    private int tabulatorCount;
+
     //TODO: Move this to BodyNode.cs
     public int BodyLength { get; private set; }
 
@@ -18,6 +20,7 @@ internal abstract class BodyStatement : StatementNode
         int invokerIndex = tokens[tokenIndex..].IndexOfToken(invokerToken);
         int returnTokenIndex = invokerIndex == -1 ? tokenIndex : tokenIndex + invokerIndex;
         BodyLength = invokerIndex;
+        tabulatorCount = GetTabulatorCount(tokens);
 
         return base.CreateStatementResult(tokens, returnTokenIndex);
     }
@@ -54,15 +57,29 @@ internal abstract class BodyStatement : StatementNode
             currentTabulatorIndex = nextTabulatorIndex == -1 ? nextTabulatorIndex :
                 currentTabulatorIndex + nextTabulatorIndex;
         }
-        return returnBodyNodes[..(currentBodyLength + 1)];
+        return returnBodyNodes[..(currentBodyLength)];
+    }
+
+    private int GetTabulatorCount(ReadOnlySpan<Token> tokens) 
+    {
+        int tokensLength = tokens.Length;
+        int firstTabulatorIndex = tokens.IndexOfToken(TokenIndentificator.Tabulator);
+        for (int i = 0; i < tokensLength; i++)
+        {
+            Token currentToken = tokens[(firstTabulatorIndex + i)];
+            if (currentToken.TokenId != TokenIndentificator.Tabulator)
+                return i;
+        }
+        return -1;
     }
 
     private int IndexOfLineTabulator(ReadOnlySpan<Token> tokens)
     {
         int currentOperatorIndex = tokens.IndexOfToken(TokenIndentificator.EndLine);
-        if (currentOperatorIndex != 0 &&
-            tokens[currentOperatorIndex + 1].TokenId == TokenIndentificator.Tabulator)
-            return currentOperatorIndex + 1;
+        int lastTabulatorIndex = currentOperatorIndex + tabulatorCount;
+        if (lastTabulatorIndex < tokens.Length || currentOperatorIndex != 0 &&
+            tokens[lastTabulatorIndex].TokenId == TokenIndentificator.Tabulator)
+            return lastTabulatorIndex;
         return -1;
     }
 }

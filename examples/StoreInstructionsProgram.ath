@@ -1,11 +1,16 @@
-int firstValue = 83;
-int secondValue = 38;
-if(firstValue > secondValue) ->
-	int testValue = 22;
-	print testValue;
-if(firstValue + 10 > secondValue) ->
-	print firstValue;
-	print secondValue;
+def Main() ->
+	int firstValue = 83;
+	int secondValue = 38;
+	if(firstValue > secondValue) ->
+		int testValue = 22;
+		print testValue;
+	if(firstValue + 10 > secondValue) ->
+		print firstValue;
+		print secondValue;
+		if(firstValue - 50 < secondValue) ->
+			print 8383;
+
+
 
 
 
