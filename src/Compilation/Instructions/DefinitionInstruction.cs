@@ -1,4 +1,5 @@
-﻿using Athena.NET.Compilation.Interpreter;
+﻿using Athena.NET.Compilation.Instructions.Structures;
+using Athena.NET.Compilation.Interpreter;
 using Athena.NET.Compilation.Structures;
 using Athena.NET.Parsing.Nodes.Data;
 using Athena.NET.Parsing.Nodes.Statements.Body;
@@ -17,17 +18,16 @@ internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
         instructionWriter.InstructionList.AddRange(
             (uint)OperatorCodes.Nop,
             (uint)OperatorCodes.Definition,
-            definitionIdentificator, 0);
-        int currentInstructionLength = instructionWriter.InstructionList.Count;
+            definitionIdentificator);
         BodyNode rightBodyNode = (BodyNode)node.ChildNodes.RightNode;
-
         instructionWriter.CreateInstructions(rightBodyNode.NodeData.Span);
-        instructionWriter.InstructionList.Span[currentInstructionLength - 1] = (uint)(instructionWriter.InstructionList.Count - currentInstructionLength);
         return true;
     }
 
     public bool InterpretInstruction(ReadOnlySpan<uint> instructions, VirtualMachine writer)
     {
+        var definitionData = new DefinitionData(instructions[1], writer.LastInstructionNopIndex);
+        writer.DefinitionList.Add(definitionData);
         return true;
     }
 

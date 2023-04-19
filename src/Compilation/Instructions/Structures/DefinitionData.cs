@@ -1,8 +1,6 @@
-﻿using Athena.NET.Compilation.Structures;
+﻿namespace Athena.NET.Compilation.Instructions.Structures;
 
-namespace Athena.NET.Compilation.Instructions.Structures;
-
-public readonly struct DefinitionData 
+public readonly struct DefinitionData
 {
     public uint Identificator { get; }
     public int DefinitionIndex { get; }
