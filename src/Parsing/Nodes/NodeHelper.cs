@@ -51,7 +51,7 @@ public static class NodeHelper
 
                 nodeResult = result;
                 return result is BodyStatement bodyStatement ?
-                    bodyStatement.BodyLength :
+                    bodyStatement.BodyLength + tokens.IndexOfToken(TokenIndentificator.Invoker) :
                         i + (tokens[i..].IndexOfToken(TokenIndentificator.EndLine));
             }
         }

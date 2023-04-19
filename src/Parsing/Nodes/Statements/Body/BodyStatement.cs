@@ -19,8 +19,7 @@ internal abstract class BodyStatement : StatementNode
     {
         int invokerIndex = tokens[tokenIndex..].IndexOfToken(invokerToken);
         int returnTokenIndex = invokerIndex == -1 ? tokenIndex : tokenIndex + invokerIndex;
-        BodyLength = invokerIndex;
-        tabulatorCount = GetTabulatorCount(tokens);
+        tabulatorCount = GetTabulatorCount(tokens[..returnTokenIndex]) + 1;
 
         return base.CreateStatementResult(tokens, returnTokenIndex);
     }
@@ -28,7 +27,7 @@ internal abstract class BodyStatement : StatementNode
     protected sealed override bool TryParseRigthNode([NotNullWhen(true)] out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens)
     {
         ReadOnlySpan<Token> bodyTokens = GetBodyTokens(tokens);
-        BodyLength += bodyTokens.Length;
+        BodyLength = bodyTokens.Length;
         ReadOnlyMemory<INode> bodyNodes = bodyTokens.CreateNodes();
 
         var bodyNode = new BodyNode(bodyNodes);
@@ -62,23 +61,24 @@ internal abstract class BodyStatement : StatementNode
 
     private int GetTabulatorCount(ReadOnlySpan<Token> tokens) 
     {
-        int tokensLength = tokens.Length;
+        int currentIndex = 0;
         int firstTabulatorIndex = tokens.IndexOfToken(TokenIndentificator.Tabulator);
-        for (int i = 0; i < tokensLength; i++)
+        while (firstTabulatorIndex != -1 && currentIndex < tokens.Length)
         {
-            Token currentToken = tokens[(firstTabulatorIndex + i)];
+            Token currentToken = tokens[(firstTabulatorIndex + currentIndex)];
             if (currentToken.TokenId != TokenIndentificator.Tabulator)
-                return i;
+                return currentIndex;
+            currentIndex++;
         }
-        return -1;
+        return 0;
     }
 
     private int IndexOfLineTabulator(ReadOnlySpan<Token> tokens)
     {
         int currentOperatorIndex = tokens.IndexOfToken(TokenIndentificator.EndLine);
         int lastTabulatorIndex = currentOperatorIndex + tabulatorCount;
-        if (lastTabulatorIndex < tokens.Length || currentOperatorIndex != 0 &&
-            tokens[lastTabulatorIndex].TokenId == TokenIndentificator.Tabulator)
+        if (lastTabulatorIndex < tokens.Length && currentOperatorIndex != 0 &&
+            (tokens[lastTabulatorIndex].TokenId == TokenIndentificator.Tabulator))
             return lastTabulatorIndex;
         return -1;
     }

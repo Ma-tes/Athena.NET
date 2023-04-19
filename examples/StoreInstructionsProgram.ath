@@ -4,23 +4,11 @@ def Main() ->
 	if(firstValue > secondValue) ->
 		int testValue = 22;
 		print testValue;
-	if(firstValue + 10 > secondValue) ->
+	if(firstValue + 10 < secondValue) ->
 		print firstValue;
 		print secondValue;
 		if(firstValue - 50 < secondValue) ->
-			print 8383;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+			int anotherTestValue = 205;
+			print anotherTestValue;
+	int lastValue = 2005;
+	print lastValue;
