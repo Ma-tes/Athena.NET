@@ -1,6 +1,7 @@
 ﻿using Athena.NET.Lexing;
 using Athena.NET.Lexing.Structures;
 using Athena.NET.Parsing.Interfaces;
+using Athena.NET.Parsing.Nodes.Data;
 using Athena.NET.Parsing.Nodes.Operators;
 using System.Diagnostics.CodeAnalysis;
 
@@ -17,10 +18,24 @@ internal sealed class CallStatement : StatementNode
         return true;
     }
 
+    //TODO: Create better handling of errors
     protected override bool TryParseRigthNode([NotNullWhen(true)] out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens)
     {
         int semicolonIndex = tokens.IndexOfToken(TokenIndentificator.Semicolon);
-        return base.TryParseRigthNode(out nodeResult, tokens);
+        int identiferIndex = tokens[..semicolonIndex].IndexOfToken(TokenIndentificator.Identifier);
+
+        if (identiferIndex == -1) 
+        {
+            nodeResult = new ErrorNodeResult<INode>("Identifier wasn't found");
+            return false;
+        }
+        ReadOnlyMemory<INode> argumentNodes = GetArgumentsNodes(tokens[identiferIndex..]).ToArray();
+        var definitionCallNode = new DefinitionCallNode(
+                new IdentifierNode(tokens[identiferIndex].Data),
+                argumentNodes
+            );
+        nodeResult = new SuccessulNodeResult<INode>(definitionCallNode);
+        return true;
     }
 
     private static IEnumerable<INode> GetArgumentsNodes(ReadOnlySpan<Token> argumentsTokens)
@@ -28,8 +43,11 @@ internal sealed class CallStatement : StatementNode
         int currentSeparatorIndex = argumentsTokens.IndexOfToken(TokenIndentificator.Separator);
         while (currentSeparatorIndex != -1)
         {
-            ReadOnlySpan<Token> argumentTokens = argumentsTokens[..currentSeparatorIndex];
+            ReadOnlySpan<Token> argumentTokens = argumentsTokens[..currentSeparatorIndex]; 
             argumentsTokens = argumentsTokens[(currentSeparatorIndex + 1)..];
+
+            currentSeparatorIndex = argumentsTokens.IndexOfToken(TokenIndentificator.Separator);
+            yield return GetArgumentNode(argumentTokens);
         }
     }
 

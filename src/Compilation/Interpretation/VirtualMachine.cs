@@ -29,7 +29,7 @@ internal sealed class VirtualMachine : IDisposable
     /// definitions as an <see cref="DefinitionData"/> in
     /// a <see cref="Memory{T}"/>.
     /// </summary>
-    internal List<DefinitionData> DefinitionList { get; }
+    internal List<DefinitionData<int>> DefinitionList { get; }
         = new();
 
     /// <summary>

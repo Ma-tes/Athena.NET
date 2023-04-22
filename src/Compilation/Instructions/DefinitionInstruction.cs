@@ -26,7 +26,7 @@ internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
 
     public bool InterpretInstruction(ReadOnlySpan<uint> instructions, VirtualMachine writer)
     {
-        var definitionData = new DefinitionData(instructions[1], writer.LastInstructionNopIndex);
+        var definitionData = new DefinitionData<int>(instructions[1], writer.LastInstructionNopIndex);
         writer.DefinitionList.Add(definitionData);
         return true;
     }
