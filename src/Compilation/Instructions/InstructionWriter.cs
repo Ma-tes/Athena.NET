@@ -48,6 +48,15 @@ public sealed class InstructionWriter : IDisposable
     public NativeMemoryList<uint> InstructionList { get; }
         = new();
 
+    //TODO: Improve storing
+    /// <summary>
+    /// It's being used for storing individual
+    /// instructions as an <see cref="DefinitionData{T}"/> in
+    /// a <see cref="List{T}"/>.
+    /// </summary>
+    public List<DefinitionData<ReadOnlyMemory<MemoryData>>> DefinitionList { get; }
+        = new();
+
     /// <summary>
     /// Creates individual instructions
     /// from nodes, which are then stored
@@ -126,6 +135,18 @@ public sealed class InstructionWriter : IDisposable
     {
         uint identiferId = MemoryData.CalculateIdentifierId(identifierName);
         return GetIdentifierData(out returnData, identiferId);
+    }
+
+    internal ReadOnlyMemory<MemoryData>? GetDefinitionArguments(uint definitionIdentificator) 
+    {
+        int definitionCount = DefinitionList.Count;
+        for (int i = 0; i < definitionCount; i++)
+        {
+            DefinitionData<ReadOnlyMemory<MemoryData>> currentDefinitionData = DefinitionList[i];
+            if (currentDefinitionData.Identificator == definitionIdentificator)
+                return currentDefinitionData.Data;
+        }
+        return null;
     }
 
     internal void AddMemoryDataInstructions(OperatorCodes registerCode, MemoryData memoryData)

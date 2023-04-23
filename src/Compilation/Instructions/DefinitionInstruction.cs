@@ -17,7 +17,10 @@ internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
             AddStoreInstruction(definitionMemoryData, instructionWriter);
         }
         uint definitionIdentificator = MemoryData.CalculateIdentifierId(leftDefinitionNode.DefinitionIdentifier.NodeData);
-        ReadOnlySpan<MemoryData> argumentsData = GetArgumentsMemoryData(leftDefinitionNode.NodeData, instructionWriter);
+        ReadOnlyMemory<MemoryData> argumentsData = GetArgumentsMemoryData(leftDefinitionNode.NodeData, instructionWriter);
+        instructionWriter.DefinitionList.Add(new DefinitionData<ReadOnlyMemory<MemoryData>>(
+                definitionIdentificator, argumentsData
+            ));
         CreateArgumentsInstructions(argumentsData, instructionWriter);
 
         instructionWriter.InstructionList.AddRange(
@@ -36,10 +39,10 @@ internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
         return true;
     }
 
-    private void CreateArgumentsInstructions(ReadOnlySpan<MemoryData> argumentsData, InstructionWriter instructionWriter) 
+    private void CreateArgumentsInstructions(ReadOnlyMemory<MemoryData> argumentsData, InstructionWriter instructionWriter) 
     {
         int argumentsDataLength = argumentsData.Length;
-        for (int i = 0; i < argumentsDataLength; i++) { AddStoreInstruction(argumentsData[i], instructionWriter); }
+        for (int i = 0; i < argumentsDataLength; i++) { AddStoreInstruction(argumentsData.Span[i], instructionWriter); }
     }
 
     private void AddStoreInstruction(MemoryData memoryData, InstructionWriter instructionWriter)
@@ -50,19 +53,19 @@ internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
         instructionWriter.InstructionList.Add(0);
     }
 
-    private ReadOnlySpan<MemoryData> GetArgumentsMemoryData(ReadOnlyMemory<InstanceNode> argumentInstances, InstructionWriter instructionWriter)
+    private ReadOnlyMemory<MemoryData> GetArgumentsMemoryData(ReadOnlyMemory<InstanceNode> argumentInstances, InstructionWriter instructionWriter)
     {
         int instancesLength = argumentInstances.Length;
         if (instancesLength == 0)
             return null;
 
         ReadOnlySpan<InstanceNode> instancesSpan = argumentInstances.Span;
-        Span<MemoryData> returnRegisters = new MemoryData[instancesLength];
+        Memory<MemoryData> returnRegisters = new MemoryData[instancesLength];
         for (int i = 0; i < instancesLength; i++)
         {
             ReadOnlyMemory<char> argumentIdentificator = instancesSpan[i].NodeData;
             MemoryData argumentMemoryData = instructionWriter.TemporaryRegisterTM.AddRegisterData(argumentIdentificator, 16);
-            returnRegisters[i] = argumentMemoryData;
+            returnRegisters.Span[i] = argumentMemoryData;
         }
         return returnRegisters;
     }
