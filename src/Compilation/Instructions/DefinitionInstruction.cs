@@ -11,6 +11,11 @@ internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
     public bool EmitInstruction(DefinitionStatement node, InstructionWriter instructionWriter) 
     {
         DefinitionNode leftDefinitionNode = (DefinitionNode)node.ChildNodes.LeftNode;
+        if (node.NodeToken != Lexing.TokenIndentificator.Unknown)
+        {
+            MemoryData definitionMemoryData = instructionWriter.TemporaryRegisterTM.AddRegisterData(leftDefinitionNode.DefinitionIdentifier.NodeData, 16);
+            AddStoreInstruction(definitionMemoryData, instructionWriter);
+        }
         uint definitionIdentificator = MemoryData.CalculateIdentifierId(leftDefinitionNode.DefinitionIdentifier.NodeData);
         ReadOnlySpan<MemoryData> argumentsData = GetArgumentsMemoryData(leftDefinitionNode.NodeData, instructionWriter);
         CreateArgumentsInstructions(argumentsData, instructionWriter);
@@ -31,17 +36,18 @@ internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
         return true;
     }
 
-    private void CreateArgumentsInstructions(ReadOnlySpan<MemoryData> memoryData, InstructionWriter instructionWriter) 
+    private void CreateArgumentsInstructions(ReadOnlySpan<MemoryData> argumentsData, InstructionWriter instructionWriter) 
     {
-        int memoryDataLength = memoryData.Length;
-        for (int i = 0; i < memoryDataLength; i++)
-        {
-            instructionWriter.InstructionList.AddRange((uint)OperatorCodes.Nop,
-                (uint)OperatorCodes.Store);
-            MemoryData currentData = memoryData[i];
-            instructionWriter.AddMemoryDataInstructions(OperatorCodes.TM, currentData);
-            instructionWriter.InstructionList.Add(0);
-        }
+        int argumentsDataLength = argumentsData.Length;
+        for (int i = 0; i < argumentsDataLength; i++) { AddStoreInstruction(argumentsData[i], instructionWriter); }
+    }
+
+    private void AddStoreInstruction(MemoryData memoryData, InstructionWriter instructionWriter)
+    {
+        instructionWriter.InstructionList.AddRange((uint)OperatorCodes.Nop,
+            (uint)OperatorCodes.Store);
+        instructionWriter.AddMemoryDataInstructions(OperatorCodes.TM, memoryData);
+        instructionWriter.InstructionList.Add(0);
     }
 
     private ReadOnlySpan<MemoryData> GetArgumentsMemoryData(ReadOnlyMemory<InstanceNode> argumentInstances, InstructionWriter instructionWriter)

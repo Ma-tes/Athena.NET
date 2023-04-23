@@ -18,12 +18,12 @@ internal sealed class CallStatement : StatementNode
         return true;
     }
 
-    //TODO: Create better handling of errors
     protected override bool TryParseRigthNode([NotNullWhen(true)] out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens)
     {
         int semicolonIndex = tokens.IndexOfToken(TokenIndentificator.Semicolon);
         int identiferIndex = tokens[..semicolonIndex].IndexOfToken(TokenIndentificator.Identifier);
 
+        //TODO: Create better handling of errors
         if (identiferIndex == -1) 
         {
             nodeResult = new ErrorNodeResult<INode>("Identifier wasn't found");
