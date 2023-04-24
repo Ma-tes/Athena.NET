@@ -51,10 +51,10 @@ public sealed class InstructionWriter : IDisposable
     //TODO: Improve storing
     /// <summary>
     /// It's being used for storing individual
-    /// instructions as an <see cref="DefinitionData{T}"/> in
+    /// definitions as an <see cref="DefinitionData{T}"/> in
     /// a <see cref="List{T}"/>.
     /// </summary>
-    public List<DefinitionData<ReadOnlyMemory<MemoryData>>> DefinitionList { get; }
+    public List<DefinitionData<DefinitionInformation>> DefinitionList { get; }
         = new();
 
     /// <summary>
@@ -142,9 +142,9 @@ public sealed class InstructionWriter : IDisposable
         int definitionCount = DefinitionList.Count;
         for (int i = 0; i < definitionCount; i++)
         {
-            DefinitionData<ReadOnlyMemory<MemoryData>> currentDefinitionData = DefinitionList[i];
+            DefinitionData<DefinitionInformation> currentDefinitionData = DefinitionList[i];
             if (currentDefinitionData.Identificator == definitionIdentificator)
-                return currentDefinitionData.Data;
+                return currentDefinitionData.Data.DefinitionArguments;
         }
         return null;
     }

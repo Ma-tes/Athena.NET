@@ -11,6 +11,7 @@ internal enum OperatorCodes : uint
     Load = 0xffee02,
     Print = 0xffee08,
     Definition = 0xffee09,
+    DefinitionCall = 0xffeeA,
     //For now, it's being used for determine
     //whetever current uint is a instruction
     Nop = 0xffee07,

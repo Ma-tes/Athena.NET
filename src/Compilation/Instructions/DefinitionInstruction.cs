@@ -18,8 +18,8 @@ internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
         }
         uint definitionIdentificator = MemoryData.CalculateIdentifierId(leftDefinitionNode.DefinitionIdentifier.NodeData);
         ReadOnlyMemory<MemoryData> argumentsData = GetArgumentsMemoryData(leftDefinitionNode.NodeData, instructionWriter);
-        instructionWriter.DefinitionList.Add(new DefinitionData<ReadOnlyMemory<MemoryData>>(
-                definitionIdentificator, argumentsData
+        instructionWriter.DefinitionList.Add(new DefinitionData<DefinitionInformation>(
+                definitionIdentificator, new DefinitionInformation(argumentsData)
             ));
         CreateArgumentsInstructions(argumentsData, instructionWriter);
 
