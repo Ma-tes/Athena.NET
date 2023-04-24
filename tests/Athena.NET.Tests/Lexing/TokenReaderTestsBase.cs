@@ -16,11 +16,7 @@ public class TokenReaderTestsBase
 
     protected static Token[] Tokenize(string text)
     {
-        var stream = new MemoryStream();
-        stream.Write(Encoding.UTF8.GetBytes(text));
-        stream.Position = 0;
-
-        using var tokenReader = new TokenReader(stream);
+        using var tokenReader = CreateReader(text);
         return tokenReader
             .ReadTokensAsync()
             .GetAwaiter()
