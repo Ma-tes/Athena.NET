@@ -2,9 +2,11 @@
 using Athena.NET.Compilation.Instructions.Structures;
 using Athena.NET.Compilation.Structures;
 using Athena.NET.Parsing.Interfaces;
+using Athena.NET.Parsing.Nodes.Data;
 using Athena.NET.Parsing.Nodes.Operators;
 using Athena.NET.Parsing.Nodes.Statements;
 using Athena.NET.Parsing.Nodes.Statements.Body;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Athena.NET.Compilation.Instructions;
 
@@ -54,8 +56,7 @@ public sealed class InstructionWriter : IDisposable
     /// definitions as an <see cref="DefinitionData{T}"/> in
     /// a <see cref="List{T}"/>.
     /// </summary>
-    public List<DefinitionData<DefinitionInformation>> DefinitionList { get; }
-        = new();
+    public ReadOnlyMemory<DefinitionData> DefinitionDataList { get; private set; }
 
     /// <summary>
     /// Creates individual instructions
@@ -64,12 +65,56 @@ public sealed class InstructionWriter : IDisposable
     /// </summary>
     public void CreateInstructions(ReadOnlySpan<INode> nodes)
     {
+        if (TryGetDefinitionsData(out ReadOnlyMemory<DefinitionData> returnData, nodes))
+            DefinitionDataList = returnData;
+
         int nodesLength = nodes.Length;
         for (int i = 0; i < nodesLength; i++)
         {
             if (!TryGetEmitInstruction(nodes[i]))
                 throw new Exception("Instruction wasn't completed or found");
         }
+    }
+
+    private bool TryGetDefinitionsData([NotNullWhen(true)]out ReadOnlyMemory<DefinitionData> returnDefinitions, ReadOnlySpan<INode> nodes)
+    {
+        int currentDefinitionCount = 0;
+        int nodesLength = nodes.Length;
+        var currentDefinitions = new DefinitionData[nodesLength];
+        for (int i = 0; i < nodesLength; i++)
+        {
+            if (nodes[i] is not DefinitionStatement definitionStatement) 
+            {
+                returnDefinitions = null;
+                return false;
+            }
+            DefinitionNode leftDefinitionNode = (DefinitionNode)definitionStatement.ChildNodes.LeftNode;
+            currentDefinitions[i] = new DefinitionData(
+                    MemoryData.CalculateIdentifierId(leftDefinitionNode.DefinitionIdentifier.NodeData),
+                    currentDefinitionCount + leftDefinitionNode.NodeData.Length,
+                    GetArgumentsMemoryData(leftDefinitionNode.NodeData)
+                );
+            currentDefinitionCount += (leftDefinitionNode.NodeData.Length + definitionStatement.BodyLength);
+        }
+        returnDefinitions = currentDefinitions;
+        return true;
+    }
+
+    private ReadOnlyMemory<MemoryData> GetArgumentsMemoryData(ReadOnlyMemory<InstanceNode> argumentInstances)
+    {
+        int instancesLength = argumentInstances.Length;
+        if (instancesLength == 0)
+            return null;
+
+        ReadOnlySpan<InstanceNode> instancesSpan = argumentInstances.Span;
+        Memory<MemoryData> returnRegisters = new MemoryData[instancesLength];
+        for (int i = 0; i < instancesLength; i++)
+        {
+            ReadOnlyMemory<char> argumentIdentificator = instancesSpan[i].NodeData;
+            MemoryData argumentMemoryData = TemporaryRegisterTM.AddRegisterData(argumentIdentificator, 16);
+            returnRegisters.Span[i] = argumentMemoryData;
+        }
+        return returnRegisters;
     }
 
     /// <summary>
@@ -139,12 +184,12 @@ public sealed class InstructionWriter : IDisposable
 
     internal ReadOnlyMemory<MemoryData>? GetDefinitionArguments(uint definitionIdentificator) 
     {
-        int definitionCount = DefinitionList.Count;
+        int definitionCount = DefinitionDataList.Length;
         for (int i = 0; i < definitionCount; i++)
         {
-            DefinitionData<DefinitionInformation> currentDefinitionData = DefinitionList[i];
+            DefinitionData currentDefinitionData = DefinitionDataList.Span[i];
             if (currentDefinitionData.Identificator == definitionIdentificator)
-                return currentDefinitionData.Data.DefinitionArguments;
+                return currentDefinitionData.DefinitionArguments;
         }
         return null;
     }

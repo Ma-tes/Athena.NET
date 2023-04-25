@@ -1,13 +1,17 @@
-﻿namespace Athena.NET.Compilation.Instructions.Structures;
+﻿using Athena.NET.Compilation.Structures;
 
-public readonly struct DefinitionData<T>
+namespace Athena.NET.Compilation.Instructions.Structures;
+
+public readonly struct DefinitionData
 {
     public uint Identificator { get; }
-    public T Data { get; }
+    public int DefinitionIndex { get; }
+    public ReadOnlyMemory<MemoryData> DefinitionArguments { get; }
 
-    public DefinitionData(uint identificator, T data)
+    public DefinitionData(uint identificator, int definitionIndex, ReadOnlyMemory<MemoryData> definitionArguments)
     {
         Identificator = identificator;
-        Data = data;
+        DefinitionIndex = definitionIndex;
+        DefinitionArguments = definitionArguments;
     }
 } 

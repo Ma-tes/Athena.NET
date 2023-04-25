@@ -1,5 +1,4 @@
-﻿using Athena.NET.Compilation.Instructions.Structures;
-using Athena.NET.Compilation.Interpreter;
+﻿using Athena.NET.Compilation.Interpreter;
 using Athena.NET.Compilation.Structures;
 using Athena.NET.Parsing.Nodes.Data;
 using Athena.NET.Parsing.Nodes.Statements.Body;
@@ -16,17 +15,12 @@ internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
             MemoryData definitionMemoryData = instructionWriter.TemporaryRegisterTM.AddRegisterData(leftDefinitionNode.DefinitionIdentifier.NodeData, 16);
             AddStoreInstruction(definitionMemoryData, instructionWriter);
         }
-        uint definitionIdentificator = MemoryData.CalculateIdentifierId(leftDefinitionNode.DefinitionIdentifier.NodeData);
-        ReadOnlyMemory<MemoryData> argumentsData = GetArgumentsMemoryData(leftDefinitionNode.NodeData, instructionWriter);
-        instructionWriter.DefinitionList.Add(new DefinitionData<DefinitionInformation>(
-                definitionIdentificator, new DefinitionInformation(argumentsData)
-            ));
-        CreateArgumentsInstructions(argumentsData, instructionWriter);
+        ReadOnlyMemory<MemoryData>? currentDefinitionData = instructionWriter.GetDefinitionArguments(
+            MemoryData.CalculateIdentifierId(leftDefinitionNode.DefinitionIdentifier.NodeData));
+        if (currentDefinitionData is null)
+            return false;
 
-        instructionWriter.InstructionList.AddRange(
-            (uint)OperatorCodes.Nop,
-            (uint)OperatorCodes.Definition,
-            definitionIdentificator);
+        CreateArgumentsInstructions(currentDefinitionData.Value, instructionWriter);
         BodyNode rightBodyNode = (BodyNode)node.ChildNodes.RightNode;
         instructionWriter.CreateInstructions(rightBodyNode.NodeData.Span);
         return true;
@@ -34,8 +28,6 @@ internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
 
     public bool InterpretInstruction(ReadOnlySpan<uint> instructions, VirtualMachine writer)
     {
-        var definitionData = new DefinitionData<int>(instructions[1], writer.LastInstructionNopIndex);
-        writer.DefinitionList.Add(definitionData);
         return true;
     }
 
@@ -51,22 +43,5 @@ internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
             (uint)OperatorCodes.Store);
         instructionWriter.AddMemoryDataInstructions(OperatorCodes.TM, memoryData);
         instructionWriter.InstructionList.Add(0);
-    }
-
-    private ReadOnlyMemory<MemoryData> GetArgumentsMemoryData(ReadOnlyMemory<InstanceNode> argumentInstances, InstructionWriter instructionWriter)
-    {
-        int instancesLength = argumentInstances.Length;
-        if (instancesLength == 0)
-            return null;
-
-        ReadOnlySpan<InstanceNode> instancesSpan = argumentInstances.Span;
-        Memory<MemoryData> returnRegisters = new MemoryData[instancesLength];
-        for (int i = 0; i < instancesLength; i++)
-        {
-            ReadOnlyMemory<char> argumentIdentificator = instancesSpan[i].NodeData;
-            MemoryData argumentMemoryData = instructionWriter.TemporaryRegisterTM.AddRegisterData(argumentIdentificator, 16);
-            returnRegisters.Span[i] = argumentMemoryData;
-        }
-        return returnRegisters;
     }
 } 
