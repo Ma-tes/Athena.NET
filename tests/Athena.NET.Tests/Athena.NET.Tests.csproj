@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Athena.NET.csproj" />
+    <ProjectReference Include="..\..\src\Athena.NET\Athena.NET.csproj" />
   </ItemGroup>
 
 </Project>
