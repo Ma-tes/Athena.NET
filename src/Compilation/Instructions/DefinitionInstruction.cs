@@ -1,4 +1,5 @@
-﻿using Athena.NET.Compilation.Interpreter;
+﻿using Athena.NET.Compilation.Instructions.Structures;
+using Athena.NET.Compilation.Interpreter;
 using Athena.NET.Compilation.Structures;
 using Athena.NET.Parsing.Nodes.Data;
 using Athena.NET.Parsing.Nodes.Statements.Body;
@@ -15,12 +16,13 @@ internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
             MemoryData definitionMemoryData = instructionWriter.TemporaryRegisterTM.AddRegisterData(leftDefinitionNode.DefinitionIdentifier.NodeData, 16);
             AddStoreInstruction(definitionMemoryData, instructionWriter);
         }
-        ReadOnlyMemory<MemoryData>? currentDefinitionData = instructionWriter.GetDefinitionArguments(
-            MemoryData.CalculateIdentifierId(leftDefinitionNode.DefinitionIdentifier.NodeData));
-        if (currentDefinitionData is null)
-            return false;
 
-        CreateArgumentsInstructions(currentDefinitionData.Value, instructionWriter);
+        if (!instructionWriter.TryGetDefinitionData(out DefinitionData? currentDefinitionData,
+            MemoryData.CalculateIdentifierId(leftDefinitionNode.DefinitionIdentifier.NodeData)))
+            return false;
+        ReadOnlyMemory<MemoryData> currentArgumentsData = currentDefinitionData.Value.DefinitionArguments;
+        CreateArgumentsInstructions(currentArgumentsData, instructionWriter);
+
         BodyNode rightBodyNode = (BodyNode)node.ChildNodes.RightNode;
         instructionWriter.CreateInstructions(rightBodyNode.NodeData.Span);
         return true;

@@ -56,7 +56,7 @@ public sealed class InstructionWriter : IDisposable
     /// definitions as an <see cref="DefinitionData{T}"/> in
     /// a <see cref="List{T}"/>.
     /// </summary>
-    public ReadOnlyMemory<DefinitionData> DefinitionDataList { get; private set; }
+    public ReadOnlyMemory<DefinitionData> InstructionDefinitionData { get; private set; }
 
     /// <summary>
     /// Creates individual instructions
@@ -66,7 +66,7 @@ public sealed class InstructionWriter : IDisposable
     public void CreateInstructions(ReadOnlySpan<INode> nodes)
     {
         if (TryGetDefinitionsData(out ReadOnlyMemory<DefinitionData> returnData, nodes))
-            DefinitionDataList = returnData;
+            InstructionDefinitionData = returnData;
 
         int nodesLength = nodes.Length;
         for (int i = 0; i < nodesLength; i++)
@@ -182,16 +182,20 @@ public sealed class InstructionWriter : IDisposable
         return GetIdentifierData(out returnData, identiferId);
     }
 
-    internal ReadOnlyMemory<MemoryData>? GetDefinitionArguments(uint definitionIdentificator) 
+    internal bool TryGetDefinitionData([NotNullWhen(true)] out DefinitionData? returnData, uint definitionIdentificator) 
     {
-        int definitionCount = DefinitionDataList.Length;
-        for (int i = 0; i < definitionCount; i++)
+        int definitionDataCount = InstructionDefinitionData.Length;
+        for (int i = 0; i < definitionDataCount; i++)
         {
-            DefinitionData currentDefinitionData = DefinitionDataList.Span[i];
+            DefinitionData currentDefinitionData = InstructionDefinitionData.Span[i];
             if (currentDefinitionData.Identificator == definitionIdentificator)
-                return currentDefinitionData.DefinitionArguments;
+            {
+                returnData = currentDefinitionData;
+                return true;
+            }
         }
-        return null;
+        returnData = null;
+        return false;
     }
 
     internal void AddMemoryDataInstructions(OperatorCodes registerCode, MemoryData memoryData)

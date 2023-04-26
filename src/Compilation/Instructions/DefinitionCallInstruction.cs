@@ -1,4 +1,5 @@
-﻿using Athena.NET.Compilation.Interpreter;
+﻿using Athena.NET.Compilation.Instructions.Structures;
+using Athena.NET.Compilation.Interpreter;
 using Athena.NET.Compilation.Structures;
 using Athena.NET.Parsing.Interfaces;
 using Athena.NET.Parsing.Nodes;
@@ -13,13 +14,16 @@ internal sealed class DefinitionCallInstruction : IInstruction<CallStatement>
     public bool EmitInstruction(CallStatement node, InstructionWriter writer) 
     {
         DefinitionCallNode callNode = (DefinitionCallNode)node.ChildNodes.RightNode;
-        ReadOnlyMemory<MemoryData>? definitionArguments = writer.GetDefinitionArguments(MemoryData.CalculateIdentifierId(callNode.DefinitionIdentifier.NodeData));
-        if (definitionArguments is null || callNode.NodeData.Length != definitionArguments.Value.Length)
+        if (!writer.TryGetDefinitionData(out DefinitionData? currentDefinitionData,
+            MemoryData.CalculateIdentifierId(callNode.DefinitionIdentifier.NodeData)) ||
+            callNode.NodeData.Length != currentDefinitionData.Value.DefinitionArguments.Length)
             return false;
+
+        ReadOnlyMemory<MemoryData> definitionArgumentsData = currentDefinitionData.Value.DefinitionArguments;
         ReadOnlySpan<INode> argumentNodes = callNode.NodeData.Span;
         for (int i = 0; i < argumentNodes.Length; i++)
         {
-            MemoryData currentArgumentMemoryData = definitionArguments.Value.Span[i];
+            MemoryData currentArgumentMemoryData = definitionArgumentsData.Span[i];
             if (!CreateArgumentStoreInstructions(argumentNodes[i], currentArgumentMemoryData, writer))
                 return false;
         }
