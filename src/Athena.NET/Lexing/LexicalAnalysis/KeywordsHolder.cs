@@ -23,6 +23,13 @@ internal static class KeywordsHolder
             new (TokenIndentificator.Char, "char"),
             new (TokenIndentificator.If, "if"),
             new (TokenIndentificator.Else, "else"),
+
+            new (TokenIndentificator.LogicalAnd, "&", true),
+            new (TokenIndentificator.LogicalOr, "|", true),
+            new (TokenIndentificator.LogicalXor, "^", true),
+            new (TokenIndentificator.LogicalLshift, "<<", true),
+            new (TokenIndentificator.LogicalRshift, ">>", true),
+
             new (TokenIndentificator.EqualLogical, "=="),
             new (TokenIndentificator.NotEqual, "!="),
             new (TokenIndentificator.GreaterEqual, ">="),
@@ -51,12 +58,6 @@ internal static class KeywordsHolder
             new (TokenIndentificator.Sub, "-", true),
             new (TokenIndentificator.Mul, "*", true),
             new (TokenIndentificator.Div, "/", true),
-
-            new (TokenIndentificator.LogicalAnd, "&", true),
-            new (TokenIndentificator.LogicalOr, "|", true),
-            new (TokenIndentificator.LogicalXor, "^", true),
-            new (TokenIndentificator.LogicalLshift, "<<", true),
-            new (TokenIndentificator.LogicalRshift, ">>", true),
 
             new (TokenIndentificator.EqualAssignment, "=", true),
             new (TokenIndentificator.OpenBrace, "(", true),
