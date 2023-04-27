@@ -38,8 +38,9 @@ internal sealed class CallStatement : StatementNode
         return true;
     }
 
-    private static IEnumerable<INode> GetArgumentsNodes(ReadOnlySpan<Token> argumentsTokens)
+    private static ReadOnlyMemory<INode> GetArgumentsNodes(ReadOnlySpan<Token> argumentsTokens)
     {
+        var argumentNodesList = new List<INode>();
         int currentSeparatorIndex = argumentsTokens.IndexOfToken(TokenIndentificator.Separator);
         while (currentSeparatorIndex != -1)
         {
@@ -47,8 +48,9 @@ internal sealed class CallStatement : StatementNode
             argumentsTokens = argumentsTokens[(currentSeparatorIndex + 1)..];
 
             currentSeparatorIndex = argumentsTokens.IndexOfToken(TokenIndentificator.Separator);
-            yield return GetArgumentNode(argumentTokens);
+            argumentNodesList.Add(GetArgumentNode(argumentTokens));
         }
+        return argumentNodesList.ToArray();
     }
 
     private static INode GetArgumentNode(ReadOnlySpan<Token> argumentTokens)

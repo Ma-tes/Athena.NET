@@ -1,6 +1,9 @@
 ﻿using Athena.NET.Compilation.DataHolders;
 using Athena.NET.Compilation.Instructions;
+using Athena.NET.Compilation.Instructions.Structures;
 using Athena.NET.Compilation.Interpretation;
+using Athena.NET.Compilation.Structures;
+using Athena.NET.Parsing.Nodes.Data;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 
@@ -11,6 +14,10 @@ namespace Athena.NET.Compilation.Interpreter;
 /// </summary>
 internal sealed class VirtualMachine : IDisposable
 {
+    //TODO: Consider a better reimplemtentation
+    public static uint MainDefinitionIdentificator = MemoryData.CalculateIdentifierId(
+            new char[] { 'M', 'a', 'i', 'n' }
+        );
     private ImmutableArray<RegisterMemory> virtualRegisters =
         ImmutableArray.Create
         (
@@ -30,6 +37,8 @@ internal sealed class VirtualMachine : IDisposable
     /// </remarks>
     public int LastInstructionNopIndex { get; internal set; }
 
+    //TODO: Make sure to calculate exact
+    //index and length of a main definition
     /// <summary>
     /// Performs virtualized interpretation of
     /// instruction byte-code.

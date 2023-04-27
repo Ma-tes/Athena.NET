@@ -11,6 +11,8 @@ namespace Athena.NET.Compilation.Instructions;
 
 internal sealed class DefinitionCallInstruction : IInstruction<CallStatement>
 {
+    public static int LastJumpIndex { get; private set; } = 0;
+
     public bool EmitInstruction(CallStatement node, InstructionWriter writer) 
     {
         DefinitionCallNode callNode = (DefinitionCallNode)node.ChildNodes.RightNode;
@@ -27,6 +29,10 @@ internal sealed class DefinitionCallInstruction : IInstruction<CallStatement>
             if (!CreateArgumentStoreInstructions(argumentNodes[i], currentArgumentMemoryData, writer))
                 return false;
         }
+        LastJumpIndex = Math.Abs(writer.InstructionList.Count - currentDefinitionData.Value.DefinitionIndex);
+        writer.InstructionList.AddRange((uint)OperatorCodes.Nop,
+            (uint)OperatorCodes.Jump,
+            (uint)LastJumpIndex);
         return true;
     }
 

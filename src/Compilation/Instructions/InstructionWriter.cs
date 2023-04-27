@@ -63,11 +63,14 @@ public sealed class InstructionWriter : IDisposable
     /// from nodes, which are then stored
     /// in an <see cref="InstructionList"/>.
     /// </summary>
-    public void CreateInstructions(ReadOnlySpan<INode> nodes)
+    public InstructionWriter(ReadOnlySpan<INode> nodes) 
     {
         if (TryGetDefinitionsData(out ReadOnlyMemory<DefinitionData> returnData, nodes))
             InstructionDefinitionData = returnData;
+    }
 
+    public void CreateInstructions(ReadOnlySpan<INode> nodes)
+    {
         int nodesLength = nodes.Length;
         for (int i = 0; i < nodesLength; i++)
         {
@@ -89,9 +92,12 @@ public sealed class InstructionWriter : IDisposable
                 return false;
             }
             DefinitionNode leftDefinitionNode = (DefinitionNode)definitionStatement.ChildNodes.LeftNode;
+            int definitionDataLength = leftDefinitionNode.NodeData.Length;
+
             currentDefinitions[i] = new DefinitionData(
                     MemoryData.CalculateIdentifierId(leftDefinitionNode.DefinitionIdentifier.NodeData),
-                    currentDefinitionCount + leftDefinitionNode.NodeData.Length,
+                    currentDefinitionCount + definitionDataLength,
+                    definitionDataLength,
                     GetArgumentsMemoryData(leftDefinitionNode.NodeData)
                 );
             currentDefinitionCount += (leftDefinitionNode.NodeData.Length + definitionStatement.BodyLength);
