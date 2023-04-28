@@ -53,8 +53,8 @@ public sealed class InstructionWriter : IDisposable
     //TODO: Improve storing
     /// <summary>
     /// It's being used for storing individual
-    /// definitions as an <see cref="DefinitionData{T}"/> in
-    /// a <see cref="List{T}"/>.
+    /// definition data as an <see cref="InstructionDefinitionData{T}"/> in
+    /// a <see cref="ReadOnlyMemory{T}"/>.
     /// </summary>
     public ReadOnlyMemory<DefinitionData> InstructionDefinitionData { get; private set; }
 
@@ -100,7 +100,7 @@ public sealed class InstructionWriter : IDisposable
                     definitionDataLength,
                     GetArgumentsMemoryData(leftDefinitionNode.NodeData)
                 );
-            currentDefinitionCount += (leftDefinitionNode.NodeData.Length + definitionStatement.BodyLength);
+            currentDefinitionCount += leftDefinitionNode.NodeData.Length + definitionStatement.BodyLength;
         }
         returnDefinitions = currentDefinitions;
         return true;
