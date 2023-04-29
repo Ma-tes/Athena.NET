@@ -2,8 +2,6 @@
 using Athena.NET.Compilation.Instructions;
 using Athena.NET.Compilation.Instructions.Structures;
 using Athena.NET.Compilation.Interpretation;
-using Athena.NET.Compilation.Structures;
-using Athena.NET.Parsing.Nodes.Data;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 
@@ -14,10 +12,7 @@ namespace Athena.NET.Compilation.Interpreter;
 /// </summary>
 internal sealed class VirtualMachine : IDisposable
 {
-    //TODO: Consider a better reimplemtentation
-    public static uint MainDefinitionIdentificator = MemoryData.CalculateIdentifierId(
-            new char[] { 'M', 'a', 'i', 'n' }
-        );
+    private DefinitionData mainDefinitionData;
     private ImmutableArray<RegisterMemory> virtualRegisters =
         ImmutableArray.Create
         (
@@ -37,6 +32,11 @@ internal sealed class VirtualMachine : IDisposable
     /// </remarks>
     public int LastInstructionNopIndex { get; internal set; }
 
+    public VirtualMachine(DefinitionData mainDefinitionData) 
+    {
+        this.mainDefinitionData = mainDefinitionData;
+    }
+
     //TODO: Make sure to calculate exact
     //index and length of a main definition
     /// <summary>
@@ -51,8 +51,9 @@ internal sealed class VirtualMachine : IDisposable
     /// </exception>
     public void CreateInterpretation(ReadOnlySpan<uint> instructions)
     {
-        LastInstructionNopIndex = IndexOfNopInstruction(instructions);
-        while (LastInstructionNopIndex != instructions.Length)
+        LastInstructionNopIndex = IndexOfNopInstruction(instructions[mainDefinitionData.DefinitionIndex..]);
+        int lastMainDefinitionIndex = mainDefinitionData.DefinitionIndex + mainDefinitionData.DefinitionLength;
+        while (LastInstructionNopIndex != lastMainDefinitionIndex)
         {
             int nextInstructionIndex = LastInstructionNopIndex + 1;
             int nextNopInstruction = IndexOfNopInstruction(instructions[nextInstructionIndex..]);

@@ -34,9 +34,14 @@ internal sealed class JumpInstruction : IInstruction<BodyStatement>
 
     public bool InterpretInstruction(ReadOnlySpan<uint> instructions, VirtualMachine writer)
     {
+        if (instructions.Length <= 1)
+            return false;
         TokenIndentificator operatorInstruction = (TokenIndentificator)((instructions[0] ^ (0xffeec << 4)) + 5);
         if (!OperatorHelper.TryGetOperator(out OperatorNode instructionNode, operatorInstruction))
-            return false;
+        {
+            writer.LastInstructionNopIndex += (int)instructions[1];
+            return true;
+        }
 
         var operatorData = writer.GetInstructionData(instructions[1..]);
         int operatorResult = instructionNode.CalculateData(operatorData[0], operatorData[1]);
@@ -87,6 +92,6 @@ internal sealed class JumpInstruction : IInstruction<BodyStatement>
         TokenIndentificator.GreaterEqual => OperatorCodes.JumpLE,
         TokenIndentificator.LessThan => OperatorCodes.JumpG,
         TokenIndentificator.LessEqual => OperatorCodes.JumpGE,
-        _ => default
+        _ => OperatorCodes.Jump
     };
 }

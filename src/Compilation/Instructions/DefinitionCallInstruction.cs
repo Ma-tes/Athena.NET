@@ -16,12 +16,12 @@ internal sealed class DefinitionCallInstruction : IInstruction<CallStatement>
     public bool EmitInstruction(CallStatement node, InstructionWriter writer) 
     {
         DefinitionCallNode callNode = (DefinitionCallNode)node.ChildNodes.RightNode;
-        if (!writer.TryGetDefinitionData(out DefinitionData? currentDefinitionData,
+        if (!writer.TryGetDefinitionData(out DefinitionData currentDefinitionData,
             MemoryData.CalculateIdentifierId(callNode.DefinitionIdentifier.NodeData)) ||
-            callNode.NodeData.Length != currentDefinitionData.Value.DefinitionArguments.Length)
+            callNode.NodeData.Length != currentDefinitionData.DefinitionArguments.Length)
             return false;
 
-        ReadOnlyMemory<MemoryData> definitionArgumentsData = currentDefinitionData.Value.DefinitionArguments;
+        ReadOnlyMemory<MemoryData> definitionArgumentsData = currentDefinitionData.DefinitionArguments;
         ReadOnlySpan<INode> argumentNodes = callNode.NodeData.Span;
         for (int i = 0; i < argumentNodes.Length; i++)
         {
@@ -29,7 +29,7 @@ internal sealed class DefinitionCallInstruction : IInstruction<CallStatement>
             if (!CreateArgumentStoreInstructions(argumentNodes[i], currentArgumentMemoryData, writer))
                 return false;
         }
-        LastJumpIndex = Math.Abs(writer.InstructionList.Count - currentDefinitionData.Value.DefinitionIndex);
+        LastJumpIndex = Math.Abs(writer.InstructionList.Count - currentDefinitionData.DefinitionIndex);
         writer.InstructionList.AddRange((uint)OperatorCodes.Nop,
             (uint)OperatorCodes.Jump,
             (uint)LastJumpIndex);

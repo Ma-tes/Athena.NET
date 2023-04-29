@@ -23,6 +23,10 @@ namespace Athena.NET.Compilation.Instructions;
 /// </remarks>
 public sealed class InstructionWriter : IDisposable
 {
+    //TODO: Consider a better reimplemtentation
+    private static readonly uint mainDefinitionIdentificator = MemoryData.CalculateIdentifierId(
+            new char[] { 'M', 'a', 'i', 'n' }
+        );
     /// <summary>
     /// Implementation of a <see cref="Register"/> class as
     /// a 8-bit register with a code <see cref="OperatorCodes.AH"/>.
@@ -57,6 +61,7 @@ public sealed class InstructionWriter : IDisposable
     /// a <see cref="ReadOnlyMemory{T}"/>.
     /// </summary>
     public ReadOnlyMemory<DefinitionData> InstructionDefinitionData { get; private set; }
+    public DefinitionData MainDefinitionData { get; private set; }
 
     /// <summary>
     /// Creates individual instructions
@@ -69,8 +74,13 @@ public sealed class InstructionWriter : IDisposable
             InstructionDefinitionData = returnData;
     }
 
+    //TODO: Better exception and error handling
     public void CreateInstructions(ReadOnlySpan<INode> nodes)
     {
+        if(!TryGetDefinitionData(out DefinitionData mainDefinitionData, mainDefinitionIdentificator))
+            throw new Exception("Main definition wasn't found");
+        MainDefinitionData = mainDefinitionData;
+
         int nodesLength = nodes.Length;
         for (int i = 0; i < nodesLength; i++)
         {
@@ -92,7 +102,7 @@ public sealed class InstructionWriter : IDisposable
                 return false;
             }
             DefinitionNode leftDefinitionNode = (DefinitionNode)definitionStatement.ChildNodes.LeftNode;
-            int definitionDataLength = leftDefinitionNode.NodeData.Length;
+            int definitionDataLength = definitionStatement.BodyLength;
 
             currentDefinitions[i] = new DefinitionData(
                     MemoryData.CalculateIdentifierId(leftDefinitionNode.DefinitionIdentifier.NodeData),
@@ -121,6 +131,10 @@ public sealed class InstructionWriter : IDisposable
             returnRegisters.Span[i] = argumentMemoryData;
         }
         return returnRegisters;
+    }
+
+    private int CalculateDefinitionLength(ReadOnlySpan<INode> definitionNodes)
+    {
     }
 
     /// <summary>
@@ -188,7 +202,7 @@ public sealed class InstructionWriter : IDisposable
         return GetIdentifierData(out returnData, identiferId);
     }
 
-    internal bool TryGetDefinitionData([NotNullWhen(true)] out DefinitionData? returnData, uint definitionIdentificator) 
+    internal bool TryGetDefinitionData([NotNullWhen(true)] out DefinitionData returnData, uint definitionIdentificator) 
     {
         int definitionDataCount = InstructionDefinitionData.Length;
         for (int i = 0; i < definitionDataCount; i++)
@@ -200,7 +214,7 @@ public sealed class InstructionWriter : IDisposable
                 return true;
             }
         }
-        returnData = null;
+        returnData = default;
         return false;
     }
 

@@ -1,13 +1,11 @@
 ﻿using Athena.NET.Compilation;
 using Athena.NET.Compilation.Instructions;
-using Athena.NET.Compilation.Instructions.Structures;
 using Athena.NET.Compilation.Interpretation;
 using Athena.NET.Compilation.Interpreter;
 using Athena.NET.Compilation.Structures;
 using Athena.NET.Lexing;
 using Athena.NET.Lexing.LexicalAnalysis;
 using Athena.NET.Lexing.Structures;
-using Athena.NET.Parsing.Interfaces;
 using Athena.NET.Parsing.Nodes;
 using System.Diagnostics.CodeAnalysis;
 
@@ -27,10 +25,7 @@ using (var tokenReader = new TokenReader
 #if DEBUG
         WriteInstructions(instructionWriter.InstructionList.Span);
 #endif
-        using var virtualMachine = new VirtualMachine();
-        if (!instructionWriter.TryGetDefinitionData(out DefinitionData? mainDefinitionData,
-            VirtualMachine.MainDefinitionIdentificator))
-            throw new Exception("Main definition wasn't found");
+        using var virtualMachine = new VirtualMachine(instructionWriter.MainDefinitionData);
         virtualMachine.CreateInterpretation(instructionWriter.InstructionList.Span);
     }
 

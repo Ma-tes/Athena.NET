@@ -17,10 +17,10 @@ internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
             AddStoreInstruction(definitionMemoryData, instructionWriter);
         }
 
-        if (!instructionWriter.TryGetDefinitionData(out DefinitionData? currentDefinitionData,
+        if (!instructionWriter.TryGetDefinitionData(out DefinitionData currentDefinitionData,
             MemoryData.CalculateIdentifierId(leftDefinitionNode.DefinitionIdentifier.NodeData)))
             return false;
-        ReadOnlyMemory<MemoryData> currentArgumentsData = currentDefinitionData.Value.DefinitionArguments;
+        ReadOnlyMemory<MemoryData> currentArgumentsData = currentDefinitionData.DefinitionArguments;
         CreateArgumentsInstructions(currentArgumentsData, instructionWriter);
 
         BodyNode rightBodyNode = (BodyNode)node.ChildNodes.RightNode;
