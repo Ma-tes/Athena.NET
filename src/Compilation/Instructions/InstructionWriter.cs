@@ -60,7 +60,7 @@ public sealed class InstructionWriter : IDisposable
     /// definition data as an <see cref="InstructionDefinitionData{T}"/> in
     /// a <see cref="ReadOnlyMemory{T}"/>.
     /// </summary>
-    public ReadOnlyMemory<DefinitionData> InstructionDefinitionData { get; private set; }
+    public ReadOnlyMemory<DefinitionData> InstructionDefinitionData { get; internal set; }
     public DefinitionData MainDefinitionData { get; private set; }
 
     /// <summary>
@@ -91,9 +91,9 @@ public sealed class InstructionWriter : IDisposable
 
     private bool TryGetDefinitionsData([NotNullWhen(true)]out ReadOnlyMemory<DefinitionData> returnDefinitions, ReadOnlySpan<INode> nodes)
     {
-        int currentDefinitionCount = 0;
         int nodesLength = nodes.Length;
-        var currentDefinitions = new DefinitionData[nodesLength];
+        Memory<DefinitionData> currentDefinitions = new DefinitionData[nodesLength];
+        Span<DefinitionData> currentDefinitionsSpan = currentDefinitions.Span;
         for (int i = 0; i < nodesLength; i++)
         {
             if (nodes[i] is not DefinitionStatement definitionStatement) 
@@ -102,18 +102,33 @@ public sealed class InstructionWriter : IDisposable
                 return false;
             }
             DefinitionNode leftDefinitionNode = (DefinitionNode)definitionStatement.ChildNodes.LeftNode;
-            int definitionDataLength = definitionStatement.BodyLength;
-
-            currentDefinitions[i] = new DefinitionData(
+            currentDefinitionsSpan[i] = new DefinitionData(
                     MemoryData.CalculateIdentifierId(leftDefinitionNode.DefinitionIdentifier.NodeData),
-                    currentDefinitionCount + definitionDataLength,
-                    definitionDataLength,
-                    GetArgumentsMemoryData(leftDefinitionNode.NodeData)
+                    ((leftDefinitionNode.NodeData.Length + 1) * 6), 0,
+                    GetArgumentsMemoryData(leftDefinitionNode.NodeData),
+                    ((BodyNode)definitionStatement.ChildNodes.RightNode)
                 );
-            currentDefinitionCount += leftDefinitionNode.NodeData.Length + definitionStatement.BodyLength;
         }
-        returnDefinitions = currentDefinitions;
+        returnDefinitions = CreateRelativeDefinitionsData(currentDefinitions);
         return true;
+    }
+
+    private ReadOnlyMemory<DefinitionData> CreateRelativeDefinitionsData(Memory<DefinitionData> definitionsData)
+    {
+        int definitionInstructionCount = 0;
+        int definitionsDataLength = definitionsData.Length;
+        for (int i = 0; i < definitionsDataLength; i++)
+        {
+            ref DefinitionData currentDefinitionData = ref definitionsData.Span[i];
+            ReadOnlySpan<INode> currentBodyNodes = currentDefinitionData.DefinitionBodyNode.NodeData.Span;
+            int argumentsIntructionLength = currentDefinitionData.DefinitionIndex;
+            int definitionBodyLength = CalculateDefinitionLength(currentBodyNodes, definitionsData);
+
+            currentDefinitionData.DefinitionIndex += definitionInstructionCount;
+            currentDefinitionData.DefinitionLength = definitionBodyLength;
+            definitionInstructionCount += definitionBodyLength + argumentsIntructionLength;
+        }
+        return definitionsData;
     }
 
     private ReadOnlyMemory<MemoryData> GetArgumentsMemoryData(ReadOnlyMemory<InstanceNode> argumentInstances)
@@ -133,8 +148,13 @@ public sealed class InstructionWriter : IDisposable
         return returnRegisters;
     }
 
-    private int CalculateDefinitionLength(ReadOnlySpan<INode> definitionNodes)
+    private static int CalculateDefinitionLength(ReadOnlySpan<INode> definitionNodes, ReadOnlyMemory<DefinitionData> returnDefinitions)
     {
+        using var definitionInstructionWriter = new InstructionWriter(definitionNodes);
+        definitionInstructionWriter.InstructionDefinitionData = returnDefinitions;
+
+        definitionInstructionWriter.CreateInstructions(definitionNodes);
+        return definitionInstructionWriter.InstructionList.Count;
     }
 
     /// <summary>
