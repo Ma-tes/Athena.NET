@@ -31,7 +31,7 @@ public unsafe class NativeMemoryList<T> : IDisposable where T : struct //TODO: I
         Count++;
     }
 
-    public void AddRange(Span<T> data)
+    public void AddRange(ReadOnlySpan<T> data)
     {
         int dataLength = data.Length;
         int countDifference = allocationLength - Count;

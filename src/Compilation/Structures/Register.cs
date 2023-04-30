@@ -10,7 +10,7 @@ namespace Athena.NET.Compilation.Structures;
 /// </summary>
 internal sealed class Register : IDisposable
 {
-    private NativeMemoryList<MemoryData> memoryData;
+    internal NativeMemoryList<MemoryData> memoryData;
     private int lastOffset = 0;
 
     /// <summary>

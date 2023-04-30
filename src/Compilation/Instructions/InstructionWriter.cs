@@ -121,8 +121,9 @@ public sealed class InstructionWriter : IDisposable
         {
             ref DefinitionData currentDefinitionData = ref definitionsData.Span[i];
             ReadOnlySpan<INode> currentBodyNodes = currentDefinitionData.DefinitionBodyNode.NodeData.Span;
+
             int argumentsIntructionLength = currentDefinitionData.DefinitionIndex;
-            int definitionBodyLength = CalculateDefinitionLength(currentBodyNodes, definitionsData);
+            int definitionBodyLength = CalculateDefinitionLength(currentBodyNodes,currentDefinitionData.DefinitionArguments, definitionsData);
 
             currentDefinitionData.DefinitionIndex += definitionInstructionCount;
             currentDefinitionData.DefinitionLength = definitionBodyLength;
@@ -148,10 +149,12 @@ public sealed class InstructionWriter : IDisposable
         return returnRegisters;
     }
 
-    private static int CalculateDefinitionLength(ReadOnlySpan<INode> definitionNodes, ReadOnlyMemory<DefinitionData> returnDefinitions)
+    private static int CalculateDefinitionLength(ReadOnlySpan<INode> definitionNodes, ReadOnlyMemory<MemoryData> argumentsData,
+        ReadOnlyMemory<DefinitionData> returnDefinitions)
     {
         using var definitionInstructionWriter = new InstructionWriter(definitionNodes);
         definitionInstructionWriter.InstructionDefinitionData = returnDefinitions;
+        definitionInstructionWriter.TemporaryRegisterTM.memoryData.AddRange(argumentsData.Span);
 
         definitionInstructionWriter.CreateInstructions(definitionNodes);
         return definitionInstructionWriter.InstructionList.Count;

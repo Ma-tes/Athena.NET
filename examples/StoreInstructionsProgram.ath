@@ -12,3 +12,6 @@ def Main() ->
 			print anotherTestValue;
 	int lastValue = 2005;
 	print lastValue;
+def PrintTwoValues(int firstValue, int secondValue) ->
+	print firstValue;
+	print secondValue;
