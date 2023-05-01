@@ -36,6 +36,7 @@ internal static class KeywordsHolder
             new (TokenIndentificator.Separator, ","),
 
             //TODO: Refactor
+            new (TokenIndentificator.EndLine, "\0", true),
             new (TokenIndentificator.EndLine, "\0n", true)
             {
                 ParseFunction = (ReadOnlyMemory<char> data) =>

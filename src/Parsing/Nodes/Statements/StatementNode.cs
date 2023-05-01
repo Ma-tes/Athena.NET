@@ -14,7 +14,7 @@ internal abstract class StatementNode : INode
     public virtual NodeResult<INode> CreateStatementResult(ReadOnlySpan<Token> tokens, int tokenIndex)
     {
         ReadOnlySpan<Token> leftTokens = tokens[..tokenIndex];
-        ReadOnlySpan<Token> rightTokens = tokens[(tokenIndex + 2)..];
+        ReadOnlySpan<Token> rightTokens = tokens[(tokenIndex + 1)..];
 
         if (!TryParseLeftNode(out NodeResult<INode> leftResult, leftTokens) && leftResult is not null)
             return new ErrorNodeResult<INode>(leftResult.Message);

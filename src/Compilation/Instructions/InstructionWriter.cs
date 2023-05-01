@@ -179,6 +179,8 @@ public sealed class InstructionWriter : IDisposable
             .EmitInstruction(ifNode, this),
         DefinitionStatement definitionNode => new DefinitionInstruction()
             .EmitInstruction(definitionNode, this),
+        CallStatement definitionCallNode => new DefinitionCallInstruction()
+            .EmitInstruction(definitionCallNode, this),
         OperatorNode operatorNode => new OperatorInstruction()
             .EmitInstruction(operatorNode, this),
         _ => false

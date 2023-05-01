@@ -25,6 +25,10 @@ internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
 
         BodyNode rightBodyNode = (BodyNode)node.ChildNodes.RightNode;
         instructionWriter.CreateInstructions(rightBodyNode.NodeData.Span);
+        if(node.NodeToken == Lexing.TokenIndentificator.Unknown)
+            instructionWriter.InstructionList.AddRange((uint)OperatorCodes.Nop,
+                (uint)OperatorCodes.Jump,
+                (uint)(DefinitionCallInstruction.LastJumpIndex * -1));
         return true;
     }
 
