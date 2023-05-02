@@ -13,7 +13,14 @@ internal sealed class DefinitionStatement : BodyStatement
 
     protected override bool TryParseLeftNode([NotNullWhen(true)] out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens)
     {
-        int definitionIndex = tokens.IndexOfTokenType();
+        int identifierIndex = tokens.IndexOfToken(TokenIndentificator.Identifier);
+        if (identifierIndex == -1) 
+        {
+            nodeResult = new ErrorNodeResult<INode>("Definition identifier token wasn't found");
+            return false;
+        }
+
+        int definitionIndex = tokens[..identifierIndex].IndexOfTokenType();
         TokenIndentificator definitionType = definitionIndex != -1 ?
             tokens[definitionIndex].TokenId : TokenIndentificator.Unknown;
 
@@ -21,13 +28,6 @@ internal sealed class DefinitionStatement : BodyStatement
         if (definitionTokenIndex == -1)
         {
             nodeResult = new ErrorNodeResult<INode>("Definition token wasn't found");
-            return false;
-        }
-
-        int identifierIndex = tokens.IndexOfToken(TokenIndentificator.Identifier);
-        if (identifierIndex == -1) 
-        {
-            nodeResult = new ErrorNodeResult<INode>("Definition identifier token wasn't found");
             return false;
         }
 

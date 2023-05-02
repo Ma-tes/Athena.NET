@@ -10,9 +10,9 @@ def Main() ->
 		print secondValue;
 		if(firstValue - 50 < secondValue) ->
 			int anotherTestValue = 205;
-			print anotherTestValue;¨
+			print anotherTestValue;
 	int lastValue = 20;
 	print lastValue;
-def PrintTwoValues(int firstValue, int secondValue) ->
-	print firstValue;
-	print secondValue;
+def PrintTwoValues(int valueOne, int valueTwo) ->
+	print valueOne;
+	print valueTwo;

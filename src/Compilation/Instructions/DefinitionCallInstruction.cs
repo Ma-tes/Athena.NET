@@ -30,10 +30,10 @@ internal sealed class DefinitionCallInstruction : IInstruction<CallStatement>
             if (!CreateArgumentStoreInstructions(argumentNodes[i], currentArgumentMemoryData, writer))
                 return false;
         }
+        LastJumpIndex = currentDefinitionData.DefinitionIndex - (writer.InstructionList.Count + 3);
         writer.InstructionList.AddRange((uint)OperatorCodes.Nop,
             (uint)OperatorCodes.Jump,
             (uint)LastJumpIndex);
-        LastJumpIndex = currentDefinitionData.DefinitionIndex - writer.InstructionList.Count;
         return true;
     }
 

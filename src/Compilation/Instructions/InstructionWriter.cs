@@ -24,7 +24,7 @@ namespace Athena.NET.Compilation.Instructions;
 public sealed class InstructionWriter : IDisposable
 {
     //TODO: Consider a better reimplemtentation
-    private static readonly uint mainDefinitionIdentificator = MemoryData.CalculateIdentifierId(
+    public static readonly uint MainDefinitionIdentificator = MemoryData.CalculateIdentifierId(
             new char[] { 'M', 'a', 'i', 'n' }
         );
     /// <summary>
@@ -77,7 +77,7 @@ public sealed class InstructionWriter : IDisposable
     //TODO: Better exception and error handling
     public void CreateInstructions(ReadOnlySpan<INode> nodes)
     {
-        if(!TryGetDefinitionData(out DefinitionData mainDefinitionData, mainDefinitionIdentificator))
+        if(!TryGetDefinitionData(out DefinitionData mainDefinitionData, MainDefinitionIdentificator))
             throw new Exception("Main definition wasn't found");
         MainDefinitionData = mainDefinitionData;
 
@@ -102,9 +102,11 @@ public sealed class InstructionWriter : IDisposable
                 return false;
             }
             DefinitionNode leftDefinitionNode = (DefinitionNode)definitionStatement.ChildNodes.LeftNode;
+            int definitionMemoryDataLength = leftDefinitionNode.NodeToken != Lexing.TokenIndentificator.Unknown ?
+                leftDefinitionNode.NodeData.Length + 1 : leftDefinitionNode.NodeData.Length;
             currentDefinitionsSpan[i] = new DefinitionData(
                     MemoryData.CalculateIdentifierId(leftDefinitionNode.DefinitionIdentifier.NodeData),
-                    ((leftDefinitionNode.NodeData.Length + 1) * 6), 0,
+                    ((definitionMemoryDataLength) * 6), 0,
                     GetArgumentsMemoryData(leftDefinitionNode.NodeData),
                     ((BodyNode)definitionStatement.ChildNodes.RightNode)
                 );

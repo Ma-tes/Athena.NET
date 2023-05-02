@@ -161,8 +161,9 @@ internal sealed class VirtualMachine : IDisposable
         if (instructionCode == OperatorCodes.Definition)
             return new DefinitionInstruction()
                 .InterpretInstruction(instructionData, this);
-        if (instructionCode >= OperatorCodes.JumpE &&
-           instructionCode <= OperatorCodes.JumpLE)
+        if (instructionCode == OperatorCodes.Jump ||
+            instructionCode >= OperatorCodes.JumpE &&
+            instructionCode <= OperatorCodes.JumpLE)
             return new JumpInstruction()
                 .InterpretInstruction(instructionData, this);
         if (instructionCode >= OperatorCodes.Add &&

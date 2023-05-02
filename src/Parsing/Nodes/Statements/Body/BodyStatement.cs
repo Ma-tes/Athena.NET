@@ -77,7 +77,7 @@ internal abstract class BodyStatement : StatementNode
     {
         int currentOperatorIndex = tokens.IndexOfToken(TokenIndentificator.EndLine);
         int lastTabulatorIndex = currentOperatorIndex + tabulatorCount;
-        if (lastTabulatorIndex < tokens.Length && currentOperatorIndex != 0 &&
+        if (lastTabulatorIndex < tokens.Length && (currentOperatorIndex != -1) &&
             (tokens[lastTabulatorIndex].TokenId == TokenIndentificator.Tabulator))
             return lastTabulatorIndex;
         return -1;
