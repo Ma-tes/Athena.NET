@@ -2,6 +2,7 @@ def Main() ->
 	::PrintTwoValues(83, 20);
 	int firstValue = 83;
 	int secondValue = 38;
+	::PrintTwoValues(firstValue, secondValue);
 	if(firstValue > secondValue) ->
 		int testValue = 22;
 		print testValue;

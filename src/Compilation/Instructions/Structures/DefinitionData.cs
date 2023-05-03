@@ -11,14 +11,16 @@ public struct DefinitionData
 
     public ReadOnlyMemory<MemoryData> DefinitionArguments { get; }
     public BodyNode DefinitionBodyNode { get; }
+    public MemoryData DefinitionMemoryData { get; }
 
     public DefinitionData(uint identificator, int definitionIndex, int definitionLength,
-        ReadOnlyMemory<MemoryData> definitionArguments, BodyNode definitionBodyNode)
+        ReadOnlyMemory<MemoryData> definitionArguments, BodyNode definitionBodyNode, MemoryData definitionMemoryData)
     {
         Identificator = identificator;
         DefinitionIndex = definitionIndex;
         DefinitionLength = definitionLength;
         DefinitionArguments = definitionArguments;
         DefinitionBodyNode = definitionBodyNode;
+        DefinitionMemoryData = definitionMemoryData;
     }
 } 

@@ -11,14 +11,14 @@ namespace Athena.NET.Compilation.Instructions;
 
 internal sealed class DefinitionCallInstruction : IInstruction<CallStatement>
 {
-    public static int LastJumpIndex { get; private set; } = 0;
-
     public bool EmitInstruction(CallStatement node, InstructionWriter writer) 
     {
         IdentifierNode leftIdentifierNode = (IdentifierNode)node.ChildNodes.LeftNode;
         DefinitionCallNode rightCallNode = (DefinitionCallNode)node.ChildNodes.RightNode;
-        if (!writer.TryGetDefinitionData(out DefinitionData currentDefinitionData,
-            MemoryData.CalculateIdentifierId(leftIdentifierNode.NodeData)) ||
+
+        uint definitionIdentificator = MemoryData.CalculateIdentifierId(leftIdentifierNode.NodeData);
+
+        if (!writer.TryGetDefinitionData(out DefinitionData currentDefinitionData, definitionIdentificator) ||
             rightCallNode.NodeData.Length != currentDefinitionData.DefinitionArguments.Length)
             return false;
 
@@ -30,10 +30,13 @@ internal sealed class DefinitionCallInstruction : IInstruction<CallStatement>
             if (!CreateArgumentStoreInstructions(argumentNodes[i], currentArgumentMemoryData, writer))
                 return false;
         }
-        LastJumpIndex = currentDefinitionData.DefinitionIndex - (writer.InstructionList.Count + 3);
+
+        int currentJumpIndex = currentDefinitionData.DefinitionIndex - (writer.InstructionList.Count + 3);
+        MemoryData definitionData = writer.TemporaryRegisterTM.AddRegisterData(leftIdentifierNode.NodeData, 16);
+        AddJumpStoreInstruction(definitionData, currentJumpIndex * -1, writer);
         writer.InstructionList.AddRange((uint)OperatorCodes.Nop,
             (uint)OperatorCodes.Jump,
-            (uint)LastJumpIndex);
+            (uint)currentJumpIndex);
         return true;
     }
 
@@ -68,5 +71,13 @@ internal sealed class DefinitionCallInstruction : IInstruction<CallStatement>
         }
         writer.InstructionList.Add((uint)((DataNode<int>)callArgumentNode).NodeData);
         return true;
+    }
+
+    private void AddJumpStoreInstruction(MemoryData memoryData, int jumpIndex, InstructionWriter instructionWriter)
+    {
+        instructionWriter.InstructionList.AddRange((uint)OperatorCodes.Nop,
+            (uint)OperatorCodes.Store);
+        instructionWriter.AddMemoryDataInstructions(OperatorCodes.TM, memoryData);
+        instructionWriter.InstructionList.Add((uint)jumpIndex);
     }
 }

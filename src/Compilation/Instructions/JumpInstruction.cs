@@ -39,7 +39,7 @@ internal sealed class JumpInstruction : IInstruction<BodyStatement>
         TokenIndentificator operatorInstruction = (TokenIndentificator)((instructions[0] ^ (0xffeec << 4)) + 5);
         if (!OperatorHelper.TryGetOperator(out OperatorNode instructionNode, operatorInstruction))
         {
-            writer.LastInstructionNopIndex += (int)instructions[1];
+            writer.LastInstructionNopIndex += writer.GetInstructionData(instructions[1..])[0];
             return true;
         }
 

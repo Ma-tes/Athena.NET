@@ -104,11 +104,13 @@ public sealed class InstructionWriter : IDisposable
             DefinitionNode leftDefinitionNode = (DefinitionNode)definitionStatement.ChildNodes.LeftNode;
             int definitionMemoryDataLength = leftDefinitionNode.NodeToken != Lexing.TokenIndentificator.Unknown ?
                 leftDefinitionNode.NodeData.Length + 1 : leftDefinitionNode.NodeData.Length;
+
+            uint definitionIdentificator = MemoryData.CalculateIdentifierId(leftDefinitionNode.DefinitionIdentifier.NodeData);
             currentDefinitionsSpan[i] = new DefinitionData(
-                    MemoryData.CalculateIdentifierId(leftDefinitionNode.DefinitionIdentifier.NodeData),
-                    ((definitionMemoryDataLength) * 6), 0,
+                    definitionIdentificator,
+                    (definitionMemoryDataLength * 6), 0,
                     GetArgumentsMemoryData(leftDefinitionNode.NodeData),
-                    ((BodyNode)definitionStatement.ChildNodes.RightNode)
+                    (BodyNode)definitionStatement.ChildNodes.RightNode, default
                 );
         }
         returnDefinitions = CreateRelativeDefinitionsData(currentDefinitions);

@@ -8,14 +8,10 @@ namespace Athena.NET.Compilation.Instructions;
 
 internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
 {
+
     public bool EmitInstruction(DefinitionStatement node, InstructionWriter instructionWriter) 
     {
         DefinitionNode leftDefinitionNode = (DefinitionNode)node.ChildNodes.LeftNode;
-        if (leftDefinitionNode.NodeToken != Lexing.TokenIndentificator.Unknown)
-        {
-            MemoryData definitionMemoryData = instructionWriter.TemporaryRegisterTM.AddRegisterData(leftDefinitionNode.DefinitionIdentifier.NodeData, 16);
-            AddStoreInstruction(definitionMemoryData, instructionWriter);
-        }
 
         uint identifierId = MemoryData.CalculateIdentifierId(leftDefinitionNode.DefinitionIdentifier.NodeData);
         if (!instructionWriter.TryGetDefinitionData(out DefinitionData currentDefinitionData, identifierId))
@@ -25,11 +21,16 @@ internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
 
         BodyNode rightBodyNode = (BodyNode)node.ChildNodes.RightNode;
         instructionWriter.CreateInstructions(rightBodyNode.NodeData.Span);
-        if(leftDefinitionNode.NodeToken == Lexing.TokenIndentificator.Unknown &&
-            identifierId != InstructionWriter.MainDefinitionIdentificator)
+
+        MemoryData definitionMemoryData = instructionWriter.TemporaryRegisterTM.AddRegisterData(leftDefinitionNode.DefinitionIdentifier.NodeData, 16);
+        AddStoreInstruction(definitionMemoryData, instructionWriter);
+        if (leftDefinitionNode.NodeToken == Lexing.TokenIndentificator.Unknown &&
+            identifierId != InstructionWriter.MainDefinitionIdentificator) 
+        {
             instructionWriter.InstructionList.AddRange((uint)OperatorCodes.Nop,
-                (uint)OperatorCodes.Jump,
-                (uint)((DefinitionCallInstruction.LastJumpIndex + (currentDefinitionData.DefinitionLength + 3)) * -1));
+                (uint)OperatorCodes.Jump);
+            instructionWriter.AddMemoryDataInstructions(OperatorCodes.TM, definitionMemoryData);
+        }
         return true;
     }
 
