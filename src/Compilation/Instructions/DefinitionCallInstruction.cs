@@ -32,8 +32,11 @@ internal sealed class DefinitionCallInstruction : IInstruction<CallStatement>
         }
 
         int currentJumpIndex = currentDefinitionData.DefinitionIndex - (writer.InstructionList.Count + 3);
-        MemoryData definitionData = writer.TemporaryRegisterTM.AddRegisterData(leftIdentifierNode.NodeData, 16);
-        AddJumpStoreInstruction(definitionData, currentJumpIndex * -1, writer);
+        if (!writer.TemporaryRegisterTM.TryGetMemoryData(out _, definitionIdentificator)) 
+        {
+            MemoryData definitionData = writer.TemporaryRegisterTM.AddRegisterData(leftIdentifierNode.NodeData, 16);
+            AddJumpStoreInstruction(definitionData, currentJumpIndex * -1, writer);
+        }
         writer.InstructionList.AddRange((uint)OperatorCodes.Nop,
             (uint)OperatorCodes.Jump,
             (uint)currentJumpIndex);

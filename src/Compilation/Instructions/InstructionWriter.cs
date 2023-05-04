@@ -106,9 +106,12 @@ public sealed class InstructionWriter : IDisposable
                 leftDefinitionNode.NodeData.Length + 1 : leftDefinitionNode.NodeData.Length;
 
             uint definitionIdentificator = MemoryData.CalculateIdentifierId(leftDefinitionNode.DefinitionIdentifier.NodeData);
+            int relativeMemoryDataLength = definitionIdentificator != MainDefinitionIdentificator ?
+                definitionMemoryDataLength + 1 : definitionMemoryDataLength;
+
             currentDefinitionsSpan[i] = new DefinitionData(
                     definitionIdentificator,
-                    (definitionMemoryDataLength * 6), 0,
+                    (relativeMemoryDataLength * 6), 0,
                     GetArgumentsMemoryData(leftDefinitionNode.NodeData),
                     (BodyNode)definitionStatement.ChildNodes.RightNode, default
                 );

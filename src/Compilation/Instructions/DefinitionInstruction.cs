@@ -12,7 +12,6 @@ internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
     public bool EmitInstruction(DefinitionStatement node, InstructionWriter instructionWriter) 
     {
         DefinitionNode leftDefinitionNode = (DefinitionNode)node.ChildNodes.LeftNode;
-
         uint identifierId = MemoryData.CalculateIdentifierId(leftDefinitionNode.DefinitionIdentifier.NodeData);
         if (!instructionWriter.TryGetDefinitionData(out DefinitionData currentDefinitionData, identifierId))
             return false;
@@ -22,14 +21,18 @@ internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
         BodyNode rightBodyNode = (BodyNode)node.ChildNodes.RightNode;
         instructionWriter.CreateInstructions(rightBodyNode.NodeData.Span);
 
-        MemoryData definitionMemoryData = instructionWriter.TemporaryRegisterTM.AddRegisterData(leftDefinitionNode.DefinitionIdentifier.NodeData, 16);
-        AddStoreInstruction(definitionMemoryData, instructionWriter);
+        if (!instructionWriter.TemporaryRegisterTM.TryGetMemoryData(out MemoryData definitionData, identifierId)) 
+        {
+            definitionData = instructionWriter.TemporaryRegisterTM.AddRegisterData(leftDefinitionNode.DefinitionIdentifier.NodeData, 16);
+            AddStoreInstruction(definitionData, instructionWriter);
+        }
+
         if (leftDefinitionNode.NodeToken == Lexing.TokenIndentificator.Unknown &&
             identifierId != InstructionWriter.MainDefinitionIdentificator) 
         {
+            instructionWriter.AddMemoryDataInstructions(OperatorCodes.TM, definitionData);
             instructionWriter.InstructionList.AddRange((uint)OperatorCodes.Nop,
                 (uint)OperatorCodes.Jump);
-            instructionWriter.AddMemoryDataInstructions(OperatorCodes.TM, definitionMemoryData);
         }
         return true;
     }

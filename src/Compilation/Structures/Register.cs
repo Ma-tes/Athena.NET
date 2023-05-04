@@ -42,9 +42,6 @@ internal sealed class Register : IDisposable
     public MemoryData AddRegisterData(ReadOnlyMemory<char> identificatorName, int dataSize)
     {
         var returnData = new MemoryData(identificatorName, lastOffset, dataSize);
-        if (TryGetMemoryData(out MemoryData registerData, MemoryData.CalculateIdentifierId(identificatorName)))
-            return registerData;
-
         memoryData.Add(returnData);
         lastOffset += dataSize;
         return returnData;
