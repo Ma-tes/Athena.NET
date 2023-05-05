@@ -35,7 +35,7 @@ internal sealed class DefinitionCallInstruction : IInstruction<CallStatement>
         if (!writer.TemporaryRegisterTM.TryGetMemoryData(out _, definitionIdentificator)) 
         {
             MemoryData definitionData = writer.TemporaryRegisterTM.AddRegisterData(leftIdentifierNode.NodeData, 16);
-            AddJumpStoreInstruction(definitionData, currentJumpIndex * -1, writer);
+            AddJumpStoreInstruction(definitionData, ((currentJumpIndex + (currentDefinitionData.DefinitionLength - 6)) * -1), writer);
         }
         writer.InstructionList.AddRange((uint)OperatorCodes.Nop,
             (uint)OperatorCodes.Jump,

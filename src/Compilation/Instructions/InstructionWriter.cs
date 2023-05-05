@@ -106,12 +106,9 @@ public sealed class InstructionWriter : IDisposable
                 leftDefinitionNode.NodeData.Length + 1 : leftDefinitionNode.NodeData.Length;
 
             uint definitionIdentificator = MemoryData.CalculateIdentifierId(leftDefinitionNode.DefinitionIdentifier.NodeData);
-            int relativeMemoryDataLength = definitionIdentificator != MainDefinitionIdentificator ?
-                definitionMemoryDataLength + 1 : definitionMemoryDataLength;
-
             currentDefinitionsSpan[i] = new DefinitionData(
                     definitionIdentificator,
-                    (relativeMemoryDataLength * 6), 0,
+                    (definitionMemoryDataLength * 6), 5,
                     GetArgumentsMemoryData(leftDefinitionNode.NodeData),
                     (BodyNode)definitionStatement.ChildNodes.RightNode, default
                 );
@@ -133,7 +130,7 @@ public sealed class InstructionWriter : IDisposable
             int definitionBodyLength = CalculateDefinitionLength(currentBodyNodes,currentDefinitionData.DefinitionArguments, definitionsData);
 
             currentDefinitionData.DefinitionIndex += definitionInstructionCount;
-            currentDefinitionData.DefinitionLength = definitionBodyLength;
+            currentDefinitionData.DefinitionLength += definitionBodyLength;
             definitionInstructionCount += definitionBodyLength + argumentsIntructionLength;
         }
         return definitionsData;

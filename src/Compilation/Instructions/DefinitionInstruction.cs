@@ -28,11 +28,11 @@ internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
         }
 
         if (leftDefinitionNode.NodeToken == Lexing.TokenIndentificator.Unknown &&
-            identifierId != InstructionWriter.MainDefinitionIdentificator) 
+            identifierId != InstructionWriter.MainDefinitionIdentificator)
         {
-            instructionWriter.AddMemoryDataInstructions(OperatorCodes.TM, definitionData);
             instructionWriter.InstructionList.AddRange((uint)OperatorCodes.Nop,
                 (uint)OperatorCodes.Jump);
+            instructionWriter.AddMemoryDataInstructions(OperatorCodes.TM, definitionData);
         }
         return true;
     }
