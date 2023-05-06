@@ -49,9 +49,8 @@ internal sealed class CallStatement : StatementNode
 
             currentSeparatorIndex = argumentsTokens.IndexOfToken(TokenIndentificator.Separator);
             argumentNodesList.Add(GetArgumentNode(argumentTokens));
-            if(currentSeparatorIndex == -1)
-                argumentNodesList.Add(GetArgumentNode(argumentsTokens));
         }
+        argumentNodesList.Add(GetArgumentNode(argumentsTokens));
         return argumentNodesList.ToArray();
     }
 

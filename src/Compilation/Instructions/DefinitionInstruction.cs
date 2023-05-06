@@ -21,11 +21,8 @@ internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
         BodyNode rightBodyNode = (BodyNode)node.ChildNodes.RightNode;
         instructionWriter.CreateInstructions(rightBodyNode.NodeData.Span);
 
-        if (!instructionWriter.TemporaryRegisterTM.TryGetMemoryData(out MemoryData definitionData, identifierId)) 
-        {
+        if (!instructionWriter.TemporaryRegisterTM.TryGetMemoryData(out MemoryData definitionData, identifierId))
             definitionData = instructionWriter.TemporaryRegisterTM.AddRegisterData(leftDefinitionNode.DefinitionIdentifier.NodeData, 16);
-            AddStoreInstruction(definitionData, instructionWriter);
-        }
 
         if (leftDefinitionNode.NodeToken == Lexing.TokenIndentificator.Unknown &&
             identifierId != InstructionWriter.MainDefinitionIdentificator)

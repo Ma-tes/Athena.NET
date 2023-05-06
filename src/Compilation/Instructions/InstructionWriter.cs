@@ -104,11 +104,13 @@ public sealed class InstructionWriter : IDisposable
             DefinitionNode leftDefinitionNode = (DefinitionNode)definitionStatement.ChildNodes.LeftNode;
             int definitionMemoryDataLength = leftDefinitionNode.NodeToken != Lexing.TokenIndentificator.Unknown ?
                 leftDefinitionNode.NodeData.Length + 1 : leftDefinitionNode.NodeData.Length;
-
             uint definitionIdentificator = MemoryData.CalculateIdentifierId(leftDefinitionNode.DefinitionIdentifier.NodeData);
+
+            int definitionBodyLenght = leftDefinitionNode.NodeToken == Lexing.TokenIndentificator.Unknown &&
+                 definitionIdentificator != MainDefinitionIdentificator ? 5 : 0;
             currentDefinitionsSpan[i] = new DefinitionData(
                     definitionIdentificator,
-                    (definitionMemoryDataLength * 6), 5,
+                    (definitionMemoryDataLength * 6), definitionBodyLenght,
                     GetArgumentsMemoryData(leftDefinitionNode.NodeData),
                     (BodyNode)definitionStatement.ChildNodes.RightNode, default
                 );
@@ -127,11 +129,11 @@ public sealed class InstructionWriter : IDisposable
             ReadOnlySpan<INode> currentBodyNodes = currentDefinitionData.DefinitionBodyNode.NodeData.Span;
 
             int argumentsIntructionLength = currentDefinitionData.DefinitionIndex;
-            int definitionBodyLength = CalculateDefinitionLength(currentBodyNodes,currentDefinitionData.DefinitionArguments, definitionsData);
+            int definitionBodyLength = CalculateDefinitionLength(currentBodyNodes, currentDefinitionData.DefinitionArguments, definitionsData);
 
             currentDefinitionData.DefinitionIndex += definitionInstructionCount;
             currentDefinitionData.DefinitionLength += definitionBodyLength;
-            definitionInstructionCount += definitionBodyLength + argumentsIntructionLength;
+            definitionInstructionCount += ((currentDefinitionData.DefinitionLength) + argumentsIntructionLength);
         }
         return definitionsData;
     }

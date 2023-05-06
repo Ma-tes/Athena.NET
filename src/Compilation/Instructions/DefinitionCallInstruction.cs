@@ -17,7 +17,6 @@ internal sealed class DefinitionCallInstruction : IInstruction<CallStatement>
         DefinitionCallNode rightCallNode = (DefinitionCallNode)node.ChildNodes.RightNode;
 
         uint definitionIdentificator = MemoryData.CalculateIdentifierId(leftIdentifierNode.NodeData);
-
         if (!writer.TryGetDefinitionData(out DefinitionData currentDefinitionData, definitionIdentificator) ||
             rightCallNode.NodeData.Length != currentDefinitionData.DefinitionArguments.Length)
             return false;
@@ -32,11 +31,10 @@ internal sealed class DefinitionCallInstruction : IInstruction<CallStatement>
         }
 
         int currentJumpIndex = currentDefinitionData.DefinitionIndex - (writer.InstructionList.Count + 3);
-        if (!writer.TemporaryRegisterTM.TryGetMemoryData(out _, definitionIdentificator)) 
-        {
-            MemoryData definitionData = writer.TemporaryRegisterTM.AddRegisterData(leftIdentifierNode.NodeData, 16);
-            AddJumpStoreInstruction(definitionData, ((currentJumpIndex + (currentDefinitionData.DefinitionLength - 6)) * -1), writer);
-        }
+        if (!writer.TemporaryRegisterTM.TryGetMemoryData(out MemoryData definitionData, definitionIdentificator))
+            definitionData = writer.TemporaryRegisterTM.AddRegisterData(leftIdentifierNode.NodeData, 16);
+        AddJumpStoreInstruction(definitionData, ((currentJumpIndex + (currentDefinitionData.DefinitionLength)) * -1), writer);
+
         writer.InstructionList.AddRange((uint)OperatorCodes.Nop,
             (uint)OperatorCodes.Jump,
             (uint)currentJumpIndex);
