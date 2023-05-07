@@ -1,19 +1,5 @@
 def Main() ->
 	::PrintTwoValues(83, 20);
-	int firstValue = 83;
-	int secondValue = 38;
-	if(firstValue > secondValue) ->
-		int testValue = 22;
-		print testValue;
-	::PrintTwoValues(firstValue, 101);
-	if(firstValue + 10 < secondValue) ->
-		print firstValue;
-		print secondValue;
-		if(firstValue - 50 < secondValue) ->
-			int anotherTestValue = 205;
-			print anotherTestValue;
-	int lastValue = 20;
-	print lastValue;
 def PrintValue(int value) ->
 	print value;
 def PrintTwoValues(int valueOne, int valueTwo) ->

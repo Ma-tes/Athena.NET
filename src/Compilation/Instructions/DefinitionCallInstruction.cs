@@ -30,7 +30,7 @@ internal sealed class DefinitionCallInstruction : IInstruction<CallStatement>
                 return false;
         }
 
-        int currentJumpIndex = currentDefinitionData.DefinitionIndex - (writer.InstructionList.Count + 3);
+        int currentJumpIndex = currentDefinitionData.DefinitionIndex - (writer.InstructionList.Count + 9);
         if (!writer.TemporaryRegisterTM.TryGetMemoryData(out MemoryData definitionData, definitionIdentificator))
             definitionData = writer.TemporaryRegisterTM.AddRegisterData(leftIdentifierNode.NodeData, 16);
         AddJumpStoreInstruction(definitionData, ((currentJumpIndex + (currentDefinitionData.DefinitionLength)) * -1), writer);

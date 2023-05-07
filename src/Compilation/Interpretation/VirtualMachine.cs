@@ -51,7 +51,7 @@ internal sealed class VirtualMachine : IDisposable
     /// </exception>
     public void CreateInterpretation(ReadOnlySpan<uint> instructions)
     {
-        LastInstructionNopIndex = IndexOfNopInstruction(instructions[(mainDefinitionData.DefinitionIndex + 1)..]) + 1;
+        LastInstructionNopIndex = mainDefinitionData.DefinitionIndex;
         int lastMainDefinitionIndex = mainDefinitionData.DefinitionIndex + mainDefinitionData.DefinitionLength;
         while (LastInstructionNopIndex != lastMainDefinitionIndex)
         {
