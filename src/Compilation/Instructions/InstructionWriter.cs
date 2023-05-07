@@ -63,18 +63,18 @@ public sealed class InstructionWriter : IDisposable
     public ReadOnlyMemory<DefinitionData> InstructionDefinitionData { get; internal set; }
     public DefinitionData MainDefinitionData { get; private set; }
 
-    /// <summary>
-    /// Creates individual instructions
-    /// from nodes, which are then stored
-    /// in an <see cref="InstructionList"/>.
-    /// </summary>
-    public InstructionWriter(ReadOnlySpan<INode> nodes) 
+    public InstructionWriter(ReadOnlySpan<INode> nodes)
     {
         if (TryGetDefinitionsData(out ReadOnlyMemory<DefinitionData> returnData, nodes))
             InstructionDefinitionData = returnData;
     }
 
     //TODO: Better exception and error handling
+    /// <summary>
+    /// Creates individual instructions
+    /// from <paramref name="nodes"/>, which are then stored
+    /// in an <see cref="InstructionList"/>.
+    /// </summary>
     public void CreateInstructions(ReadOnlySpan<INode> nodes)
     {
         if(!TryGetDefinitionData(out DefinitionData mainDefinitionData, MainDefinitionIdentificator))
@@ -89,6 +89,15 @@ public sealed class InstructionWriter : IDisposable
         }
     }
 
+    /// <summary>
+    /// Tries to get <see cref="DefinitionData"/> from <paramref name="nodes"/>,
+    /// which are pre-calculated for future instruction use
+    /// </summary>
+    /// <returns>
+    /// <see langword="false"/>, if one the <see cref="INode"/>
+    /// from <paramref name="nodes"/> is not a <see cref="DefinitionStatement"/>,
+    /// otherwise <see langword="true"/>
+    /// </returns>
     private bool TryGetDefinitionsData([NotNullWhen(true)]out ReadOnlyMemory<DefinitionData> returnDefinitions, ReadOnlySpan<INode> nodes)
     {
         int nodesLength = nodes.Length;
@@ -119,6 +128,10 @@ public sealed class InstructionWriter : IDisposable
         return true;
     }
 
+    /// <summary>
+    /// Calculates relative size of every <see cref="DefinitionData"/>,
+    /// which is then saved in the same <see cref="DefinitionData"/>
+    /// </summary>
     private ReadOnlyMemory<DefinitionData> CreateRelativeDefinitionsData(Memory<DefinitionData> definitionsData)
     {
         int definitionInstructionCount = 0;
@@ -138,6 +151,10 @@ public sealed class InstructionWriter : IDisposable
         return definitionsData;
     }
 
+    /// <summary>
+    /// Creates <see cref="MemoryData"/> from <paramref name="argumentInstances"/>,
+    /// which are stored in <see cref="OperatorCodes.TM"/> <see cref="Register"/>
+    /// </summary>
     private ReadOnlyMemory<MemoryData> GetArgumentsMemoryData(ReadOnlyMemory<InstanceNode> argumentInstances)
     {
         int instancesLength = argumentInstances.Length;
@@ -155,11 +172,18 @@ public sealed class InstructionWriter : IDisposable
         return returnRegisters;
     }
 
+    /// <summary>
+    /// Provides a pre-interpretation of <paramref name="definitionNodes"/>,
+    /// with coresponding <paramref name="definitionsData"/> and <paramref name="argumentsData"/>
+    /// </summary>
+    /// <returns>
+    /// Count of instructions from pre-intepreted <paramref name="definitionNodes"/>
+    /// </returns>
     private static int CalculateDefinitionLength(ReadOnlySpan<INode> definitionNodes, ReadOnlyMemory<MemoryData> argumentsData,
-        ReadOnlyMemory<DefinitionData> returnDefinitions)
+        ReadOnlyMemory<DefinitionData> definitionsData)
     {
         using var definitionInstructionWriter = new InstructionWriter(definitionNodes);
-        definitionInstructionWriter.InstructionDefinitionData = returnDefinitions;
+        definitionInstructionWriter.InstructionDefinitionData = definitionsData;
         definitionInstructionWriter.TemporaryRegisterTM.memoryData.AddRange(argumentsData.Span);
 
         definitionInstructionWriter.CreateInstructions(definitionNodes);
