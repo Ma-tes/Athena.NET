@@ -1,4 +1,5 @@
 ﻿using Athena.NET.Compilation.DataHolders;
+using Athena.NET.Compilation.Instructions.Definition;
 using Athena.NET.Compilation.Instructions.Structures;
 using Athena.NET.Compilation.Structures;
 using Athena.NET.Parsing.Interfaces;
@@ -65,8 +66,7 @@ public sealed class InstructionWriter : IDisposable
 
     public InstructionWriter(ReadOnlySpan<INode> nodes)
     {
-        if (TryGetDefinitionsData(out ReadOnlyMemory<DefinitionData> returnData, nodes))
-            InstructionDefinitionData = returnData;
+        InstructionDefinitionData = GetDefinitionsData(nodes);
     }
 
     //TODO: Better exception and error handling
@@ -77,9 +77,8 @@ public sealed class InstructionWriter : IDisposable
     /// </summary>
     public void CreateInstructions(ReadOnlySpan<INode> nodes)
     {
-        if(!TryGetDefinitionData(out DefinitionData mainDefinitionData, MainDefinitionIdentificator))
-            throw new Exception("Main definition wasn't found");
-        MainDefinitionData = mainDefinitionData;
+        if(TryGetDefinitionData(out DefinitionData mainDefinitionData, MainDefinitionIdentificator))
+            MainDefinitionData = mainDefinitionData;
 
         int nodesLength = nodes.Length;
         for (int i = 0; i < nodesLength; i++)
@@ -93,24 +92,14 @@ public sealed class InstructionWriter : IDisposable
     /// Tries to get <see cref="DefinitionData"/> from <paramref name="nodes"/>,
     /// which are pre-calculated for future instruction use
     /// </summary>
-    /// <returns>
-    /// <see langword="false"/>, if one the <see cref="INode"/>
-    /// from <paramref name="nodes"/> is not a <see cref="DefinitionStatement"/>,
-    /// otherwise <see langword="true"/>
-    /// </returns>
-    private bool TryGetDefinitionsData([NotNullWhen(true)]out ReadOnlyMemory<DefinitionData> returnDefinitions, ReadOnlySpan<INode> nodes)
+    private ReadOnlyMemory<DefinitionData> GetDefinitionsData(ReadOnlySpan<DefinitionStatement> nodes)
     {
         int nodesLength = nodes.Length;
         Memory<DefinitionData> currentDefinitions = new DefinitionData[nodesLength];
         Span<DefinitionData> currentDefinitionsSpan = currentDefinitions.Span;
         for (int i = 0; i < nodesLength; i++)
         {
-            if (nodes[i] is not DefinitionStatement definitionStatement) 
-            {
-                returnDefinitions = null;
-                return false;
-            }
-            DefinitionNode leftDefinitionNode = (DefinitionNode)definitionStatement.ChildNodes.LeftNode;
+            DefinitionNode leftDefinitionNode = (DefinitionNode)nodes[i].ChildNodes.LeftNode;
             int definitionMemoryDataLength = leftDefinitionNode.NodeToken != Lexing.TokenIndentificator.Unknown ?
                 leftDefinitionNode.NodeData.Length + 1 : leftDefinitionNode.NodeData.Length;
             uint definitionIdentificator = MemoryData.CalculateIdentifierId(leftDefinitionNode.DefinitionIdentifier.NodeData);
@@ -121,11 +110,10 @@ public sealed class InstructionWriter : IDisposable
                     definitionIdentificator,
                     (definitionMemoryDataLength * 6), definitionBodyLenght,
                     GetArgumentsMemoryData(leftDefinitionNode.NodeData),
-                    (BodyNode)definitionStatement.ChildNodes.RightNode, default
+                    (BodyNode)nodes[i].ChildNodes.RightNode, default
                 );
         }
-        returnDefinitions = CreateRelativeDefinitionsData(currentDefinitions);
-        return true;
+        return CreateRelativeDefinitionsData(currentDefinitions);
     }
 
     /// <summary>

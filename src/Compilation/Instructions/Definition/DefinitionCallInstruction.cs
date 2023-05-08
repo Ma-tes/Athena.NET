@@ -7,11 +7,11 @@ using Athena.NET.Parsing.Nodes.Data;
 using Athena.NET.Parsing.Nodes.Operators;
 using Athena.NET.Parsing.Nodes.Statements;
 
-namespace Athena.NET.Compilation.Instructions;
+namespace Athena.NET.Compilation.Instructions.Definition;
 
 internal sealed class DefinitionCallInstruction : IInstruction<CallStatement>
 {
-    public bool EmitInstruction(CallStatement node, InstructionWriter writer) 
+    public bool EmitInstruction(CallStatement node, InstructionWriter writer)
     {
         IdentifierNode leftIdentifierNode = (IdentifierNode)node.ChildNodes.LeftNode;
         DefinitionCallNode rightCallNode = (DefinitionCallNode)node.ChildNodes.RightNode;
@@ -33,7 +33,7 @@ internal sealed class DefinitionCallInstruction : IInstruction<CallStatement>
         int currentJumpIndex = currentDefinitionData.DefinitionIndex - (writer.InstructionList.Count + 9);
         if (!writer.TemporaryRegisterTM.TryGetMemoryData(out MemoryData definitionData, definitionIdentificator))
             definitionData = writer.TemporaryRegisterTM.AddRegisterData(leftIdentifierNode.NodeData, 16);
-        AddJumpStoreInstruction(definitionData, ((currentJumpIndex + (currentDefinitionData.DefinitionLength)) * -1), writer);
+        AddJumpStoreInstruction(definitionData, (currentJumpIndex + currentDefinitionData.DefinitionLength) * -1, writer);
 
         writer.InstructionList.AddRange((uint)OperatorCodes.Nop,
             (uint)OperatorCodes.Jump,

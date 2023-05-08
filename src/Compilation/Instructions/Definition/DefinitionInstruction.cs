@@ -4,12 +4,12 @@ using Athena.NET.Compilation.Structures;
 using Athena.NET.Parsing.Nodes.Data;
 using Athena.NET.Parsing.Nodes.Statements.Body;
 
-namespace Athena.NET.Compilation.Instructions;
+namespace Athena.NET.Compilation.Instructions.Definition;
 
 internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
 {
 
-    public bool EmitInstruction(DefinitionStatement node, InstructionWriter instructionWriter) 
+    public bool EmitInstruction(DefinitionStatement node, InstructionWriter instructionWriter)
     {
         DefinitionNode leftDefinitionNode = (DefinitionNode)node.ChildNodes.LeftNode;
         uint identifierId = MemoryData.CalculateIdentifierId(leftDefinitionNode.DefinitionIdentifier.NodeData);
@@ -39,7 +39,7 @@ internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
         return true;
     }
 
-    private void CreateArgumentsInstructions(ReadOnlyMemory<MemoryData> argumentsData, InstructionWriter instructionWriter) 
+    private void CreateArgumentsInstructions(ReadOnlyMemory<MemoryData> argumentsData, InstructionWriter instructionWriter)
     {
         int argumentsDataLength = argumentsData.Length;
         for (int i = 0; i < argumentsDataLength; i++) { AddStoreInstruction(argumentsData.Span[i], instructionWriter); }
@@ -52,4 +52,4 @@ internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
         instructionWriter.AddMemoryDataInstructions(OperatorCodes.TM, memoryData);
         instructionWriter.InstructionList.Add(0);
     }
-} 
+}
