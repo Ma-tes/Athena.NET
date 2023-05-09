@@ -16,18 +16,15 @@ internal static class DefinitionHelper
     {
     }
 
-    private static bool TryGetDefinitionStatements(out ReadOnlySpan<DefinitionStatement> returnStatements,
+    private static bool TryGetDefinitionStatements(out ReadOnlyMemory<DefinitionStatement> returnStatements,
         ReadOnlySpan<INode> nodes)
     {
-        Span<DefinitionStatement> definitionStatements = new DefinitionStatement[nodes.Length];
+        Memory<DefinitionStatement> definitionStatements = new DefinitionStatement[nodes.Length];
         for (int i = 0; i < nodes.Length; i++)
         {
             if (nodes[i] is not DefinitionStatement currentStatement)
-            {
-                returnStatements = null;
-                return false;
-            }
-            definitionStatements[i] = currentStatement;
+                return NullableHelper.NullableOutValue(out returnStatements);
+            definitionStatements.Span[i] = currentStatement;
         }
         returnStatements = definitionStatements;
         return true;
