@@ -72,8 +72,7 @@ internal sealed class OperatorInstruction : IInstruction<OperatorNode>
             _ = writer.GetIdentifierData(out returnData, identifierNode.NodeData);
             return true;
         }
-        returnData = default;
-        return false;
+        return NullableHelper.NullableOutValue(out returnData);
     }
 
     public void WriteMemoryDataInstructions(NativeMemoryList<uint> nativeInstructions, INode node,

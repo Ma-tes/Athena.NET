@@ -127,8 +127,7 @@ internal sealed class VirtualMachine : IDisposable
                 return true;
             }
         }
-        registerMemory = null;
-        return false;
+        return NullableHelper.NullableOutValue(out registerMemory);
     }
 
     /// <summary>

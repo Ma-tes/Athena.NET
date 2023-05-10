@@ -45,7 +45,6 @@ internal static class DefinitionHelper
                 return true;
             }
         }
-        returnStatement = null!;
-        return false;
+        return NullableHelper.NullableOutValue(out returnStatement);
     }
 }

@@ -2,9 +2,10 @@
 
 internal static class NullableHelper
 {
-    public static bool NullableOutValue<T>(out T value) where T : struct 
+    public static bool NullableOutValue<T>(out T value)
     {
-        value = default(T);
+        value = default(T)!;
         return false;
     }
+
 }

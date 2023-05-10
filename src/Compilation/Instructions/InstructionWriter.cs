@@ -92,7 +92,7 @@ public sealed class InstructionWriter : IDisposable
     /// Tries to get <see cref="DefinitionData"/> from <paramref name="nodes"/>,
     /// which are pre-calculated for future instruction use
     /// </summary>
-    private ReadOnlyMemory<DefinitionData> GetDefinitionsData(ReadOnlySpan<DefinitionStatement> nodes)
+    private ReadOnlyMemory<DefinitionData> GetDefinitionsData(ReadOnlySpan<INode> nodes)
     {
         int nodesLength = nodes.Length;
         Memory<DefinitionData> currentDefinitions = new DefinitionData[nodesLength];
@@ -257,8 +257,7 @@ public sealed class InstructionWriter : IDisposable
                 return true;
             }
         }
-        returnData = default;
-        return false;
+        return NullableHelper.NullableOutValue(out returnData);
     }
 
     internal void AddMemoryDataInstructions(OperatorCodes registerCode, MemoryData memoryData)
