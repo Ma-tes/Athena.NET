@@ -70,9 +70,7 @@ internal sealed class Register : IDisposable
             resultData = memoryData.Span[identifierIndex];
             return true;
         }
-
-        resultData = default;
-        return false;
+        return NullableHelper.NullableOutValue(out resultData);
     }
 
     /// <summary>

@@ -2,6 +2,7 @@
 using Athena.NET.Lexing.Structures;
 using Athena.NET.Parsing.Interfaces;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 
 namespace Athena.NET.Parsing.Nodes.Operators;
 
@@ -12,16 +13,17 @@ internal static class OperatorHelper
 
     public static bool TryGetOperator([NotNullWhen(true)] out OperatorNode operatorNode, TokenIndentificator currentToken)
     {
-        operatorNode = null!;
         int operatorsLength = operatorNodes.Length;
         for (int i = 0; i < operatorsLength; i++)
         {
             OperatorNode currentNode = operatorNodes[i];
-            if (currentNode.NodeToken == currentToken)
+            if (currentNode.NodeToken == currentToken) 
+            {
                 operatorNode = currentNode;
+                return true;
+            }
         }
-
-        return operatorNode is not null;
+        return NullableHelper.NullableOutValue(out operatorNode);
     }
 
     public static bool TryGetOperatorResult(out NodeResult<INode> operatorResult, ReadOnlySpan<Token> tokens)

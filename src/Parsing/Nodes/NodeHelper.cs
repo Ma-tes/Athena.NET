@@ -121,9 +121,7 @@ public static class NodeHelper
                 return true;
             }
         }
-
-        node = null!;
-        return false;
+        return NullableHelper.NullableOutValue(out node);
     }
 
     private static bool IsDataNode(Type nodeType)

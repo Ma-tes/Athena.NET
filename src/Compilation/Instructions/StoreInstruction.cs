@@ -85,9 +85,7 @@ internal sealed class StoreInstruction : IInstruction<EqualAssignStatement>
             return TryWriteStoreInstruction(childNodes.LeftNode, returnRegister,
                 returnRegister!.CalculateByteSize(operatorData), writer);
         }
-
-        returnRegister = null!;
-        return false;
+        NullableHelper.NullableOutValue(out returnRegister);
     }
 
     private bool TryWriteStoreInstruction(INode dataNode, Register register, int size, InstructionWriter writer)

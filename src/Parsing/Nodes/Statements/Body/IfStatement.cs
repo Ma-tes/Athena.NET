@@ -24,6 +24,7 @@ internal sealed class IfStatement : BodyStatement
                     logicalOperator.Evaluate();
                     return true;
                 }
+                nodeResult = new ErrorNodeResult<INode>("Calculation of logical operator cannot be evaluated");
                 return false;
             }
         }

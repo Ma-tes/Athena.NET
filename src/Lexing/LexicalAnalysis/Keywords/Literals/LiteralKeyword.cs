@@ -18,10 +18,9 @@ internal sealed class LiteralKeyword : IKeyword<LiteralOption, char, LiteralKeyw
     {
         bool equalSource = Equals(source);
         returnData = equalSource ? this : null!;
-
         return equalSource;
     }
 
     public bool Equals(char source) =>
-        (source >= KeywordData.Start && source <= KeywordData.End);
+        source >= KeywordData.Start && source <= KeywordData.End;
 }

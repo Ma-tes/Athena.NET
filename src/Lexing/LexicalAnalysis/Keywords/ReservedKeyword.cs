@@ -37,10 +37,7 @@ internal sealed class ReservedKeyword : IKeyword<ReadOnlyMemory<char>, ReadOnlyM
         char nextSourceCharacter = source.Span[keywordLength];
         if ((KeywordsHolder.Character.Equals(nextSourceCharacter) ||
             KeywordsHolder.Digit.Equals(nextSourceCharacter)) && keywordLength > 1)
-        {
-            returnData = null!;
-            return false;
-        }
+            return NullableHelper.NullableOutValue(out returnData);
         return true;
     }
 

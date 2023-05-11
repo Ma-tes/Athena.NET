@@ -7,5 +7,4 @@ internal static class NullableHelper
         value = default(T)!;
         return false;
     }
-
 }
