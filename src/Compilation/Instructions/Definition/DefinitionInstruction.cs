@@ -34,10 +34,7 @@ internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
         return true;
     }
 
-    public bool InterpretInstruction(ReadOnlySpan<uint> instructions, VirtualMachine writer)
-    {
-        return true;
-    }
+    public bool InterpretInstruction(ReadOnlySpan<uint> instructions, VirtualMachine writer) => true;
 
     private void CreateArgumentsInstructions(ReadOnlyMemory<MemoryData> argumentsData, InstructionWriter instructionWriter)
     {

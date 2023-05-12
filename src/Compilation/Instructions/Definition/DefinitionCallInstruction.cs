@@ -41,12 +41,9 @@ internal sealed class DefinitionCallInstruction : IInstruction<CallStatement>
         return true;
     }
 
-    public bool InterpretInstruction(ReadOnlySpan<uint> instructions, VirtualMachine writer)
-    {
-        //TODO: Create a better use case for
-        //interpretation of this instruction
-        return false;
-    }
+    //TODO: Create a better use case for
+    //interpretation of this instruction
+    public bool InterpretInstruction(ReadOnlySpan<uint> instructions, VirtualMachine writer) => false;
 
     private bool CreateArgumentStoreInstructions(INode callArgumentNode, MemoryData definitionArgumentData,
         InstructionWriter writer)

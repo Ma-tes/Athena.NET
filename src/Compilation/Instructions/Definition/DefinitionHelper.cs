@@ -1,19 +1,29 @@
-﻿using Athena.NET.Compilation.Structures;
+﻿using Athena.NET.Compilation.DataHolders;
+using Athena.NET.Compilation.Structures;
 using Athena.NET.Parsing.Interfaces;
 using Athena.NET.Parsing.Nodes.Data;
+using Athena.NET.Parsing.Nodes.Statements;
 using Athena.NET.Parsing.Nodes.Statements.Body;
 
 namespace Athena.NET.Compilation.Instructions.Definition;
 
 internal static class DefinitionHelper 
 {
-    public static ReadOnlySpan<int> CreateDefinitionsCallOrder(ReadOnlySpan<DefinitionStatement> definitionStatements) 
+    public static ReadOnlySpan<int> CreateDefinitionsCallOrder(ReadOnlySpan<INode> definitionStatements)
     {
     }
 
     private static Span<int> GetDefinitionCallOrder(ReadOnlySpan<DefinitionStatement> definitionStatements,
         ReadOnlySpan<INode> definitionNodes)
     {
+        var definitionCallOrderList = new NativeMemoryList<int>();
+        int definitionNodesLength = definitionNodes.Length;
+        for (int i = 0; i < definitionNodesLength; i++)
+        {
+            if (definitionNodes[i] is CallStatement currentCallStatement)
+            {
+            }
+        }
     }
 
     private static bool TryGetDefinitionStatements(out ReadOnlyMemory<DefinitionStatement> returnStatements,
