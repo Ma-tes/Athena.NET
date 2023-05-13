@@ -16,14 +16,23 @@ internal static class DefinitionHelper
     private static Span<int> GetDefinitionCallOrder(ReadOnlySpan<DefinitionStatement> definitionStatements,
         ReadOnlySpan<INode> definitionNodes)
     {
-        var definitionCallOrderList = new NativeMemoryList<int>();
+        using var definitionCallOrderList = new NativeMemoryList<int>();
         int definitionNodesLength = definitionNodes.Length;
         for (int i = 0; i < definitionNodesLength; i++)
         {
             if (definitionNodes[i] is CallStatement currentCallStatement)
             {
+                InstanceNode callInstanceNode = (InstanceNode)currentCallStatement.ChildNodes.LeftNode;
+                if (!TryGetDefinitionStatementInstance(out DefinitionStatement currentDefinition,
+                    definitionStatements, callInstanceNode))
+                    throw new Exception($"Definition {callInstanceNode.NodeData.ToArray()} wasn't found");
+
+                BodyNode definitionBodyNodes = (BodyNode)currentDefinition.ChildNodes.RightNode;
+                Span<int> currentCallOrder = GetDefinitionCallOrder(definitionStatements, definitionBodyNodes.NodeData.Span);
+                definitionCallOrderList.AddRange(currentCallOrder);
             }
         }
+        return definitionCallOrderList.Span;
     }
 
     private static bool TryGetDefinitionStatements(out ReadOnlyMemory<DefinitionStatement> returnStatements,
