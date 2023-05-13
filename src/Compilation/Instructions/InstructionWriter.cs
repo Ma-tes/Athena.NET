@@ -245,8 +245,8 @@ public sealed class InstructionWriter : IDisposable
         return GetIdentifierData(out returnData, identiferId);
     }
 
-    internal bool TryGetDefinitionData([NotNullWhen(true)] out DefinitionData returnData, uint definitionIdentificator) 
-    {
+    internal bool TryGetDefinitionData([NotNullWhen(true)] out DefinitionData returnData, uint definitionIdentificator)
+    { 
         int definitionDataCount = InstructionDefinitionData.Length;
         for (int i = 0; i < definitionDataCount; i++)
         {

@@ -9,11 +9,24 @@ namespace Athena.NET.Compilation.Instructions.Definition;
 
 internal static class DefinitionHelper 
 {
-    public static ReadOnlySpan<int> CreateDefinitionsCallOrder(ReadOnlySpan<INode> definitionStatements)
+    public static ReadOnlySpan<int> CreateDefinitionsCallOrder(ReadOnlySpan<INode> nodes)
     {
+        Span<DefinitionStatement> definitionStatements = GetDefinitionStatements(nodes);
+        if(TryGetDefinitionStatementInstance(out DefinitionStatement mainDefinitionStatement, definitionStatements,
+            InstructionWriter.MainDefinitionIdentificator) == -1)
+            throw new Exception("Main definition wasn't found");
+
+        return CreateRelativeCallOrder(mainDefinitionStatement, definitionStatements, 0);
     }
 
-    private static Span<int> GetDefinitionCallOrder(ReadOnlySpan<DefinitionStatement> definitionStatements,
+    private static Span<int> CreateRelativeCallOrder(DefinitionStatement definitionStatement, Span<DefinitionStatement> definitionStatements, int relativeIndex)
+    {
+        BodyNode definitionBodyNodes = (BodyNode)definitionStatement.ChildNodes.RightNode;
+        Span<DefinitionStatement> currentDefinitionStatements = ReallocateOnSpan(definitionStatements, relativeIndex);
+        return GetDefinitionCallOrder(currentDefinitionStatements, definitionBodyNodes.NodeData.Span);
+    }
+
+    private static Span<int> GetDefinitionCallOrder(Span<DefinitionStatement> definitionStatements,
         ReadOnlySpan<INode> definitionNodes)
     {
         using var definitionCallOrderList = new NativeMemoryList<int>();
@@ -23,36 +36,36 @@ internal static class DefinitionHelper
             if (definitionNodes[i] is CallStatement currentCallStatement)
             {
                 InstanceNode callInstanceNode = (InstanceNode)currentCallStatement.ChildNodes.LeftNode;
-                if (!TryGetDefinitionStatementInstance(out DefinitionStatement currentDefinition,
-                    definitionStatements, callInstanceNode))
-                    throw new Exception($"Definition {callInstanceNode.NodeData.ToArray()} wasn't found");
-
-                BodyNode definitionBodyNodes = (BodyNode)currentDefinition.ChildNodes.RightNode;
-                Span<int> currentCallOrder = GetDefinitionCallOrder(definitionStatements, definitionBodyNodes.NodeData.Span);
-                definitionCallOrderList.AddRange(currentCallOrder);
+                int statementIndex = TryGetDefinitionStatementInstance(out DefinitionStatement currentDefinition,
+                    definitionStatements, MemoryData.CalculateIdentifierId(callInstanceNode.NodeData)); 
+                if (statementIndex != -1)
+                {
+                    Span<int> currentRelativeCallOrder = CreateRelativeCallOrder(currentDefinition, definitionStatements, statementIndex);
+                    definitionCallOrderList.AddRange(currentRelativeCallOrder);
+                }
             }
         }
         return definitionCallOrderList.Span;
     }
 
-    private static bool TryGetDefinitionStatements(out ReadOnlyMemory<DefinitionStatement> returnStatements,
-        ReadOnlySpan<INode> nodes)
+    private static Span<DefinitionStatement> GetDefinitionStatements(ReadOnlySpan<INode> nodes)
     {
-        Memory<DefinitionStatement> definitionStatements = new DefinitionStatement[nodes.Length];
+        Span<DefinitionStatement> definitionStatements = new DefinitionStatement[nodes.Length];
+        int definitionCount = 0;
         for (int i = 0; i < nodes.Length; i++)
         {
-            if (nodes[i] is not DefinitionStatement currentStatement)
-                return NullableHelper.NullableOutValue(out returnStatements);
-            definitionStatements.Span[i] = currentStatement;
+            if (nodes[i] is DefinitionStatement currentStatement) 
+            {
+                definitionStatements[i] = currentStatement;
+                definitionCount++;
+            }
         }
-        returnStatements = definitionStatements;
-        return true;
+        return definitionStatements[..definitionCount];
     }
- 
-    private static bool TryGetDefinitionStatementInstance(out DefinitionStatement returnStatement, ReadOnlySpan<DefinitionStatement> definitionStatements,
-        InstanceNode instanceNode)
+
+    private static int TryGetDefinitionStatementInstance(out DefinitionStatement returnStatement, ReadOnlySpan<DefinitionStatement> definitionStatements,
+        uint instanceIdentificator)
     {
-        uint instanceIdentificator = MemoryData.CalculateIdentifierId(instanceNode.NodeData);
         int definitionsLength = definitionStatements.Length;
         for (int i = 0; i < definitionsLength; i++)
         {
@@ -61,9 +74,19 @@ internal static class DefinitionHelper
             if (currentDefinitionIdentifactor == instanceIdentificator) 
             {
                 returnStatement = definitionStatements[i];
-                return true;
+                return i;
             }
         }
-        return NullableHelper.NullableOutValue(out returnStatement);
+
+        returnStatement = null!;
+        return -1;
+    }
+
+    private static Span<T> ReallocateOnSpan<T>(Span<T> values, int index) 
+    {
+        if (index < 0 || index > values.Length)
+            return values;
+        values[index] = values[0];
+        return values[1..];
     }
 }
