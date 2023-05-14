@@ -1,6 +1,7 @@
 ﻿using Athena.NET.Compilation.DataHolders;
 using Athena.NET.Compilation.Structures;
 using Athena.NET.Parsing.Interfaces;
+using Athena.NET.Parsing.Nodes;
 using Athena.NET.Parsing.Nodes.Data;
 using Athena.NET.Parsing.Nodes.Statements;
 using Athena.NET.Parsing.Nodes.Statements.Body;
@@ -15,7 +16,6 @@ internal static class DefinitionHelper
         if(TryGetDefinitionStatementInstance(out DefinitionStatement mainDefinitionStatement, definitionStatements,
             InstructionWriter.MainDefinitionIdentificator) == -1)
             throw new Exception("Main definition wasn't found");
-
         return CreateRelativeCallOrder(mainDefinitionStatement, definitionStatements, 0);
     }
 
@@ -29,18 +29,19 @@ internal static class DefinitionHelper
     private static Span<int> GetDefinitionCallOrder(Span<DefinitionStatement> definitionStatements,
         ReadOnlySpan<INode> definitionNodes)
     {
-        using var definitionCallOrderList = new NativeMemoryList<int>();
+        var definitionCallOrderList = new NativeMemoryList<int>();
         int definitionNodesLength = definitionNodes.Length;
         for (int i = 0; i < definitionNodesLength; i++)
         {
             if (definitionNodes[i] is CallStatement currentCallStatement)
             {
-                InstanceNode callInstanceNode = (InstanceNode)currentCallStatement.ChildNodes.LeftNode;
+                IdentifierNode callIdentifierNode = (IdentifierNode)currentCallStatement.ChildNodes.LeftNode;
                 int statementIndex = TryGetDefinitionStatementInstance(out DefinitionStatement currentDefinition,
-                    definitionStatements, MemoryData.CalculateIdentifierId(callInstanceNode.NodeData)); 
+                    definitionStatements, MemoryData.CalculateIdentifierId(callIdentifierNode.NodeData));
                 if (statementIndex != -1)
                 {
                     Span<int> currentRelativeCallOrder = CreateRelativeCallOrder(currentDefinition, definitionStatements, statementIndex);
+                    definitionCallOrderList.Add(statementIndex);
                     definitionCallOrderList.AddRange(currentRelativeCallOrder);
                 }
             }

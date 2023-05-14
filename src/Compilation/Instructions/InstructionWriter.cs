@@ -64,8 +64,10 @@ public sealed class InstructionWriter : IDisposable
     public ReadOnlyMemory<DefinitionData> InstructionDefinitionData { get; internal set; }
     public DefinitionData MainDefinitionData { get; private set; }
 
+    public InstructionWriter() { }
     public InstructionWriter(ReadOnlySpan<INode> nodes)
     {
+        var definitionCallOrder = DefinitionHelper.CreateDefinitionsCallOrder(nodes);
         InstructionDefinitionData = GetDefinitionsData(nodes);
     }
 
@@ -170,7 +172,7 @@ public sealed class InstructionWriter : IDisposable
     private static int CalculateDefinitionLength(ReadOnlySpan<INode> definitionNodes, ReadOnlyMemory<MemoryData> argumentsData,
         ReadOnlyMemory<DefinitionData> definitionsData)
     {
-        using var definitionInstructionWriter = new InstructionWriter(definitionNodes);
+        using var definitionInstructionWriter = new InstructionWriter();
         definitionInstructionWriter.InstructionDefinitionData = definitionsData;
         definitionInstructionWriter.TemporaryRegisterTM.memoryData.AddRange(argumentsData.Span);
 

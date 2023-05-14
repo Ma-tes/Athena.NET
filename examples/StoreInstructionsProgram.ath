@@ -1,7 +1,7 @@
 def Main() ->
 	::PrintTwoValues(83, 20);
+def PrintValue(int value) ->
+	print value;
 def PrintTwoValues(int valueOne, int valueTwo) ->
 	::PrintValue(valueOne);
 	::PrintValue(valueTwo);
-def PrintValue(int value) ->
-	print value;
