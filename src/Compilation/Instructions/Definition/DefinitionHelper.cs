@@ -16,17 +16,18 @@ internal static class DefinitionHelper
         if(TryGetDefinitionStatementInstance(out DefinitionStatement mainDefinitionStatement, definitionStatements,
             InstructionWriter.MainDefinitionIdentificator) == -1)
             throw new Exception("Main definition wasn't found");
-        return CreateRelativeCallOrder(mainDefinitionStatement, definitionStatements, 0);
+        return CreateRelativeCallOrder(mainDefinitionStatement, definitionStatements, definitionStatements, 0);
     }
 
-    private static Span<int> CreateRelativeCallOrder(DefinitionStatement definitionStatement, Span<DefinitionStatement> definitionStatements, int relativeIndex)
+    private static Span<int> CreateRelativeCallOrder(DefinitionStatement definitionStatement, 
+        Span<DefinitionStatement> definitionStatements, ReadOnlySpan<DefinitionStatement> originalStatements, int relativeIndex)
     {
         BodyNode definitionBodyNodes = (BodyNode)definitionStatement.ChildNodes.RightNode;
         Span<DefinitionStatement> currentDefinitionStatements = ReallocateOnSpan(definitionStatements, relativeIndex);
-        return GetDefinitionCallOrder(currentDefinitionStatements, definitionBodyNodes.NodeData.Span);
+        return GetDefinitionCallOrder(currentDefinitionStatements, originalStatements, definitionBodyNodes.NodeData.Span);
     }
 
-    private static Span<int> GetDefinitionCallOrder(Span<DefinitionStatement> definitionStatements,
+    private static Span<int> GetDefinitionCallOrder(Span<DefinitionStatement> definitionStatements, ReadOnlySpan<DefinitionStatement> originalStatements,
         ReadOnlySpan<INode> definitionNodes)
     {
         var definitionCallOrderList = new NativeMemoryList<int>();
@@ -36,12 +37,16 @@ internal static class DefinitionHelper
             if (definitionNodes[i] is CallStatement currentCallStatement)
             {
                 IdentifierNode callIdentifierNode = (IdentifierNode)currentCallStatement.ChildNodes.LeftNode;
-                int statementIndex = TryGetDefinitionStatementInstance(out DefinitionStatement currentDefinition,
-                    definitionStatements, MemoryData.CalculateIdentifierId(callIdentifierNode.NodeData));
-                if (statementIndex != -1)
+                uint identifierId = MemoryData.CalculateIdentifierId(callIdentifierNode.NodeData);
+
+                int currentStatementIndex = TryGetDefinitionStatementInstance(out DefinitionStatement currentDefinition,
+                    definitionStatements, identifierId);
+                int originalStatementIndex = TryGetDefinitionStatementInstance(out _,
+                    originalStatements, identifierId);
+                if (currentStatementIndex != -1)
                 {
-                    Span<int> currentRelativeCallOrder = CreateRelativeCallOrder(currentDefinition, definitionStatements, statementIndex);
-                    definitionCallOrderList.Add(statementIndex);
+                    Span<int> currentRelativeCallOrder = CreateRelativeCallOrder(currentDefinition, definitionStatements, originalStatements, currentStatementIndex);
+                    definitionCallOrderList.Add(originalStatementIndex);
                     definitionCallOrderList.AddRange(currentRelativeCallOrder);
                 }
             }
