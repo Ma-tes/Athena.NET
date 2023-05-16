@@ -62,13 +62,14 @@ public sealed class InstructionWriter : IDisposable
     /// a <see cref="ReadOnlyMemory{T}"/>.
     /// </summary>
     public ReadOnlyMemory<DefinitionData> InstructionDefinitionData { get; internal set; }
+    public ReadOnlyMemory<int> InstructionDefinitionOrder { get; internal set; }
     public DefinitionData MainDefinitionData { get; private set; }
 
     public InstructionWriter() { }
     public InstructionWriter(ReadOnlySpan<INode> nodes)
     {
-        var definitionCallOrder = DefinitionHelper.CreateDefinitionsCallOrder(nodes);
-        InstructionDefinitionData = GetDefinitionsData(nodes);
+        InstructionDefinitionData = GetDefinitionsData(nodes); 
+        InstructionDefinitionOrder = DefinitionHelper.CreateDefinitionsCallOrder(nodes);
     }
 
     //TODO: Better exception and error handling
@@ -82,10 +83,12 @@ public sealed class InstructionWriter : IDisposable
         if(TryGetDefinitionData(out DefinitionData mainDefinitionData, MainDefinitionIdentificator))
             MainDefinitionData = mainDefinitionData;
 
+        ReadOnlySpan<int> definitionOrderIndexes = InstructionDefinitionOrder.Span;
         int nodesLength = nodes.Length;
         for (int i = 0; i < nodesLength; i++)
         {
-            if (!TryGetEmitInstruction(nodes[i]))
+            int definitionIndex = InstructionDefinitionOrder.Length != 0 ? definitionOrderIndexes[i] : i;
+            if (!TryGetEmitInstruction(nodes[definitionIndex]))
                 throw new Exception("Instruction wasn't completed or found");
         }
     }

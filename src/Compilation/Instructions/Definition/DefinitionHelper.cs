@@ -10,15 +10,30 @@ namespace Athena.NET.Compilation.Instructions.Definition;
 
 internal static class DefinitionHelper 
 {
-    public static ReadOnlySpan<int> CreateDefinitionsCallOrder(ReadOnlySpan<INode> nodes)
+    /// <summary>
+    /// Provides calculation of definition call order,
+    /// that start with index of main definition
+    /// </summary>
+    /// <returns>Order indexes of definitions</returns>
+    public static ReadOnlyMemory<int> CreateDefinitionsCallOrder(ReadOnlySpan<INode> nodes)
     {
         Span<DefinitionStatement> definitionStatements = GetDefinitionStatements(nodes);
-        if(TryGetDefinitionStatementInstance(out DefinitionStatement mainDefinitionStatement, definitionStatements,
-            InstructionWriter.MainDefinitionIdentificator) == -1)
-            throw new Exception("Main definition wasn't found");
-        return CreateRelativeCallOrder(mainDefinitionStatement, definitionStatements, definitionStatements, 0);
+        int mainStatementIndex = TryGetDefinitionStatementInstance(out DefinitionStatement mainDefinitionStatement, definitionStatements,
+            InstructionWriter.MainDefinitionIdentificator);
+        if (mainStatementIndex == -1)
+            return ReadOnlyMemory<int>.Empty;
+
+        Memory<int> returnCallOrder = new int[definitionStatements.Length];
+        returnCallOrder.Span[0] = mainStatementIndex;
+        CreateRelativeCallOrder(mainDefinitionStatement, definitionStatements, definitionStatements, mainStatementIndex).CopyTo(returnCallOrder.Span[1..]);
+        return returnCallOrder;
     }
 
+    /// <summary>
+    /// Creates definition call order and reallocates
+    /// <paramref name="definitionStatements"/> by <paramref name="relativeIndex"/>
+    /// </summary>
+    /// <returns>Order indexes of definitions</returns>
     private static Span<int> CreateRelativeCallOrder(DefinitionStatement definitionStatement, 
         Span<DefinitionStatement> definitionStatements, ReadOnlySpan<DefinitionStatement> originalStatements, int relativeIndex)
     {
@@ -41,11 +56,12 @@ internal static class DefinitionHelper
 
                 int currentStatementIndex = TryGetDefinitionStatementInstance(out DefinitionStatement currentDefinition,
                     definitionStatements, identifierId);
-                int originalStatementIndex = TryGetDefinitionStatementInstance(out _,
-                    originalStatements, identifierId);
+                int originalStatementIndex = TryGetDefinitionStatementInstance(out _, originalStatements, identifierId);
                 if (currentStatementIndex != -1)
                 {
                     Span<int> currentRelativeCallOrder = CreateRelativeCallOrder(currentDefinition, definitionStatements, originalStatements, currentStatementIndex);
+                    definitionStatements = ReallocateOnSpan(definitionStatements, currentStatementIndex);
+
                     definitionCallOrderList.Add(originalStatementIndex);
                     definitionCallOrderList.AddRange(currentRelativeCallOrder);
                 }
@@ -90,6 +106,8 @@ internal static class DefinitionHelper
 
     private static Span<T> ReallocateOnSpan<T>(Span<T> values, int index) 
     {
+        if (values.Length == 1 && index == 0)
+            return Span<T>.Empty;
         if (index < 0 || index > values.Length)
             return values;
         values[index] = values[0];
