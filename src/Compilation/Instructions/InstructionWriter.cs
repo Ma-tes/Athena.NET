@@ -8,6 +8,7 @@ using Athena.NET.Parsing.Nodes.Operators;
 using Athena.NET.Parsing.Nodes.Statements;
 using Athena.NET.Parsing.Nodes.Statements.Body;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace Athena.NET.Compilation.Instructions;
 
@@ -68,8 +69,8 @@ public sealed class InstructionWriter : IDisposable
     public InstructionWriter() { }
     public InstructionWriter(ReadOnlySpan<INode> nodes)
     {
-        InstructionDefinitionData = GetDefinitionsData(nodes); 
         InstructionDefinitionOrder = DefinitionHelper.CreateDefinitionsCallOrder(nodes);
+        InstructionDefinitionData = GetDefinitionsData(nodes);
     }
 
     //TODO: Better exception and error handling
@@ -80,6 +81,7 @@ public sealed class InstructionWriter : IDisposable
     /// </summary>
     public void CreateInstructions(ReadOnlySpan<INode> nodes)
     {
+        ReadOnlySpan<DefinitionStatement> definitionStatements = DefinitionHelper.GetDefinitionStatements(nodes);
         if(TryGetDefinitionData(out DefinitionData mainDefinitionData, MainDefinitionIdentificator))
             MainDefinitionData = mainDefinitionData;
 
@@ -87,7 +89,8 @@ public sealed class InstructionWriter : IDisposable
         int nodesLength = nodes.Length;
         for (int i = 0; i < nodesLength; i++)
         {
-            int definitionIndex = InstructionDefinitionOrder.Length != 0 ? definitionOrderIndexes[i] : i;
+            int definitionIndex = InstructionDefinitionOrder.Length != 0 && !definitionStatements.IsEmpty
+                ? definitionOrderIndexes[i] : i;
             if (!TryGetEmitInstruction(nodes[definitionIndex]))
                 throw new Exception("Instruction wasn't completed or found");
         }
@@ -101,10 +104,14 @@ public sealed class InstructionWriter : IDisposable
     {
         int nodesLength = nodes.Length;
         Memory<DefinitionData> currentDefinitions = new DefinitionData[nodesLength];
+
         Span<DefinitionData> currentDefinitionsSpan = currentDefinitions.Span;
+        ReadOnlySpan<int> definitionOrderIndexes = InstructionDefinitionOrder.Span;
         for (int i = 0; i < nodesLength; i++)
         {
-            DefinitionNode leftDefinitionNode = (DefinitionNode)nodes[i].ChildNodes.LeftNode;
+            int currentDefinitionIndex = definitionOrderIndexes[i];
+            DefinitionNode leftDefinitionNode = (DefinitionNode)nodes[currentDefinitionIndex].ChildNodes.LeftNode;
+
             int definitionMemoryDataLength = leftDefinitionNode.NodeToken != Lexing.TokenIndentificator.Unknown ?
                 leftDefinitionNode.NodeData.Length + 1 : leftDefinitionNode.NodeData.Length;
             uint definitionIdentificator = MemoryData.CalculateIdentifierId(leftDefinitionNode.DefinitionIdentifier.NodeData);
@@ -115,7 +122,7 @@ public sealed class InstructionWriter : IDisposable
                     definitionIdentificator,
                     (definitionMemoryDataLength * 6), definitionBodyLenght,
                     GetArgumentsMemoryData(leftDefinitionNode.NodeData),
-                    (BodyNode)nodes[i].ChildNodes.RightNode, default
+                    (BodyNode)nodes[currentDefinitionIndex].ChildNodes.RightNode, default
                 );
         }
         return CreateRelativeDefinitionsData(currentDefinitions);

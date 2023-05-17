@@ -72,8 +72,8 @@ internal static class DefinitionHelper
                     Span<int> currentRelativeCallOrder = CreateRelativeCallOrder(currentDefinition, definitionStatements, originalStatements, currentStatementIndex);
                     definitionStatements = ReallocateOnSpan(definitionStatements, currentStatementIndex);
 
-                    definitionCallOrderList.Add(originalStatementIndex);
                     definitionCallOrderList.AddRange(currentRelativeCallOrder);
+                    definitionCallOrderList.Add(originalStatementIndex);
                 }
             }
         }
@@ -86,7 +86,7 @@ internal static class DefinitionHelper
     /// is ignored.
     /// </summary>
     /// <returns>Every <see cref="DefinitionStatement"/>, that was found.</returns>
-    private static Span<DefinitionStatement> GetDefinitionStatements(ReadOnlySpan<INode> nodes)
+    public static Span<DefinitionStatement> GetDefinitionStatements(ReadOnlySpan<INode> nodes)
     {
         Span<DefinitionStatement> definitionStatements = new DefinitionStatement[nodes.Length];
         int definitionCount = 0;
