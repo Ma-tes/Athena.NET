@@ -8,13 +8,17 @@ using Athena.NET.Parsing.Nodes.Statements.Body;
 
 namespace Athena.NET.Compilation.Instructions.Definition;
 
+/// <summary>
+/// Extension helper class for all uses for <see cref="DefinitionStatement"/>,
+/// <see cref="DefinitionInstruction"/> or even <see cref="DefinitionCallInstruction"/>
+/// </summary>
 internal static class DefinitionHelper 
 {
     /// <summary>
     /// Provides calculation of definition call order,
-    /// that start with index of main definition
+    /// that start with index of main definition.
     /// </summary>
-    /// <returns>Order indexes of definitions</returns>
+    /// <returns>Order indexes of definitions.</returns>
     public static ReadOnlyMemory<int> CreateDefinitionsCallOrder(ReadOnlySpan<INode> nodes)
     {
         Span<DefinitionStatement> definitionStatements = GetDefinitionStatements(nodes);
@@ -31,9 +35,9 @@ internal static class DefinitionHelper
 
     /// <summary>
     /// Creates definition call order and reallocates
-    /// <paramref name="definitionStatements"/> by <paramref name="relativeIndex"/>
-    /// </summary>
-    /// <returns>Order indexes of definitions</returns>
+    /// <paramref name="definitionStatements"/> by <paramref name="relativeIndex"/>.
+    /// </summary> 
+    /// <returns>Order indexes of definitions.</returns>
     private static Span<int> CreateRelativeCallOrder(DefinitionStatement definitionStatement, 
         Span<DefinitionStatement> definitionStatements, ReadOnlySpan<DefinitionStatement> originalStatements, int relativeIndex)
     {
@@ -42,6 +46,12 @@ internal static class DefinitionHelper
         return GetDefinitionCallOrder(currentDefinitionStatements, originalStatements, definitionBodyNodes.NodeData.Span);
     }
 
+    /// <summary>
+    /// Provides exact order of <see cref="CallStatement"/>, which are
+    /// then related as a <see cref="DefinitionStatement"/> and recursivly 
+    /// executed again.
+    /// </summary>
+    /// <returns>Order indexes of definitions.</returns>
     private static Span<int> GetDefinitionCallOrder(Span<DefinitionStatement> definitionStatements, ReadOnlySpan<DefinitionStatement> originalStatements,
         ReadOnlySpan<INode> definitionNodes)
     {
@@ -70,6 +80,12 @@ internal static class DefinitionHelper
         return definitionCallOrderList.Span;
     }
 
+    /// <summary>
+    /// Creates parsing for every <see cref="INode"/> in <paramref name="nodes"/>,
+    /// if it's <see cref="DefinitionStatement"/>, otherwise the current <see cref="INode"/>
+    /// is ignored.
+    /// </summary>
+    /// <returns>Every <see cref="DefinitionStatement"/>, that was found.</returns>
     private static Span<DefinitionStatement> GetDefinitionStatements(ReadOnlySpan<INode> nodes)
     {
         Span<DefinitionStatement> definitionStatements = new DefinitionStatement[nodes.Length];
@@ -85,6 +101,11 @@ internal static class DefinitionHelper
         return definitionStatements[..definitionCount];
     }
 
+    /// <summary>
+    /// Tries to find matching <see cref="DefinitionStatement"/>, by comperessing 
+    /// <paramref name="instanceIdentificator"/> and <see cref="DefinitionStatement"/> id.
+    /// </summary>
+    /// <returns>Relative index, of found <see cref="DefinitionStatement"/> in <paramref name="definitionStatements"/></returns>
     private static int TryGetDefinitionStatementInstance(out DefinitionStatement returnStatement, ReadOnlySpan<DefinitionStatement> definitionStatements,
         uint instanceIdentificator)
     {
@@ -104,6 +125,7 @@ internal static class DefinitionHelper
         return -1;
     }
 
+    //TODO: Create more efficient implementation
     private static Span<T> ReallocateOnSpan<T>(Span<T> values, int index) 
     {
         if (values.Length == 1 && index == 0)
