@@ -29,7 +29,9 @@ internal static class DefinitionHelper
 
         Memory<int> returnCallOrder = new int[definitionStatements.Length];
         returnCallOrder.Span[0] = mainStatementIndex;
-        CreateRelativeCallOrder(mainDefinitionStatement, definitionStatements, definitionStatements, mainStatementIndex).CopyTo(returnCallOrder.Span[1..]);
+
+        Span<int> currentRelativeCallOrder = CreateRelativeCallOrder(mainDefinitionStatement, ref definitionStatements, definitionStatements, mainStatementIndex);
+        currentRelativeCallOrder.CopyTo(returnCallOrder.Span[1..]);
         return returnCallOrder;
     }
 
@@ -39,11 +41,11 @@ internal static class DefinitionHelper
     /// </summary> 
     /// <returns>Order indexes of definitions.</returns>
     private static Span<int> CreateRelativeCallOrder(DefinitionStatement definitionStatement, 
-        Span<DefinitionStatement> definitionStatements, ReadOnlySpan<DefinitionStatement> originalStatements, int relativeIndex)
+        ref Span<DefinitionStatement> definitionStatements, ReadOnlySpan<DefinitionStatement> originalStatements, int relativeIndex)
     {
         BodyNode definitionBodyNodes = (BodyNode)definitionStatement.ChildNodes.RightNode;
-        Span<DefinitionStatement> currentDefinitionStatements = ReallocateOnSpan(definitionStatements, relativeIndex);
-        return GetDefinitionCallOrder(currentDefinitionStatements, originalStatements, definitionBodyNodes.NodeData.Span);
+        definitionStatements = ReallocateOnSpan(definitionStatements, relativeIndex);
+        return GetDefinitionCallOrder(definitionStatements, originalStatements, definitionBodyNodes.NodeData.Span);
     }
 
     /// <summary>
@@ -69,7 +71,7 @@ internal static class DefinitionHelper
                 int originalStatementIndex = TryGetDefinitionStatementInstance(out _, originalStatements, identifierId);
                 if (currentStatementIndex != -1)
                 {
-                    Span<int> currentRelativeCallOrder = CreateRelativeCallOrder(currentDefinition, definitionStatements, originalStatements, currentStatementIndex);
+                    Span<int> currentRelativeCallOrder = CreateRelativeCallOrder(currentDefinition, ref definitionStatements, originalStatements, currentStatementIndex);
                     definitionStatements = ReallocateOnSpan(definitionStatements, currentStatementIndex);
 
                     definitionCallOrderList.AddRange(currentRelativeCallOrder);
@@ -128,7 +130,7 @@ internal static class DefinitionHelper
     //TODO: Create more efficient implementation
     private static Span<T> ReallocateOnSpan<T>(Span<T> values, int index) 
     {
-        if (values.Length == 1 && index == 0)
+        if (values.Length == 1 && index == 0 || values.IsEmpty)
             return Span<T>.Empty;
         if (index < 0 || index > values.Length)
             return values;
