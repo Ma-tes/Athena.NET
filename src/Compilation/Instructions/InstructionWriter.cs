@@ -8,7 +8,6 @@ using Athena.NET.Parsing.Nodes.Operators;
 using Athena.NET.Parsing.Nodes.Statements;
 using Athena.NET.Parsing.Nodes.Statements.Body;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 
 namespace Athena.NET.Compilation.Instructions;
 
@@ -56,14 +55,25 @@ public sealed class InstructionWriter : IDisposable
     public NativeMemoryList<uint> InstructionList { get; }
         = new();
 
-    //TODO: Improve storing
     /// <summary>
     /// It's being used for storing individual
     /// definition data as an <see cref="InstructionDefinitionData{T}"/> in
     /// a <see cref="ReadOnlyMemory{T}"/>.
     /// </summary>
     public ReadOnlyMemory<DefinitionData> InstructionDefinitionData { get; internal set; }
+
+    /// <summary>
+    /// It's being used for storing definition
+    /// call order as an <see cref="int"/> in
+    /// a <see cref="ReadOnlyMemory{T}"/>.
+    /// </summary>
     public ReadOnlyMemory<int> InstructionDefinitionOrder { get; internal set; }
+
+    /// <summary>
+    /// Provide's <see cref="DefinitionData"/> of
+    /// first definitions, which identificator is equal
+    /// to <see cref="MainDefinitionIdentificator"/>.
+    /// </summary>
     public DefinitionData MainDefinitionData { get; private set; }
 
     public InstructionWriter() { }
@@ -142,7 +152,7 @@ public sealed class InstructionWriter : IDisposable
             ReadOnlySpan<INode> currentBodyNodes = currentDefinitionData.DefinitionBodyNode.NodeData.Span;
 
             int argumentsIntructionLength = currentDefinitionData.DefinitionIndex;
-            int definitionBodyLength = CalculateDefinitionLength(currentBodyNodes, currentDefinitionData.DefinitionArguments, definitionsData);
+            int definitionBodyLength = DefinitionHelper.CalculateDefinitionLength(currentBodyNodes, currentDefinitionData.DefinitionArguments, definitionsData);
 
             currentDefinitionData.DefinitionIndex += definitionInstructionCount;
             currentDefinitionData.DefinitionLength += definitionBodyLength;
@@ -153,7 +163,7 @@ public sealed class InstructionWriter : IDisposable
 
     /// <summary>
     /// Creates <see cref="MemoryData"/> from <paramref name="argumentInstances"/>,
-    /// which are stored in <see cref="OperatorCodes.TM"/> <see cref="Register"/>
+    /// which are stored in <see cref="OperatorCodes.TM"/> <see cref="Register"/>.
     /// </summary>
     private ReadOnlyMemory<MemoryData> GetArgumentsMemoryData(ReadOnlyMemory<InstanceNode> argumentInstances)
     {
@@ -170,24 +180,6 @@ public sealed class InstructionWriter : IDisposable
             returnRegisters.Span[i] = argumentMemoryData;
         }
         return returnRegisters;
-    }
-
-    /// <summary>
-    /// Provides a pre-interpretation of <paramref name="definitionNodes"/>,
-    /// with coresponding <paramref name="definitionsData"/> and <paramref name="argumentsData"/>
-    /// </summary>
-    /// <returns>
-    /// Count of instructions from pre-intepreted <paramref name="definitionNodes"/>
-    /// </returns>
-    private static int CalculateDefinitionLength(ReadOnlySpan<INode> definitionNodes, ReadOnlyMemory<MemoryData> argumentsData,
-        ReadOnlyMemory<DefinitionData> definitionsData)
-    {
-        using var definitionInstructionWriter = new InstructionWriter();
-        definitionInstructionWriter.InstructionDefinitionData = definitionsData;
-        definitionInstructionWriter.TemporaryRegisterTM.memoryData.AddRange(argumentsData.Span);
-
-        definitionInstructionWriter.CreateInstructions(definitionNodes);
-        return definitionInstructionWriter.InstructionList.Count;
     }
 
     /// <summary>
@@ -257,6 +249,12 @@ public sealed class InstructionWriter : IDisposable
         return GetIdentifierData(out returnData, identiferId);
     }
 
+    /// <summary>
+    /// Tries to get <see cref="DefinitionData"/>, by finding
+    /// <see cref="DefinitionData.Identificator"/>, that's
+    /// equal to <paramref name="definitionIdentificator"/>.
+    /// </summary>
+    /// <returns>Bool state if <see cref="DefinitionData"/> was found.</returns>
     internal bool TryGetDefinitionData([NotNullWhen(true)] out DefinitionData returnData, uint definitionIdentificator)
     { 
         int definitionDataCount = InstructionDefinitionData.Length;
@@ -272,6 +270,11 @@ public sealed class InstructionWriter : IDisposable
         return NullableHelper.NullableOutValue(out returnData);
     }
 
+    /// <summary>
+    /// Adds <see cref="MemoryData.Size"/> and <see cref="MemoryData.Offset"/>,
+    /// from <paramref name="memoryData"/>, instructions to <see cref="InstructionList"/>
+    /// with coresponding <paramref name="registerCode"/> instruction.
+    /// </summary>
     internal void AddMemoryDataInstructions(OperatorCodes registerCode, MemoryData memoryData)
     {
         InstructionList.AddRange((uint)registerCode,

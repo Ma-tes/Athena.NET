@@ -1,4 +1,5 @@
 ﻿using Athena.NET.Compilation.DataHolders;
+using Athena.NET.Compilation.Instructions.Structures;
 using Athena.NET.Compilation.Structures;
 using Athena.NET.Parsing.Interfaces;
 using Athena.NET.Parsing.Nodes;
@@ -10,7 +11,7 @@ namespace Athena.NET.Compilation.Instructions.Definition;
 
 /// <summary>
 /// Extension helper class for all uses for <see cref="DefinitionStatement"/>,
-/// <see cref="DefinitionInstruction"/> or even <see cref="DefinitionCallInstruction"/>
+/// <see cref="DefinitionInstruction"/> or even <see cref="DefinitionCallInstruction"/>.
 /// </summary>
 internal static class DefinitionHelper 
 {
@@ -33,6 +34,24 @@ internal static class DefinitionHelper
         Span<int> currentRelativeCallOrder = CreateRelativeCallOrder(mainDefinitionStatement, ref definitionStatements, definitionStatements, mainStatementIndex);
         currentRelativeCallOrder.CopyTo(returnCallOrder.Span[1..]);
         return returnCallOrder;
+    }
+
+    /// <summary>
+    /// Provides a pre-interpretation of <paramref name="definitionNodes"/>,
+    /// with coresponding <paramref name="definitionsData"/> and <paramref name="argumentsData"/>.
+    /// </summary>
+    /// <returns>
+    /// Count of instructions from pre-intepreted <paramref name="definitionNodes"/>.
+    /// </returns>
+    public static int CalculateDefinitionLength(ReadOnlySpan<INode> definitionNodes, ReadOnlyMemory<MemoryData> argumentsData,
+        ReadOnlyMemory<DefinitionData> definitionsData)
+    {
+        using var definitionInstructionWriter = new InstructionWriter();
+        definitionInstructionWriter.InstructionDefinitionData = definitionsData;
+        definitionInstructionWriter.TemporaryRegisterTM.memoryData.AddRange(argumentsData.Span);
+
+        definitionInstructionWriter.CreateInstructions(definitionNodes);
+        return definitionInstructionWriter.InstructionList.Count;
     }
 
     /// <summary>
@@ -107,7 +126,7 @@ internal static class DefinitionHelper
     /// Tries to find matching <see cref="DefinitionStatement"/>, by comperessing 
     /// <paramref name="instanceIdentificator"/> and <see cref="DefinitionStatement"/> id.
     /// </summary>
-    /// <returns>Relative index, of found <see cref="DefinitionStatement"/> in <paramref name="definitionStatements"/></returns>
+    /// <returns>Relative index, of found <see cref="DefinitionStatement"/> in <paramref name="definitionStatements"/>.</returns>
     private static int TryGetDefinitionStatementInstance(out DefinitionStatement returnStatement, ReadOnlySpan<DefinitionStatement> definitionStatements,
         uint instanceIdentificator)
     {
@@ -128,6 +147,10 @@ internal static class DefinitionHelper
     }
 
     //TODO: Create more efficient implementation
+    /// <summary>
+    /// Creates reallocated <see cref="Span{T}"/>, by swaping
+    /// and removing value on <paramref name="index"/>.
+    /// </summary>
     private static Span<T> ReallocateOnSpan<T>(Span<T> values, int index) 
     {
         if (values.Length == 1 && index == 0 || values.IsEmpty)
