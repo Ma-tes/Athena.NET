@@ -8,7 +8,6 @@ namespace Athena.NET.Compilation.Instructions.Definition;
 
 internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
 {
-
     public bool EmitInstruction(DefinitionStatement node, InstructionWriter instructionWriter)
     {
         DefinitionNode leftDefinitionNode = (DefinitionNode)node.ChildNodes.LeftNode;

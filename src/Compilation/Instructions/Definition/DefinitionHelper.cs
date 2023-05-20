@@ -19,7 +19,9 @@ internal static class DefinitionHelper
     /// Provides calculation of definition call order,
     /// that start with index of main definition.
     /// </summary>
-    /// <returns>Order indexes of definitions.</returns>
+    /// <returns>
+    /// Order indexes of definitions.
+    /// </returns>
     public static ReadOnlyMemory<int> CreateDefinitionsCallOrder(ReadOnlySpan<INode> nodes)
     {
         Span<DefinitionStatement> definitionStatements = GetDefinitionStatements(nodes);
@@ -58,7 +60,9 @@ internal static class DefinitionHelper
     /// Creates definition call order and reallocates
     /// <paramref name="definitionStatements"/> by <paramref name="relativeIndex"/>.
     /// </summary> 
-    /// <returns>Order indexes of definitions.</returns>
+    /// <returns>
+    /// Order indexes of definitions.
+    /// </returns>
     private static Span<int> CreateRelativeCallOrder(DefinitionStatement definitionStatement, 
         ref Span<DefinitionStatement> definitionStatements, ReadOnlySpan<DefinitionStatement> originalStatements, int relativeIndex)
     {
@@ -72,7 +76,9 @@ internal static class DefinitionHelper
     /// then related as a <see cref="DefinitionStatement"/> and recursivly 
     /// executed again.
     /// </summary>
-    /// <returns>Order indexes of definitions.</returns>
+    /// <returns>
+    /// Order indexes of definitions.
+    /// </returns>
     private static Span<int> GetDefinitionCallOrder(Span<DefinitionStatement> definitionStatements, ReadOnlySpan<DefinitionStatement> originalStatements,
         ReadOnlySpan<INode> definitionNodes)
     {
@@ -106,7 +112,9 @@ internal static class DefinitionHelper
     /// if it's <see cref="DefinitionStatement"/>, otherwise the current <see cref="INode"/>
     /// is ignored.
     /// </summary>
-    /// <returns>Every <see cref="DefinitionStatement"/>, that was found.</returns>
+    /// <returns>
+    /// Every <see cref="DefinitionStatement"/>, that was found.
+    /// </returns>
     public static Span<DefinitionStatement> GetDefinitionStatements(ReadOnlySpan<INode> nodes)
     {
         Span<DefinitionStatement> definitionStatements = new DefinitionStatement[nodes.Length];
@@ -126,7 +134,9 @@ internal static class DefinitionHelper
     /// Tries to find matching <see cref="DefinitionStatement"/>, by comperessing 
     /// <paramref name="instanceIdentificator"/> and <see cref="DefinitionStatement"/> id.
     /// </summary>
-    /// <returns>Relative index, of found <see cref="DefinitionStatement"/> in <paramref name="definitionStatements"/>.</returns>
+    /// <returns>
+    /// Relative index, of found <see cref="DefinitionStatement"/> in <paramref name="definitionStatements"/>.
+    /// </returns>
     private static int TryGetDefinitionStatementInstance(out DefinitionStatement returnStatement, ReadOnlySpan<DefinitionStatement> definitionStatements,
         uint instanceIdentificator)
     {

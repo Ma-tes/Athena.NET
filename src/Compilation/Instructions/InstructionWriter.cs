@@ -25,6 +25,9 @@ namespace Athena.NET.Compilation.Instructions;
 public sealed class InstructionWriter : IDisposable
 {
     //TODO: Consider a better reimplemtentation
+    /// <summary>
+    /// Identificatora of a Main <see cref="Definition"/>.
+    /// </summary>
     public static readonly uint MainDefinitionIdentificator = MemoryData.CalculateIdentifierId(
             new char[] { 'M', 'a', 'i', 'n' }
         );
