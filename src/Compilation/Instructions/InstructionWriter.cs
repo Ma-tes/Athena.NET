@@ -159,7 +159,7 @@ public sealed class InstructionWriter : IDisposable
 
             currentDefinitionData.DefinitionIndex += definitionInstructionCount;
             currentDefinitionData.DefinitionLength += definitionBodyLength;
-            definitionInstructionCount += ((currentDefinitionData.DefinitionLength) + argumentsIntructionLength);
+            definitionInstructionCount += (currentDefinitionData.DefinitionLength + argumentsIntructionLength);
         }
         return definitionsData;
     }
@@ -196,8 +196,7 @@ public sealed class InstructionWriter : IDisposable
     /// </returns>
     private bool TryGetEmitInstruction(INode node) => node switch
     {
-        EqualAssignStatement equalNode => new StoreInstruction()
-            .EmitInstruction(equalNode, this),
+        EqualAssignStatement equalNode => InstructionFactory.
         PrintStatement printNode => new PrintInstruction()
             .EmitInstruction(printNode, this),
         IfStatement ifNode => new JumpInstruction()

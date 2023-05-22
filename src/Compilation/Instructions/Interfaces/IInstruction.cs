@@ -3,10 +3,11 @@ using Athena.NET.Parsing.Interfaces;
 
 namespace Athena.NET.Compilation.Instructions;
 
-internal interface IInstruction<T, TSelf> where T : INode where TSelf : IInstruction<T, TSelf>
+//TODO: After switch to .NET 7, consider
+//implementation of factory pattern, for
+//this interface
+internal interface IInstruction<T> where T : INode
 {
-    public static abstract TSelf InstructionInstance { get; }
-
     public bool EmitInstruction(T node, InstructionWriter writer);
     public bool InterpretInstruction(ReadOnlySpan<uint> instructions, VirtualMachine writer);
 }
