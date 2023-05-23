@@ -186,7 +186,7 @@ public sealed class InstructionWriter : IDisposable
     }
 
     /// <summary>
-    /// Executes a related instruction to a specific 
+    /// Executes a related instruction to a specific
     /// node that was derived from <see cref="INode"/>.
     /// </summary>
     /// <returns>
@@ -196,16 +196,17 @@ public sealed class InstructionWriter : IDisposable
     /// </returns>
     private bool TryGetEmitInstruction(INode node) => node switch
     {
-        EqualAssignStatement equalNode => InstructionFactory.
-        PrintStatement printNode => new PrintInstruction()
+        EqualAssignStatement equalNode => InstructionFactory.StoreInstruction
+            .EmitInstruction(equalNode, this),
+        PrintStatement printNode => InstructionFactory.PrintInstruction
             .EmitInstruction(printNode, this),
-        IfStatement ifNode => new JumpInstruction()
+        IfStatement ifNode => InstructionFactory.JumpInstruction
             .EmitInstruction(ifNode, this),
-        DefinitionStatement definitionNode => new DefinitionInstruction()
+        DefinitionStatement definitionNode => InstructionFactory.DefinitionInstruction
             .EmitInstruction(definitionNode, this),
-        CallStatement definitionCallNode => new DefinitionCallInstruction()
+        CallStatement definitionCallNode => InstructionFactory.DefinitionCallInstruction
             .EmitInstruction(definitionCallNode, this),
-        OperatorNode operatorNode => new OperatorInstruction()
+        OperatorNode operatorNode => InstructionFactory.OperatorInstruction
             .EmitInstruction(operatorNode, this),
         _ => false
     };
