@@ -1,5 +1,6 @@
 ﻿using Athena.NET.Compilation.Interpreter;
 using Athena.NET.Compilation.Structures;
+using Athena.NET.Parsing.Interfaces;
 using Athena.NET.Parsing.Nodes;
 using Athena.NET.Parsing.Nodes.Data;
 using Athena.NET.Parsing.Nodes.Operators;
@@ -11,7 +12,7 @@ internal sealed class PrintInstruction : IInstruction<PrintStatement>
 {
     public bool EmitInstruction(PrintStatement node, InstructionWriter writer)
     {
-        var rightChildrenNode = node.ChildNodes.RightNode;
+        INode rightChildrenNode = node.ChildNodes.RightNode;
         if (rightChildrenNode is OperatorNode operatorNode)
         {
             var operatorInstruction = new OperatorInstruction();

@@ -1,11 +1,7 @@
 ﻿using Athena.NET.Compilation;
 using Athena.NET.Compilation.Instructions;
-using Athena.NET.Compilation.Interpretation;
 using Athena.NET.Compilation.Interpreter;
-using Athena.NET.Compilation.Structures;
-using Athena.NET.Lexing;
 using Athena.NET.Lexing.LexicalAnalysis;
-using Athena.NET.Lexing.Structures;
 using Athena.NET.Parsing.Nodes;
 using System.Diagnostics.CodeAnalysis;
 
@@ -41,18 +37,6 @@ using (var tokenReader = new TokenReader
 }
 Console.ReadLine();
 
-
-static void WriteRegisterData(RegisterMemory memory, params RegisterData[] registerData)
-{
-    int dataLength = registerData.Length;
-    for (int i = 0; i < registerData.Length; i++)
-    {
-        RegisterData currentRegister = registerData[i];
-        int currentData = (int)memory.GetData(currentRegister);
-        Console.Write($"\n[{memory.RegisterCode}]: ({currentRegister.Size}, {currentRegister.Offset}) = {currentData}");
-    }
-}
-
 static void WriteInstructions(Span<uint> instructionsSpan)
 {
     bool isInstruction = false;
@@ -83,20 +67,3 @@ static bool TryGetOperatorCode([NotNullWhen(true)] out OperatorCodes returnCode,
     returnCode = default;
     return false;
 }
-
-static void WriteTokens(ReadOnlyMemory<Token> tokens)
-{
-    int tokensLength = tokens.Length;
-    for (int i = 0; i < tokensLength; i++)
-    {
-        var currentToken = tokens.Span[i];
-        if (currentToken.TokenId == TokenIndentificator.EndLine)
-            Console.WriteLine($"{currentToken.TokenId} ");
-        else
-            Console.Write($"{currentToken.TokenId} ");
-
-        if (currentToken.TokenId == TokenIndentificator.Identifier)
-            Console.Write($"[{currentToken.Data}] ");
-    }
-}
-
