@@ -63,6 +63,13 @@ public sealed class InstructionWriter : IDisposable
     /// definition data as an <see cref="InstructionDefinitionData{T}"/> in
     /// a <see cref="ReadOnlyMemory{T}"/>.
     /// </summary>
+    public DefinitionData CurrentDefinitionData { get; internal set; }
+
+    /// <summary>
+    /// It's being used for storing individual
+    /// definition data as an <see cref="InstructionDefinitionData{T}"/> in
+    /// a <see cref="ReadOnlyMemory{T}"/>.
+    /// </summary>
     public ReadOnlyMemory<DefinitionData> InstructionDefinitionData { get; internal set; }
 
     /// <summary>
@@ -104,6 +111,7 @@ public sealed class InstructionWriter : IDisposable
         {
             int definitionIndex = InstructionDefinitionOrder.Length != 0 && !definitionStatements.IsEmpty
                 ? definitionOrderIndexes[i] : i;
+            CurrentDefinitionData = InstructionDefinitionData.Span[definitionIndex];
             if (!TryGetEmitInstruction(nodes[definitionIndex]))
                 throw new Exception("Instruction wasn't completed or found");
         }
