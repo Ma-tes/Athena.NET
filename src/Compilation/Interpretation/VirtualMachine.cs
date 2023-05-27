@@ -169,7 +169,7 @@ internal sealed class VirtualMachine : IDisposable
         if (instructionCode >= OperatorCodes.Add &&
            instructionCode <= OperatorCodes.Div)
             return new OperatorInstruction()
-            .InterpretInstruction(instructionData, this);
+                .InterpretInstruction(instructionData, this);
         return false;
     }
 
