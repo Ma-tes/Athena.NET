@@ -58,5 +58,6 @@ public enum TokenIndentificator : uint
     Print = 34,
     Definition = 35,
     DefinitionCall = 36,
-    Separator = 37
+    DefinitionReturn = 37,
+    Separator = 38
 }

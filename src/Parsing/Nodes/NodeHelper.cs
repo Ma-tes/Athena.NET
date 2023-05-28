@@ -3,6 +3,7 @@ using Athena.NET.Lexing;
 using Athena.NET.Lexing.Structures;
 using Athena.NET.Parsing.Interfaces;
 using Athena.NET.Parsing.Nodes.Data;
+using Athena.NET.Parsing.Nodes.Statements;
 using Athena.NET.Parsing.Nodes.Statements.Body;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
@@ -100,6 +101,16 @@ public static class NodeHelper
 
     public static INode GetDataNode(this ReadOnlySpan<Token> tokens)
     {
+        int definitionCallIndex = tokens.IndexOfToken(TokenIndentificator.DefinitionCall);
+        if (definitionCallIndex != -1) 
+        {
+            if (TryGetNodeInstance(out INode definitionCallNode, tokens[definitionCallIndex])) 
+            {
+                definitionCallNode.CreateStatementResult(tokens, definitionCallIndex);
+                return definitionCallNode;
+            }
+        }
+
         int identifierIndex = tokens.IndexOfToken(TokenIndentificator.Identifier);
         if (identifierIndex != -1)
             return new IdentifierNode(tokens[identifierIndex].Data);
