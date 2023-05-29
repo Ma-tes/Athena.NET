@@ -1,9 +1,26 @@
 ﻿namespace Athena.NET.Compilation.Structures;
 
+/// <summary>
+/// Provides structurized handeling of a
+/// <see cref="Offset"/>, <see cref="Size"/>.
+/// </summary>
 public readonly struct MemoryData
 {
+    /// <summary>
+    /// Identificator related to <see cref="Offset"/>
+    /// and <see cref="Size"/>.
+    /// </summary>
     public uint IdentifierId { get; }
+
+    /// <summary>
+    /// Calculated offset by already stored data
+    /// in <see cref="Register"/>.
+    /// </summary>
     public int Offset { get; }
+
+    /// <summary> 
+    /// Determinated size by stored value.
+    /// </summary>
     public int Size { get; }
 
     public MemoryData(ReadOnlyMemory<char> identifierName, int offset, int size)

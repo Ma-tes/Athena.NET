@@ -13,7 +13,7 @@ namespace Athena.NET.Compilation.Instructions.Definition;
 /// Extension helper class for all uses for <see cref="DefinitionStatement"/>,
 /// <see cref="DefinitionInstruction"/> or even <see cref="DefinitionCallInstruction"/>.
 /// </summary>
-internal static class DefinitionHelper 
+internal static class DefinitionHelper
 {
     /// <summary>
     /// Provides calculation of definition call order,
