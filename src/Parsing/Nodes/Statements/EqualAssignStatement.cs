@@ -28,15 +28,6 @@ internal sealed class EqualAssignStatement : StatementNode
         return true;
     }
 
-    protected override bool TryParseRigthNode(out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens)
-    {
-        int semicolonIndex = tokens.IndexOfToken(TokenIndentificator.Semicolon);
-        if (OperatorHelper.TryGetOperatorResult(out nodeResult, tokens[..semicolonIndex]))
-            return true;
-
-        INode resultNode = tokens[..semicolonIndex].GetDataNode();
-        nodeResult = resultNode is not null ? new SuccessulNodeResult<INode>(resultNode) :
-            new ErrorNodeResult<INode>("Any valid node wasn't found");
-        return resultNode is not null;
-    }
+    protected override bool TryParseRigthNode(out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens) =>
+        TryGetNodeData(out nodeResult, tokens);
 }

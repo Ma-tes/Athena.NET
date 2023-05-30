@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Athena.NET.Parsing.Nodes.Statements;
 
-internal sealed class PrintStatement : StatementNode
+internal sealed class ReturnStatement : StatementNode
 {
     public override TokenIndentificator NodeToken { get; } =
         TokenIndentificator.Print;

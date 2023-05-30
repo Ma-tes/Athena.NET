@@ -30,6 +30,11 @@ public readonly struct MemoryData
         Size = size;
     }
 
+    /// <summary>
+    /// Creates identificator, that is calculated by current
+    /// <see cref="byte"/> and relative index.
+    /// </summary>
+    /// <returns>Calculated sum of every interation.</returns>
     public static uint CalculateIdentifierId(ReadOnlyMemory<char> identifierName)
     {
         ReadOnlySpan<char> identifierSpan = identifierName.Span;
