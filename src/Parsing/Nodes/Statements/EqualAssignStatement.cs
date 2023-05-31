@@ -2,7 +2,6 @@
 using Athena.NET.Lexing.Structures;
 using Athena.NET.Parsing.Interfaces;
 using Athena.NET.Parsing.Nodes.Data;
-using Athena.NET.Parsing.Nodes.Operators;
 
 namespace Athena.NET.Parsing.Nodes.Statements;
 
