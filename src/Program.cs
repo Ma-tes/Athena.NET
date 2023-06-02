@@ -24,16 +24,6 @@ using (var tokenReader = new TokenReader
         using var virtualMachine = new VirtualMachine(instructionWriter.MainDefinitionData);
         virtualMachine.CreateInterpretation(instructionWriter.InstructionList.Span);
     }
-
-    //using (var nodeViewer = new NodeViewer(nodes, new Size(4000, 4000)))
-    //{
-    //Image nodeImage = nodeViewer.CreateImage();
-    //nodeImage.Save(@"C:\Users\uzivatel\source\repos\Athena.NET\examples\Node1.png", ImageFormat.Png);
-    //nodeViewer.Dispose();
-    //}
-
-    //resultOperator.Evaluate();
-    //WriteTokens(tokens);
 }
 Console.ReadLine();
 

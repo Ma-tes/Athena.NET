@@ -63,7 +63,7 @@ internal static class DefinitionHelper
     /// <returns>
     /// Order indexes of definitions.
     /// </returns>
-    private static Span<int> CreateRelativeCallOrder(DefinitionStatement definitionStatement, 
+    private static Span<int> CreateRelativeCallOrder(DefinitionStatement definitionStatement,
         ref Span<DefinitionStatement> definitionStatements, ReadOnlySpan<DefinitionStatement> originalStatements, int relativeIndex)
     {
         BodyNode definitionBodyNodes = (BodyNode)definitionStatement.ChildNodes.RightNode;
