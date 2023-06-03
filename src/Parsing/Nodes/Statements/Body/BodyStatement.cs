@@ -6,6 +6,10 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Athena.NET.Parsing.Nodes.Statements.Body;
 
+/// <summary>
+/// Definines and parse right node, from
+/// every statement, with related tokens.
+/// </summary>
 internal abstract class BodyStatement : StatementNode
 {
     private static readonly TokenIndentificator invokerToken =
