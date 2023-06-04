@@ -15,6 +15,8 @@ namespace Athena.NET.Compilation.Instructions.Definition;
 /// </summary>
 internal static class DefinitionHelper
 {
+    private static ReadOnlySpan<char> returnDefinitionSequence => new char[] { '_', 'r', ':' };
+
     /// <summary>
     /// Provides calculation of definition call order,
     /// that start with index of main definition.
@@ -54,6 +56,39 @@ internal static class DefinitionHelper
 
         definitionInstructionWriter.CreateInstructions(definitionNodes);
         return definitionInstructionWriter.InstructionList.Count;
+    }
+
+    /// <summary>
+    /// Provides getting or creating <see cref="MemoryData"/>,
+    /// from related <paramref name="definitionNode"/>.
+    /// </summary>
+    public static MemoryData GetDefinitionReturnData(DefinitionNode definitionNode, InstructionWriter instructionWriter)
+    {
+        ReadOnlyMemory<char> returnIdentifier = GetDefinitionReturnIdentifier(definitionNode.DefinitionIdentifier.NodeData.Span);
+        uint returnIdentificator = MemoryData.CalculateIdentifierId(returnIdentifier);
+        if (!instructionWriter.TemporaryRegisterTM.TryGetMemoryData(out MemoryData returnMemoryData,
+            returnIdentificator))
+            returnMemoryData = instructionWriter.TemporaryRegisterTM.AddRegisterData(returnIdentifier, 16);
+        return returnMemoryData;
+    }
+
+    //TODO: Try to avoid coping from multiple Spans.
+    /// <summary>
+    /// Creates identifier for <see cref="Register"/>, that's
+    /// going to be used for saving specific data, of related definition.
+    /// </summary>
+    /// <param name="definitionIdentificator">Related definition identificator.</param>
+    /// <returns>
+    /// Combinated <paramref name="definitionIdentificator"/> with constant
+    /// <see cref="returnDefinitionSequence"/>.
+    /// </returns>
+    private static ReadOnlyMemory<char> GetDefinitionReturnIdentifier(ReadOnlySpan<char> definitionIdentificator) 
+    {
+        Memory<char> returnIdentificator = new char[definitionIdentificator.Length + 3];
+        returnDefinitionSequence.CopyTo(returnIdentificator.Span);
+        definitionIdentificator.CopyTo(returnIdentificator.Span);
+
+        return returnIdentificator;
     }
 
     /// <summary>

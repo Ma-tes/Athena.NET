@@ -23,8 +23,7 @@ internal sealed class DefinitionInstruction : IInstruction<DefinitionStatement>
         if (!instructionWriter.TemporaryRegisterTM.TryGetMemoryData(out MemoryData definitionData, identifierId))
             definitionData = instructionWriter.TemporaryRegisterTM.AddRegisterData(leftDefinitionNode.DefinitionIdentifier.NodeData, 16);
 
-        if (leftDefinitionNode.NodeToken == Lexing.TokenIndentificator.Unknown &&
-            identifierId != InstructionWriter.MainDefinitionIdentificator)
+        if (identifierId != InstructionWriter.MainDefinitionIdentificator)
         {
             instructionWriter.InstructionList.AddRange((uint)OperatorCodes.Nop,
                 (uint)OperatorCodes.Jump);
