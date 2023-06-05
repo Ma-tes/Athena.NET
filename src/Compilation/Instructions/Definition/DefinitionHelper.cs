@@ -15,7 +15,7 @@ namespace Athena.NET.Compilation.Instructions.Definition;
 /// </summary>
 internal static class DefinitionHelper
 {
-    private static ReadOnlySpan<char> returnDefinitionSequence => new char[] { '_', 'r', ':' };
+    private static ReadOnlySpan<char> returnDefinitionSequence => new char[] { ':', 'r'};
 
     /// <summary>
     /// Provides calculation of definition call order,
@@ -60,11 +60,11 @@ internal static class DefinitionHelper
 
     /// <summary>
     /// Provides getting or creating <see cref="MemoryData"/>,
-    /// from related <paramref name="definitionNode"/>.
+    /// from related <paramref name="definitionData"/>.
     /// </summary>
-    public static MemoryData GetDefinitionReturnData(DefinitionNode definitionNode, InstructionWriter instructionWriter)
+    public static MemoryData GetDefinitionReturnData(DefinitionData definitionData, InstructionWriter instructionWriter)
     {
-        ReadOnlyMemory<char> returnIdentifier = GetDefinitionReturnIdentifier(definitionNode.DefinitionIdentifier.NodeData.Span);
+        ReadOnlyMemory<char> returnIdentifier = GetDefinitionReturnIdentifier(definitionData.Identificator);
         uint returnIdentificator = MemoryData.CalculateIdentifierId(returnIdentifier);
         if (!instructionWriter.TemporaryRegisterTM.TryGetMemoryData(out MemoryData returnMemoryData,
             returnIdentificator))
@@ -82,12 +82,9 @@ internal static class DefinitionHelper
     /// Combinated <paramref name="definitionIdentificator"/> with constant
     /// <see cref="returnDefinitionSequence"/>.
     /// </returns>
-    private static ReadOnlyMemory<char> GetDefinitionReturnIdentifier(ReadOnlySpan<char> definitionIdentificator) 
+    private static ReadOnlyMemory<char> GetDefinitionReturnIdentifier(uint definitionIdentificator)
     {
         Memory<char> returnIdentificator = new char[definitionIdentificator.Length + 3];
-        returnDefinitionSequence.CopyTo(returnIdentificator.Span);
-        definitionIdentificator.CopyTo(returnIdentificator.Span);
-
         return returnIdentificator;
     }
 
