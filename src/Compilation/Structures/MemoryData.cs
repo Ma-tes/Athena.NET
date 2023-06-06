@@ -23,9 +23,9 @@ public readonly struct MemoryData
     /// </summary>
     public int Size { get; }
 
-    public MemoryData(ReadOnlyMemory<char> identifierName, int offset, int size)
+    public MemoryData(uint identificator, int offset, int size)
     {
-        IdentifierId = CalculateIdentifierId(identifierName);
+        IdentifierId = identificator;
         Offset = offset;
         Size = size;
     }

@@ -41,11 +41,27 @@ internal sealed class Register : IDisposable
     /// </returns>
     public MemoryData AddRegisterData(ReadOnlyMemory<char> identificatorName, int dataSize)
     {
-        var returnData = new MemoryData(identificatorName, lastOffset, dataSize);
+        uint registerIndenficator = MemoryData.CalculateIdentifierId(identificatorName);
+        return AddRegisterData(registerIndenficator, dataSize);
+    }
+
+    /// <summary>
+    /// Attach initialized <see cref="MemoryData"/> into
+    /// <see cref="NativeMemoryList{T}"/> register.
+    /// </summary>
+    /// <param name="identificator">Identificator of an instance or an identifier.</param>
+    /// <param name="dataSize">Size of data in a bits.</param>
+    /// <returns>
+    /// Corresponding <see cref="MemoryData"/>, that were already attached.
+    /// </returns>
+    public MemoryData AddRegisterData(uint identificator, int dataSize)
+    {
+        var returnData = new MemoryData(identificator, lastOffset, dataSize);
         memoryData.Add(returnData);
         lastOffset += dataSize;
         return returnData;
     }
+
     /// <summary>
     /// If identificator exists, then it removes corresponding
     /// <see cref="MemoryData"/> by identifier id.

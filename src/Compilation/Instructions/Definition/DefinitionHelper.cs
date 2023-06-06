@@ -15,8 +15,6 @@ namespace Athena.NET.Compilation.Instructions.Definition;
 /// </summary>
 internal static class DefinitionHelper
 {
-    private static ReadOnlySpan<char> returnDefinitionSequence => new char[] { ':', 'r'};
-
     /// <summary>
     /// Provides calculation of definition call order,
     /// that start with index of main definition.
@@ -64,11 +62,10 @@ internal static class DefinitionHelper
     /// </summary>
     public static MemoryData GetDefinitionReturnData(DefinitionData definitionData, InstructionWriter instructionWriter)
     {
-        ReadOnlyMemory<char> returnIdentifier = GetDefinitionReturnIdentifier(definitionData.Identificator);
-        uint returnIdentificator = MemoryData.CalculateIdentifierId(returnIdentifier);
+        uint returnIdentificator = GetDefinitionReturnIdentificator(definitionData.Identificator);
         if (!instructionWriter.TemporaryRegisterTM.TryGetMemoryData(out MemoryData returnMemoryData,
             returnIdentificator))
-            returnMemoryData = instructionWriter.TemporaryRegisterTM.AddRegisterData(returnIdentifier, 16);
+            returnMemoryData = instructionWriter.TemporaryRegisterTM.AddRegisterData(returnIdentificator, 16);
         return returnMemoryData;
     }
 
@@ -82,11 +79,8 @@ internal static class DefinitionHelper
     /// Combinated <paramref name="definitionIdentificator"/> with constant
     /// <see cref="returnDefinitionSequence"/>.
     /// </returns>
-    private static ReadOnlyMemory<char> GetDefinitionReturnIdentifier(uint definitionIdentificator)
-    {
-        Memory<char> returnIdentificator = new char[definitionIdentificator.Length + 3];
-        return returnIdentificator;
-    }
+    private static uint GetDefinitionReturnIdentificator(uint definitionIdentificator) =>
+        (definitionIdentificator >> 1) + 209;
 
     /// <summary>
     /// Creates definition call order and reallocates
