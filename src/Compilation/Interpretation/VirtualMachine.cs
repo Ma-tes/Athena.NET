@@ -153,22 +153,22 @@ internal sealed class VirtualMachine : IDisposable
     private bool TryInterpretInstruction(OperatorCodes instructionCode, ReadOnlySpan<uint> instructionData)
     {
         if (instructionCode == OperatorCodes.Store)
-            return new StoreInstruction()
+            return InstructionFactory.StoreInstruction
                 .InterpretInstruction(instructionData, this);
         if (instructionCode == OperatorCodes.Print)
-            return new PrintInstruction()
+            return InstructionFactory.PrintInstruction
                 .InterpretInstruction(instructionData, this);
         if (instructionCode == OperatorCodes.Definition)
-            return new DefinitionInstruction()
+            return InstructionFactory.DefinitionInstruction
                 .InterpretInstruction(instructionData, this);
         if (instructionCode == OperatorCodes.Jump ||
             instructionCode >= OperatorCodes.JumpE &&
             instructionCode <= OperatorCodes.JumpLE)
-            return new JumpInstruction()
+            return InstructionFactory.JumpInstruction
                 .InterpretInstruction(instructionData, this);
         if (instructionCode >= OperatorCodes.Add &&
            instructionCode <= OperatorCodes.Div)
-            return new OperatorInstruction()
+            return InstructionFactory.OperatorInstruction
                 .InterpretInstruction(instructionData, this);
         return false;
     }
