@@ -8,6 +8,8 @@ namespace Athena.NET.Compilation.Instructions;
 
 internal sealed class ReturnInstruction : IInstruction<ReturnStatement>
 {
+    //TODO: Implement dynamic jumping to call instruction,
+    //with a propriete return memory data in register.
     public bool EmitInstruction(ReturnStatement node, InstructionWriter writer)
     {
         MemoryData returnDefinitionData = DefinitionHelper.GetDefinitionReturnData(writer.CurrentDefinitionData, writer);

@@ -1,6 +1,5 @@
 ﻿using Athena.NET.Compilation.DataHolders;
 using Athena.NET.Compilation.Instructions;
-using Athena.NET.Compilation.Instructions.Definition;
 using Athena.NET.Compilation.Instructions.Structures;
 using Athena.NET.Compilation.Interpretation;
 using System.Collections.Immutable;
