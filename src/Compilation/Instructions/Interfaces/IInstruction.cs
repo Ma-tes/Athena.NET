@@ -5,9 +5,6 @@ using Athena.NET.Parsing.Interfaces;
 
 namespace Athena.NET.Compilation.Instructions;
 
-//TODO: After switch to .NET 7, consider
-//implementation of factory pattern, for
-//this interface
 /// <summary>
 /// Definition of specific instruction structure, 
 /// that's based on <typeparamref name="T"/> Node.
