@@ -9,8 +9,8 @@ Athena often given the epithet Pallas, is an ancient Greek goddess associated wi
 - Lexical Analyzer
 ![](https://geps.dev/progress/100)
 - Parser graph visualizer
-![](https://geps.dev/progress/55)
+![](https://geps.dev/progress/60)
 - Abstract syntax tree parser
-![](https://geps.dev/progress/50)
+![](https://geps.dev/progress/60)
 - Interpreter
-![](https://geps.dev/progress/45)
+![](https://geps.dev/progress/60)

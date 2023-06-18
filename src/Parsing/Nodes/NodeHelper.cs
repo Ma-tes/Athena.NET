@@ -20,7 +20,7 @@ public static class NodeHelper
     private static readonly Type tokenTypeAttribute =
         typeof(TokenTypeAttribute);
 
-    //Actually I'm not entiry sure
+    //TODO: Actually I'm not entiry sure
     //about the name of this method
     //so it's possible, that I will
     //change it to something else
