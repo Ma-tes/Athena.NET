@@ -88,6 +88,7 @@ internal sealed class StoreInstruction : IInstruction<EqualAssignStatement>
         return NullableHelper.NullableOutValue(out returnRegister);
     }
 
+
     private bool TryWriteStoreInstruction(INode dataNode, Register register, int size, InstructionWriter writer)
     {
         MemoryData currentMemoryData = default;
