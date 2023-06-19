@@ -16,7 +16,10 @@ internal abstract class BodyStatement : StatementNode
         TokenIndentificator.Invoker;
     private int tabulatorCount;
 
-    //TODO: Move this to BodyNode.cs
+    /// <summary>
+    /// Provides count of all tokens, that
+    /// are after <see cref="TokenIndentificator.Invoker"/>.
+    /// </summary>
     public int BodyLength { get; private set; }
 
     public sealed override NodeResult<INode> CreateStatementResult(ReadOnlySpan<Token> tokens, int tokenIndex)
@@ -41,6 +44,10 @@ internal abstract class BodyStatement : StatementNode
 
     //TODO: Make sure that sepration is relative to
     //a tabulator count on the individual body statement
+    /// <summary>
+    /// Gets all related tokens, that after <see cref="TokenIndentificator.Invoker"/>
+    /// and with specific count of <see cref="TokenIndentificator.Tabulator"/>.
+    /// </summary>
     private ReadOnlySpan<Token> GetBodyTokens(ReadOnlySpan<Token> tokens)
     {
         Span<Token> returnBodyNodes = new Token[tokens.Length];
@@ -63,6 +70,10 @@ internal abstract class BodyStatement : StatementNode
         return returnBodyNodes[..(currentBodyLength)];
     }
 
+    /// <summary>
+    /// Calculates count of <see cref="TokenIndentificator.Tabulator"/>,
+    /// in related <paramref name="tokens"/>.
+    /// </summary>
     private int GetTabulatorCount(ReadOnlySpan<Token> tokens) 
     {
         int currentIndex = 0;
@@ -77,8 +88,16 @@ internal abstract class BodyStatement : StatementNode
         return 0;
     }
 
+    /// <summary>
+    /// Gets index of first <see cref="TokenIndentificator.Tabulator"/>,
+    /// that is after <see cref="TokenIndentificator.EndLine"/> in <paramref name="tokens"/>.
+    /// </summary>
+    /// <returns>
+    /// First index of related <see cref="TokenIndentificator.Tabulator"/>, if it was found,
+    /// otherwise it will return -1.
+    /// </returns>
     private int IndexOfLineTabulator(ReadOnlySpan<Token> tokens)
-    {
+    { 
         int currentOperatorIndex = tokens.IndexOfToken(TokenIndentificator.EndLine);
         int lastTabulatorIndex = currentOperatorIndex + tabulatorCount;
         if (lastTabulatorIndex < tokens.Length && (currentOperatorIndex != -1) &&
