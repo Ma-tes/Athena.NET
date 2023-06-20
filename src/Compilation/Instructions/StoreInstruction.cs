@@ -54,6 +54,10 @@ internal sealed class StoreInstruction : IInstruction<EqualAssignStatement>
         return writeInstructions;
     }
 
+    public static bool CreateStoreInstructions(MemoryData storeMemoryData, INode node, InstructionWriter writer)
+    {
+    }
+
     //TODO: Implement more cohesive way
     //of tokenizing instructions
     public bool InterpretInstruction(ReadOnlySpan<uint> instructions, VirtualMachine writer)
@@ -111,5 +115,11 @@ internal sealed class StoreInstruction : IInstruction<EqualAssignStatement>
         writer.InstructionList.Add((uint)OperatorCodes.Store);
         writer.AddMemoryDataInstructions(register.RegisterCode, currentMemoryData);
         return true;
+    }
+
+    private void WriteStoreInstruction(MemoryData memoryData, Register register, InstructionWriter writer) 
+    {
+        writer.InstructionList.Add((uint)OperatorCodes.Store);
+        writer.AddMemoryDataInstructions(register.RegisterCode, memoryData);
     }
 }
