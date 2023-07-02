@@ -29,11 +29,9 @@ Console.ReadLine();
 
 static void WriteInstructions(Span<uint> instructionsSpan)
 {
-    bool isInstruction = false;
     for (int i = 0; i < instructionsSpan.Length; i++)
     {
-        isInstruction = instructionsSpan[i] == (uint)OperatorCodes.Nop;
-        if (isInstruction)
+        if (instructionsSpan[i] == (uint)OperatorCodes.Nop)
             Console.WriteLine();
         string instructionValue = TryGetOperatorCode(out OperatorCodes returnCode, instructionsSpan[i]) ?
            Enum.GetName(returnCode)! : $"0x{instructionsSpan[i]:X}";
