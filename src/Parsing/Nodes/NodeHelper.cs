@@ -98,7 +98,7 @@ public static class NodeHelper
         }
     }
 
-    public static INode GetDataNode(this ReadOnlySpan<Token> tokens)
+    public static INode? GetDataNode(this ReadOnlySpan<Token> tokens)
     {
         int definitionCallIndex = tokens.IndexOfToken(TokenIndentificator.DefinitionCall);
         if (definitionCallIndex != -1) 
@@ -116,7 +116,7 @@ public static class NodeHelper
         int tokenTypeIndex = tokens.IndexOfTokenType();
         if (tokenTypeIndex != -1)
             return new DataNode<int>(tokens[tokenTypeIndex].TokenId, int.Parse(tokens[tokenTypeIndex].Data.Span));
-        return null!;
+        return null;
     }
 
     private static bool TryGetNodeInstance([NotNullWhen(true)] out INode node, Token currentToken)

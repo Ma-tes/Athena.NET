@@ -12,10 +12,9 @@ internal sealed class CallStatement : StatementNode
     public override TokenIndentificator NodeToken { get; } =
         TokenIndentificator.DefinitionCall;
 
-    public override NodeResult<INode> CreateStatementResult(ReadOnlySpan<Token> tokens, int tokenIndex)
-    {
-        return base.CreateStatementResult(tokens, tokenIndex + 2);
-    }
+    public override NodeResult<INode> CreateStatementResult(ReadOnlySpan<Token> tokens, int tokenIndex) =>
+        base.CreateStatementResult(tokens, tokenIndex + 2);
+
     protected override bool TryParseLeftNode([NotNullWhen(true)] out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens)
     {
         int identiferIndex = tokens.IndexOfToken(TokenIndentificator.Identifier);
@@ -48,17 +47,23 @@ internal sealed class CallStatement : StatementNode
             argumentsTokens = argumentsTokens[(currentSeparatorIndex + 1)..];
 
             currentSeparatorIndex = argumentsTokens.IndexOfToken(TokenIndentificator.Separator);
-            argumentNodesList.Add(GetArgumentNode(argumentTokens));
+            if(TryGetArgumentNode(out INode currentNode, argumentTokens))
+                argumentNodesList.Add(currentNode);
         }
-        argumentNodesList.Add(GetArgumentNode(argumentsTokens));
+        if(TryGetArgumentNode(out INode argumentNode, argumentsTokens))
+            argumentNodesList.Add(argumentNode);
         return argumentNodesList.ToArray();
     }
 
-    private static INode GetArgumentNode(ReadOnlySpan<Token> argumentTokens)
+    private static bool TryGetArgumentNode([NotNullWhen(true)]out INode argumentNode, ReadOnlySpan<Token> argumentTokens)
     {
         int operatorIndex = OperatorHelper.IndexOfOperator(argumentTokens);
-        if (operatorIndex != -1 && OperatorHelper.TryGetOperator(out OperatorNode operatorNode, argumentTokens[operatorIndex].TokenId))
-            return operatorNode;
-        return argumentTokens.GetDataNode();
+        if (operatorIndex != -1 && OperatorHelper.TryGetOperator(out OperatorNode operatorNode, argumentTokens[operatorIndex].TokenId)) 
+        {
+            argumentNode = operatorNode;
+            return true;
+        }
+        argumentNode = argumentTokens.GetDataNode()!;
+        return argumentNode is not null;
     }
 }
