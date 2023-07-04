@@ -13,8 +13,7 @@ public abstract class NodeResult<T> where T : INode
     public T? Node { get; }
     public StatementResultMessage ResultMessage { get; }
     public string Message { get; protected set; } =
-        String.Empty;
-
+        string.Empty;
 
     public NodeResult(T node, StatementResultMessage resultMessage)
     {
