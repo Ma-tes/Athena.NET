@@ -24,7 +24,6 @@ internal abstract class LexicalTokenReader : IDisposable
     public async Task<ReadOnlyMemory<Token>> ReadTokensAsync()
     {
         var returnTokens = new List<Token>();
-
         await streamReader.ReadAsync(ReaderData);
         while (ReaderPosition < ReaderLength)
         {

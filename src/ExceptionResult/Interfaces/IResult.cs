@@ -3,8 +3,7 @@
 internal enum ResultType 
 {
     Lexing,
-    Parsing,
-    Interpreting
+    Parsing
 }
 
 internal interface IResult<T>
