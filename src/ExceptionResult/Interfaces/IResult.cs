@@ -1,12 +1,12 @@
 ﻿namespace Athena.NET.ExceptionResult.Interfaces;
 
-internal enum ResultType 
+public enum ResultType 
 {
     Lexing,
     Parsing
 }
 
-internal interface IResult<T>
+public interface IResult<T>
 {
     public T? Result { get; }
     public ResultType Type { get; }

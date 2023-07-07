@@ -2,7 +2,7 @@
 
 namespace Athena.NET.ExceptionResult;
 
-internal sealed class ErrorResult<T> : IResultProvider<T>
+public sealed class ErrorResult<T> : IResultProvider<T>
 {
     public IResult<T> ValueResult { get; }
     public string? Message { get; }
