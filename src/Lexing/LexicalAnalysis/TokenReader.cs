@@ -42,7 +42,7 @@ internal sealed class TokenReader : LexicalTokenReader
             PrimitiveType currentType = typesSpan[i];
             Type primitiveType = currentType.Type;
 
-            var methodInformation = primitiveType.GetMethod(tryParse, new Type[] { typeof(string), primitiveType.MakeByRefType() });
+            MethodInfo? methodInformation = primitiveType.GetMethod(tryParse, new Type[] { typeof(string), primitiveType.MakeByRefType() });
             if (methodInformation is not null)
             {
                 bool parseResult = (bool)methodInformation.Invoke(null, new object[] { dataString, null! })!;
@@ -62,7 +62,7 @@ internal sealed class TokenReader : LexicalTokenReader
             if (IsReservedSymbol(currentCharacter))
                 return i;
         }
-        return (dataLength - 1);
+        return dataLength - 1;
     }
 
     private bool IsReservedSymbol(char character)

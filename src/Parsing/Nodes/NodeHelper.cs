@@ -1,4 +1,6 @@
 ﻿using Athena.NET.Attributes;
+using Athena.NET.ExceptionResult;
+using Athena.NET.ExceptionResult.Interfaces;
 using Athena.NET.Lexing;
 using Athena.NET.Lexing.Structures;
 using Athena.NET.Parsing.Interfaces;
@@ -20,24 +22,22 @@ public static class NodeHelper
     private static readonly Type tokenTypeAttribute =
         typeof(TokenTypeAttribute);
 
-    //TODO: Actually I'm not entiry sure
-    //about the name of this method
-    //so it's possible, that I will
-    //change it to something else
-    public static ReadOnlyMemory<INode> CreateNodes(this ReadOnlySpan<Token> tokens)
+    public static ResultMemory<INode> CreateNodes(this ReadOnlySpan<Token> tokens)
     {
         int tokenIndex = 0;
-        int currentNodeSize = GetFirstNode(out INode currentNode, tokens[tokenIndex..]);
-
-        var returnNodes = new List<INode>();
-        while (currentNodeSize != -1)
+        var returnNodes = new ResultMemory<INode>();
+        while (returnNodes.IsErrorResult)
         {
-            returnNodes.Add(currentNode);
-            tokenIndex += currentNodeSize;
+            tokenIndex += GetFirstNode(out INode currentNode, tokens[tokenIndex..]);
 
-            currentNodeSize = GetFirstNode(out currentNode, tokens[tokenIndex..]);
+            //TODO: Change the current position of token, to
+            //relative position of lines.
+            var currentResult = new ParsingResult(currentNode, tokenIndex);
+            returnNodes.AddResult(currentNode is null ?
+                ErrorResult<INode>.Create(currentResult, "Any valid token wasn't found.") :
+                SuccessfulResult<INode>.Create(currentResult));
         }
-        return returnNodes.ToArray();
+        return returnNodes;
     }
 
     private static int GetFirstNode([NotNullWhen(true)] out INode nodeResult, ReadOnlySpan<Token> tokens)

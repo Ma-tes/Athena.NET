@@ -5,7 +5,6 @@ namespace Athena.NET.ExceptionResult;
 
 //TODO: Add ICollection with a propriete methods
 //and try to reduce redudant allocations.
-
 /// <summary>
 /// Provides manageable storing for <see cref="IResultProvider{T}"/>,
 /// that could execute actions on specific <see cref="ErrorResult{T}"/>.
@@ -16,9 +15,9 @@ public sealed class ResultMemory<T> : IEnumerable<IResultProvider<T>>
     private Action<ErrorResult<T>>? onErrorResult;
 
     /// <summary>
-    /// Index of the last found <see cref="ErrorResult{T}"/>.
+    /// Bool statement if last result is <see cref="ErrorResult{T}"/>.
     /// </summary>
-    public int ErrorResultIndex { get; private set; }
+    public bool IsErrorResult { get; private set; }
 
     /// <summary>
     /// Gets the number of results, that are contained in <see cref="resultValues"/>
@@ -36,7 +35,7 @@ public sealed class ResultMemory<T> : IEnumerable<IResultProvider<T>>
     }
 
     public ResultMemory() { }
-    public ResultMemory(Action<IResultProvider<T>> onErrorResult) 
+    public ResultMemory(Action<IResultProvider<T>> onErrorResult)
     {
         this.onErrorResult = onErrorResult;
     }
@@ -54,11 +53,11 @@ public sealed class ResultMemory<T> : IEnumerable<IResultProvider<T>>
     public bool AddResult(IResultProvider<T> result)
     {
         resultValues.Add(result);
-        bool isErrorResult = result is ErrorResult<T>;
+        IsErrorResult = result is ErrorResult<T>;
 
-        if (isErrorResult && onErrorResult is not null)
+        if (IsErrorResult && onErrorResult is not null)
             onErrorResult.Invoke((ErrorResult<T>)result);
-        return isErrorResult;
+        return IsErrorResult;
     }
 
     public IEnumerator<IResultProvider<T>> GetEnumerator() =>

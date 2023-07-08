@@ -1,4 +1,5 @@
-﻿using Athena.NET.Lexing.Structures;
+﻿using Athena.NET.ExceptionResult;
+using Athena.NET.Lexing.Structures;
 using System.Text;
 
 namespace Athena.NET.Lexing;
@@ -23,17 +24,17 @@ internal abstract class LexicalTokenReader : IDisposable
 
     public async Task<ReadOnlyMemory<Token>> ReadTokensAsync()
     {
-        var returnTokens = new List<Token>();
+        var lexicalResults = new List<Token>();
         await streamReader.ReadAsync(ReaderData);
         while (ReaderPosition < ReaderLength)
         {
             Memory<char> currentData = ReaderData[ReaderPosition..];
             Token currentToken = GetToken(currentData);
 
-            returnTokens.Add(currentToken);
+            lexicalResults.Add(currentToken);
             ReaderPosition += currentToken.Data.Length;
         }
-        return returnTokens.ToArray();
+        return lexicalResults.ToArray();
     }
 
     protected abstract Token GetToken(ReadOnlyMemory<char> data);
