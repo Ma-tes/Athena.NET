@@ -34,7 +34,7 @@ public static class NodeHelper
             //relative position of lines.
             var currentResult = new ParsingResult(currentNode, tokenIndex);
             returnNodes.AddResult(currentNode is null ?
-                ErrorResult<INode>.Create(currentResult, "Any valid token wasn't found.") :
+                ErrorResult<INode>.Create(currentResult, "No valid tokens were found.") :
                 SuccessfulResult<INode>.Create(currentResult));
         }
         return returnNodes;
