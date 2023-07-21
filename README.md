@@ -13,4 +13,4 @@ Athena often given the epithet Pallas, is an ancient Greek goddess associated wi
 - Abstract syntax tree parser
 ![](https://geps.dev/progress/65)
 - Interpreter
-![](https://geps.dev/progress/60)
+![](https://geps.dev/progress/65)
