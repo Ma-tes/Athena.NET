@@ -1,0 +1,4 @@
+{
+    "dotnet.defaultSolution": "src/Athena.NET.sln",
+    "editor.fontSize": 13
+}
