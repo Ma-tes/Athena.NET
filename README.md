@@ -14,5 +14,3 @@ Athena often given the epithet Pallas, is an ancient Greek goddess associated wi
 ![](https://geps.dev/progress/65)
 - Interpreter
 ![](https://geps.dev/progress/65)
-
-### The development starts after: -41 days
