@@ -45,7 +45,6 @@ public sealed class ResultMemory<T> : IEnumerable<IResultProvider<T>>
     /// execute <see cref="onErrorResult"/>, if <paramref name="result"/>
     /// is <see cref="ErrorResult{T}"/>.
     /// </summary>
-    /// <param name="result"></param>
     /// <returns>
     /// Returns <see langword="true"/>, if <paramref name="result"/>
     /// is not <see cref="ErrorResult{T}"/>, otherwise <see langword="false"/>.

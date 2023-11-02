@@ -15,9 +15,9 @@ using (var tokenReader = new TokenReader
     var tokens = await tokenReader.ReadTokensAsync();
     var nodes = tokens.Span.CreateNodes();
 
-    using (var instructionWriter = new InstructionWriter(nodes.Span))
+    using (var instructionWriter = new InstructionWriter(nodes))
     {
-        instructionWriter.CreateInstructions(nodes.Span);
+        instructionWriter.CreateInstructions(nodes);
 #if DEBUG
         WriteInstructions(instructionWriter.InstructionList.Span);
 #endif
