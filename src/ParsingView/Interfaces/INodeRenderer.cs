@@ -3,9 +3,14 @@
 namespace Athena.NET.ParsingView.Interfaces;
 
 public interface INodeRenderer<T> : IDisposable
-    where T : INodeRenderer<T>
+    where T : IFormatGraphics
 {
-    public IFormatGraphics RendererGraphics { get; }
+    public T RendererGraphics { get; }
 
-    public void DrawRelativeNode(NodeElementData<T> elementNode);
+    public void DrawElements(ReadOnlyMemory<NodeElementData<T>> elements);
+    public Task DrawElementsAsync(ReadOnlyMemory<NodeElementData<T>> elements);
+
+    //TODO: Move it into, abstract class, which would provide
+    //certain protected operation.
+    //public void DrawRelativeNode(NodeElementData<T> elementNode);
 }

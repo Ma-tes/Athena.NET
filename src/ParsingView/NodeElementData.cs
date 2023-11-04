@@ -1,12 +1,18 @@
 ﻿using Athena.NET.Parsing.Interfaces;
-using Athena.NET.ParsingView.Interfaces;
+using Athena.NET.ParsingView.FormatRenderer.Interfaces;
 using Athena.NET.ParsingView.Structures;
 
 namespace Athena.NET.ParsingView;
 
-public class NodeElementData<T> where T : INodeRenderer<T>
+public struct NodeElementData<T>
+    where T : IFormatGraphics
 {
-    public INode ElementNode { get; }
-    public VectorPointF Position { get; set; }
-    public Action 
+    public Type ElementNodeType { get; }
+    public Action<T, INode, VectorPointF> ElementDrawFunction { get; set; }
+
+    public NodeElementData(Type nodeType, Action<T, INode, VectorPointF> elementDrawFunction)
+    {
+        ElementDrawFunction = nodeType;
+        ElementDrawFunction = elementDrawFunction;
+    }
 } 
