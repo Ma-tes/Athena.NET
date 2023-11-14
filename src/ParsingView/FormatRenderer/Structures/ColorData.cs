@@ -40,7 +40,7 @@ public readonly struct ColorData
                      return NullableHelper.NullableOutValue(out returnData);
             returnBytesRange[i] = CalculateRelativeColorIndex(leftIndex, rightIndex);
         }
-        returnData = CreateFromRange(returnBytesRange);
+        returnData = CreateFromRange(returnBytesRange); 
         return true;
     }
 
