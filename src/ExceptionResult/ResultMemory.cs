@@ -12,12 +12,11 @@ namespace Athena.NET.ExceptionResult;
 public sealed class ResultMemory<T> : IEnumerable<IResultProvider<T>>
 {
     private readonly List<IResultProvider<T>> resultValues = new();
-    private Action<ErrorResult<T>>? onErrorResult;
-
+    private Func<IResultProvider<T>, bool>? resultFlawFunction;
     /// <summary>
-    /// Bool statement if last result is <see cref="ErrorResult{T}"/>.
+    /// Bool statement if last result is causing the entire inconsistency, of results.
     /// </summary>
-    public bool IsErrorResult { get; private set; }
+    public bool IsResultFlaw { get; private set; } = false;
 
     /// <summary>
     /// Gets the number of results, that are contained in <see cref="resultValues"/>
@@ -35,9 +34,9 @@ public sealed class ResultMemory<T> : IEnumerable<IResultProvider<T>>
     }
 
     public ResultMemory() { }
-    public ResultMemory(Action<IResultProvider<T>> onErrorResult)
+    public ResultMemory(Func<IResultProvider<T>, bool>? resultFlawFunction)
     {
-        this.onErrorResult = onErrorResult;
+        this.resultFlawFunction = resultFlawFunction;
     }
 
     /// <summary>

@@ -1,6 +1,7 @@
-﻿using Athena.NET.Lexing;
+﻿using Athena.NET.ExceptionResult;
+using Athena.NET.ExceptionResult.Interfaces;
+using Athena.NET.Lexing;
 using Athena.NET.Lexing.Structures;
-using Athena.NET.Parsing.Nodes;
 
 namespace Athena.NET.Parsing.Interfaces;
 
@@ -28,8 +29,9 @@ public interface INode
     /// <param name="tokens">Tokens related for current <see cref="INode"/>.</param>
     /// <param name="tokenIndex">Relative index of <see cref="NodeToken"/>.</param>
     /// <returns>
-    /// If creating result was succesful, it will return <see cref="SuccessulNodeResult{T}"/>,
-    /// otherwise <see cref="ErrorNodeResult{T}"/> with related error message.
+    /// If creating result was succesful, it will return <see cref="SuccessfulResult{T}"/>,
+    /// otherwise <see cref="ErrorResult{T}"/> with related error message. Generic type is
+    /// setted to <see cref="INode"/>.
     /// </returns>
-    public NodeResult<INode> CreateStatementResult(ReadOnlySpan<Token> tokens, int tokenIndex);
+    public IResultProvider<INode> CreateStatementResult(ReadOnlySpan<Token> tokens, int tokenIndex);
 }

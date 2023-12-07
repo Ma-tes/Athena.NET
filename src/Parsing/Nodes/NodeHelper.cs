@@ -14,49 +14,47 @@ namespace Athena.NET.Parsing.Nodes;
 
 public static class NodeHelper
 {
-    private static ReadOnlySpan<INode> nodeInstances =>
-        GetNodeInstances<INode>().ToArray();
+    private static readonly ErrorResult<INode> unknownNodeResult =
+        new ErrorResult<INode>(null!, "No valid tokens were found.");
+    private static ReadOnlySpan<INode> nodeInstances => GetNodeInstances<INode>().ToArray();
 
-    private static readonly Type tokenIdentificatorType =
-        typeof(TokenIndentificator);
-    private static readonly Type tokenTypeAttribute =
-        typeof(TokenTypeAttribute);
+    private static readonly Type tokenIdentificatorType = typeof(TokenIndentificator);
+    private static readonly Type tokenTypeAttribute = typeof(TokenTypeAttribute);
 
     public static ResultMemory<INode> CreateNodes(this ReadOnlySpan<Token> tokens)
     {
         int tokenIndex = 0;
         var returnNodes = new ResultMemory<INode>();
-        while (returnNodes.IsErrorResult)
+        while (returnNodes.IsResultFlaw)
         {
-            tokenIndex += GetFirstNode(out INode currentNode, tokens[tokenIndex..]);
+            IResultProvider<INode> currentResultProvider = GetFirstNode(tokens[tokenIndex..]);
+            INode? currentResultNode = currentResultProvider.ValueResult.Result;
 
-            //TODO: Change the current position of token, to
-            //relative position of lines.
-            var currentResult = new ParsingResult(currentNode, tokenIndex);
-            returnNodes.AddResult(currentNode is null ?
+            var currentResult = new ParsingResult(currentResultNode, tokenIndex);
+            returnNodes.AddResult(?
                 ErrorResult<INode>.Create(currentResult, "No valid tokens were found.") :
                 SuccessfulResult<INode>.Create(currentResult));
+            tokenIndex += currentNodeResult.ValueResult.PositionIndex;
         }
         return returnNodes;
     }
 
-    private static int GetFirstNode([NotNullWhen(true)] out INode nodeResult, ReadOnlySpan<Token> tokens)
+    private static IResultProvider<INode> GetFirstNode(ReadOnlySpan<Token> tokens)
     {
-        for (int i = 0; i < tokens.Length; i++)
+        int tokensLength = tokens.Length;
+        for (int i = 0; i < tokensLength; i++)
         {
             if (TryGetNodeInstance(out INode result, tokens[i]))
             {
                 int nodeIndex = tokens.IndexOfToken(result.NodeToken);
                 result.CreateStatementResult(tokens, nodeIndex);
 
-                nodeResult = result;
                 return result is BodyStatement bodyStatement ?
                     bodyStatement.BodyLength + tokens.IndexOfToken(TokenIndentificator.Invoker) :
                         i + (tokens[i..].IndexOfToken(TokenIndentificator.EndLine));
             }
         }
-        nodeResult = null!;
-        return -1;
+        return ErrorResult<INode>.Create(null!, "No specific node token was found.");
     }
 
     //Value -1 means that wasn't found

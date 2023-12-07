@@ -76,9 +76,10 @@ internal abstract class StatementNode : INode
         if (OperatorHelper.TryGetOperatorResult(out nodeResult, tokens[..semicolonIndex]))
             return true;
 
-        INode resultNode = tokens[..semicolonIndex].GetDataNode();
-        nodeResult = resultNode is not null ? new SuccessulNodeResult<INode>(resultNode) :
-            new ErrorNodeResult<INode>("Any valid node wasn't found");
+        INode? resultNode = tokens[..semicolonIndex].GetDataNode();
+        nodeResult = resultNode is not null ?
+            new SuccessulNodeResult<INode>(resultNode) :
+            new ErrorNodeResult<INode>("Any related node could be created from current tokens");
         return resultNode is not null;
     }
 }

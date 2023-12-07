@@ -9,7 +9,7 @@ public sealed class ErrorResult<T> : IResultProvider<T>
 
     public ErrorResult(IResult<T> valueResult, string message)
     {
-        ValueResult = valueResult;
+        ValueResult = valueResult; 
         Message = message;
     }
 

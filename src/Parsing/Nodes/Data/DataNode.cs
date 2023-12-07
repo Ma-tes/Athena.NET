@@ -1,4 +1,6 @@
-﻿using Athena.NET.Lexing;
+﻿using Athena.NET.ExceptionResult;
+using Athena.NET.ExceptionResult.Interfaces;
+using Athena.NET.Lexing;
 using Athena.NET.Lexing.Structures;
 using Athena.NET.Parsing.Interfaces;
 
@@ -19,6 +21,6 @@ public class DataNode<T> : INode
         NodeData = data;
     }
 
-    public NodeResult<INode> CreateStatementResult(ReadOnlySpan<Token> tokens, int tokenIndex) =>
-        new SuccessulNodeResult<INode>(this);
+    public IResultProvider<INode> CreateStatementResult(ReadOnlySpan<Token> tokens, int tokenIndex) =>
+        SuccessfulResult<INode>.Create(new ParsingResult(this, tokenIndex));
 }
