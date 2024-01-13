@@ -13,3 +13,8 @@ public sealed record class ParsingResult(INode? Result, int PositionIndex) : IRe
 {
     public ResultType Type => ResultType.Parsing;
 }
+
+public sealed record class CompilationResult(INode? Result, int PositionIndex) : IResult<INode>
+{
+    public ResultType Type => ResultType.Parsing;
+}

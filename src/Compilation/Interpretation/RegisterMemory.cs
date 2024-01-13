@@ -11,6 +11,8 @@ namespace Athena.NET.Compilation.Interpretation;
 /// </summary>
 internal sealed class RegisterMemory : IDisposable
 {
+    //TODO: Consider more sustainable usage of related memory,
+    //
     private readonly NativeMemoryList<ulong> registerMemoryList = new();
     private readonly NativeMemoryList<ulong> offsetIndexList = new();
 

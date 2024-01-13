@@ -1,6 +1,6 @@
 ﻿namespace Athena.NET.ExceptionResult.Interfaces;
 
-public enum ResultType 
+public enum ResultType
 {
     Lexing,
     Parsing

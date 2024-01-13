@@ -52,11 +52,11 @@ public sealed class ResultMemory<T> : IEnumerable<IResultProvider<T>>
     public bool AddResult(IResultProvider<T> result)
     {
         resultValues.Add(result);
-        IsErrorResult = result is ErrorResult<T>;
+        IsResultFlaw = result is ErrorResult<T>;
 
-        if (IsErrorResult && onErrorResult is not null)
-            onErrorResult.Invoke((ErrorResult<T>)result);
-        return IsErrorResult;
+        if (IsResultFlaw && resultFlawFunction is not null)
+            resultFlawFunction.Invoke((ErrorResult<T>)result);
+        return IsResultFlaw;
     }
 
     public IEnumerator<IResultProvider<T>> GetEnumerator() =>
