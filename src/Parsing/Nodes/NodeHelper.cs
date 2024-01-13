@@ -73,6 +73,13 @@ public static class NodeHelper
         return -1;
     }
 
+    public static bool TryGetIndexOfToken(this ReadOnlySpan<Token> tokens,
+        out int returnIndex, TokenIndentificator tokenIdentificator)
+    {
+        returnIndex = tokens.IndexOfToken(tokenIdentificator);
+        return returnIndex != -1;
+    }
+
     public static int IndexOfToken(this ReadOnlySpan<Token> tokens, TokenIndentificator tokenIdentificator) =>
         tokens.IndexOfTokenCondition((Token token) =>
             token.TokenId == tokenIdentificator);
@@ -98,8 +105,8 @@ public static class NodeHelper
 
     public static INode? GetDataNode(this ReadOnlySpan<Token> tokens)
     {
-        int definitionCallIndex = tokens.IndexOfToken(TokenIndentificator.DefinitionCall);
-        if (definitionCallIndex != -1) 
+        if (tokens.TryGetIndexOfToken(out int definitionCallIndex,
+            TokenIndentificator.DefinitionCall))
         {
             if (TryGetNodeInstance(out INode definitionCallNode, tokens[definitionCallIndex])) 
             {
@@ -108,9 +115,9 @@ public static class NodeHelper
             }
         }
 
-        int identifierIndex = tokens.IndexOfToken(TokenIndentificator.Identifier);
-        if (identifierIndex != -1)
+        if (tokens.TryGetIndexOfToken(out int identifierIndex, TokenIndentificator.Identifier))
             return new IdentifierNode(tokens[identifierIndex].Data);
+
         int tokenTypeIndex = tokens.IndexOfTokenType();
         if (tokenTypeIndex != -1)
             return new DataNode<int>(tokens[tokenTypeIndex].TokenId, int.Parse(tokens[tokenTypeIndex].Data.Span));

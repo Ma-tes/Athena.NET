@@ -13,8 +13,7 @@ internal sealed class DefinitionStatement : BodyStatement
 
     protected override bool TryParseLeftNode([NotNullWhen(true)] out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens)
     {
-        int identifierIndex = tokens.IndexOfToken(TokenIndentificator.Identifier);
-        if (identifierIndex == -1) 
+        if (!tokens.TryGetIndexOfToken(out _, TokenIndentificator.Identifier))
         {
             nodeResult = new ErrorNodeResult<INode>("Definition identifier token wasn't found");
             return false;
@@ -24,8 +23,8 @@ internal sealed class DefinitionStatement : BodyStatement
         TokenIndentificator definitionType = definitionIndex != -1 ?
             tokens[definitionIndex].TokenId : TokenIndentificator.Unknown;
 
-        int definitionTokenIndex = tokens.IndexOfToken(TokenIndentificator.Definition);
-        if (definitionTokenIndex == -1)
+        //TODO: Consider whenever, is this statement related and valid.
+        if (!tokens.TryGetIndexOfToken(out _, TokenIndentificator.Definition))
         {
             nodeResult = new ErrorNodeResult<INode>("Definition token wasn't found");
             return false;
@@ -51,8 +50,8 @@ internal sealed class DefinitionStatement : BodyStatement
 
             Token currentIdentiferToken = tokens[nextTokenIndex];
             if (currentIdentiferToken.TokenId == TokenIndentificator.Identifier) 
-                returnInstances.Add(new(tokens[currentTokenTypeIndex].TokenId, currentIdentiferToken.Data));
-            currentTokenTypeIndex = (tokens[nextTokenIndex..].IndexOfTokenType() + nextTokenIndex);
+                returnInstances.Add(new InstanceNode(tokens[currentTokenTypeIndex].TokenId, currentIdentiferToken.Data));
+            currentTokenTypeIndex = tokens[nextTokenIndex..].IndexOfTokenType() + nextTokenIndex;
         }
         return returnInstances.ToArray();
     }

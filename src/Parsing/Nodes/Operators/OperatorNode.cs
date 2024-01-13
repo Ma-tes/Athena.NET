@@ -40,8 +40,7 @@ internal abstract class OperatorNode : IEvaluationNode
         int operatorIndex = OperatorHelper.IndexOfOperator(tokens);
         if (operatorIndex == -1)
         {
-            int valueIndex = tokens.IndexOfToken(TokenIndentificator.Int);
-            if (valueIndex == -1)
+            if (tokens.TryGetIndexOfToken(out int valueIndex, TokenIndentificator.Int))
             {
                 int idetifierIndex = tokens.IndexOfToken(TokenIndentificator.Identifier);
                 var idetifierNode = new IdentifierNode(tokens[idetifierIndex].Data);

@@ -67,7 +67,7 @@ internal abstract class BodyStatement : StatementNode
             currentTabulatorIndex = nextTabulatorIndex == -1 ? nextTabulatorIndex :
                 currentTabulatorIndex + nextTabulatorIndex;
         }
-        return returnBodyNodes[..(currentBodyLength)];
+        return returnBodyNodes[..currentBodyLength];
     }
 
     /// <summary>
@@ -80,7 +80,7 @@ internal abstract class BodyStatement : StatementNode
         int firstTabulatorIndex = tokens.IndexOfToken(TokenIndentificator.Tabulator);
         while (firstTabulatorIndex != -1 && currentIndex < tokens.Length)
         {
-            Token currentToken = tokens[(firstTabulatorIndex + currentIndex)];
+            Token currentToken = tokens[firstTabulatorIndex + currentIndex];
             if (currentToken.TokenId != TokenIndentificator.Tabulator)
                 return currentIndex;
             currentIndex++;

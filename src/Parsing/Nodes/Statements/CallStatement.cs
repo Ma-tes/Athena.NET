@@ -17,21 +17,17 @@ internal sealed class CallStatement : StatementNode
 
     protected override bool TryParseLeftNode([NotNullWhen(true)] out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens)
     {
-        int identiferIndex = tokens.IndexOfToken(TokenIndentificator.Identifier);
-        //TODO: Create better handling of errors
-        if (identiferIndex == -1) 
-        {
-            nodeResult = new ErrorNodeResult<INode>("Identifier wasn't found");
-            return false;
-        }
-        nodeResult = new SuccessulNodeResult<INode>(new IdentifierNode(tokens[identiferIndex].Data));
-        return true;
+        nodeResult = tokens.TryGetIndexOfToken(out int identifierIndex, TokenIndentificator.Identifier) ?
+            new SuccessulNodeResult<INode>(new IdentifierNode(tokens[identifierIndex].Data)) :
+            new ErrorNodeResult<INode>("Identifier wasn't found");
+        return nodeResult is SuccessulNodeResult<INode>;
     }
 
     protected override bool TryParseRigthNode([NotNullWhen(true)] out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens)
     {
         int semicolonIndex = tokens.IndexOfToken(TokenIndentificator.Semicolon);
-        ReadOnlyMemory<INode> argumentNodes = GetArgumentsNodes(tokens[..semicolonIndex]).ToArray();
+        ReadOnlyMemory<INode> argumentNodes = GetArgumentsNodes(tokens[..semicolonIndex]);
+
         var definitionCallNode = new DefinitionCallNode(argumentNodes);
         nodeResult = new SuccessulNodeResult<INode>(definitionCallNode);
         return true;
