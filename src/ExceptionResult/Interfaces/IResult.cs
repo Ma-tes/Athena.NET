@@ -3,7 +3,8 @@
 public enum ResultType
 {
     Lexing,
-    Parsing
+    Parsing,
+    Intepretation
 }
 
 public interface IResult<T>

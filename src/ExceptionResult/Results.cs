@@ -14,7 +14,7 @@ public sealed record class ParsingResult(INode? Result, int PositionIndex) : IRe
     public ResultType Type => ResultType.Parsing;
 }
 
-public sealed record class CompilationResult(INode? Result, int PositionIndex) : IResult<INode>
+public sealed record class InterpretationResult(ReadOnlyMemory<uint> Result, int PositionIndex) : IResult<ReadOnlyMemory<uint>>
 {
-    public ResultType Type => ResultType.Parsing;
-}
+    public ResultType Type => ResultType.Intepretation;
+}  

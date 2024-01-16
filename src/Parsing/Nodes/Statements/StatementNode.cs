@@ -1,4 +1,6 @@
-﻿using Athena.NET.Lexing;
+﻿using Athena.NET.ExceptionResult;
+using Athena.NET.ExceptionResult.Interfaces;
+using Athena.NET.Lexing;
 using Athena.NET.Lexing.Structures;
 using Athena.NET.Parsing.Interfaces;
 using Athena.NET.Parsing.Nodes.Operators;
@@ -16,61 +18,47 @@ internal abstract class StatementNode : INode
     public abstract TokenIndentificator NodeToken { get; }
     public ChildrenNodes ChildNodes { get; internal set; }
 
-    public virtual NodeResult<INode> CreateStatementResult(ReadOnlySpan<Token> tokens, int tokenIndex)
+    public virtual IResultProvider<INode> CreateStatementResult(ReadOnlySpan<Token> tokens, int tokenIndex)
     {
         ReadOnlySpan<Token> leftTokens = tokens[..tokenIndex];
         ReadOnlySpan<Token> rightTokens = tokens[(tokenIndex + 1)..];
 
-        if (!TryParseLeftNode(out NodeResult<INode> leftResult, leftTokens) && leftResult is not null)
-            return new ErrorNodeResult<INode>(leftResult.Message);
-        if (!TryParseRigthNode(out NodeResult<INode> rightResult, rightTokens) && rightResult is not null)
-            return new ErrorNodeResult<INode>(rightResult.Message);
+        if (!TryParseLeftNode(out IResultProvider<INode> leftResult, leftTokens) && leftResult is not null)
+            return new ErrorResult<INode>(leftResult.Message);
+        if (!TryParseRigthNode(out IResultProvider<INode> rightResult, rightTokens) && rightResult is not null)
+            return new ErrorResult<INode>(rightResult.Message);
 
         ChildNodes = new(leftResult!.Node!, rightResult!.Node!);
-        return new SuccessulNodeResult<INode>(this);
+        return new SuccessulResult<INode>(this);
     }
 
     /// <summary>
     /// Provides parsing a left portion of statement <paramref name="tokens"/>.
     /// </summary>
-    /// <param name="nodeResult">
-    /// Result of final parsing, that could be <see cref="SuccessulNodeResult{T}"/> or
-    /// <see cref="ErrorNodeResult{T}"/>.
-    /// </param>
     /// <param name="tokens">Specifically splitted portion of tokens.</param>
     /// <returns>
-    /// If <see cref="TryParseLeftNode(out NodeResult{INode}, ReadOnlySpan{Token})"/>
-    /// wasn't overriden it returns <see langword="true"/>, otherwise <see langword="false"/>.
+    /// Related result of <see cref="IResultProvider{T}"/>, which is only going to
+    /// be equal to<see cref="SuccessfulResult{T}"/> or <see cref="ErrorResult{T}"/>,
+    /// with related type of <see cref="INode"/>.
     /// </returns>
-    protected virtual bool TryParseLeftNode([NotNullWhen(true)] out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens)
-    {
-        nodeResult = null!;
-        return false;
-    }
+    protected virtual IResultProvider<INode> CreateParseLeftNode(ReadOnlySpan<Token> tokens) => null!;
 
     /// <summary>
     /// Provides parsing a rigth portion of statement <paramref name="tokens"/>.
     /// </summary>
-    /// <param name="nodeResult">
-    /// Result of final parsing, that could be <see cref="SuccessulNodeResult{T}"/> or
-    /// <see cref="ErrorNodeResult{T}"/>.
-    /// </param>
     /// <param name="tokens">Specifically splitted portion of tokens.</param>
     /// <returns>
-    /// If <see cref="TryParseRigthNode(out NodeResult{INode}, ReadOnlySpan{Token})"/>
-    /// wasn't overriden it returns <see langword="true"/>, otherwise <see langword="false"/>.
+    /// Related result of <see cref="IResultProvider{T}"/>, which is only going to
+    /// be equal to<see cref="SuccessfulResult{T}"/> or <see cref="ErrorResult{T}"/>,
+    /// with related type of <see cref="INode"/>.
     /// </returns>
-    protected virtual bool TryParseRigthNode([NotNullWhen(true)] out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens)
-    {
-        nodeResult = null!;
-        return false;
-    }
+    protected virtual IResultProvider<INode> CreateParseRigthNode(ReadOnlySpan<Token> tokens) => null!;
 
     /// <summary>
     /// Tries to get data from related <paramref name="tokens"/>,
     /// that must be ended by <see cref="TokenIndentificator.Semicolon"/>.
     /// </summary>
-    protected bool TryGetNodeData([NotNullWhen(true)] out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens)
+    protected bool TryGetNodeData([NotNullWhen(true)] out IResultProvider<INode> nodeResult, ReadOnlySpan<Token> tokens)
     {
         int semicolonIndex = tokens.IndexOfToken(TokenIndentificator.Semicolon);
         if (OperatorHelper.TryGetOperatorResult(out nodeResult, tokens[..semicolonIndex]))
