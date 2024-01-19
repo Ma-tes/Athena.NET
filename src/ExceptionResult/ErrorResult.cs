@@ -13,7 +13,7 @@ public sealed class ErrorResult<T> : IResultProvider<T>
         Message = message;
     }
 
-    public static ErrorResult<T> Create(IResult<T> valueResult, string message) =>
+    public static ErrorResult<T> Create(IResult<T> valueResult = null!, string message) =>
         new ErrorResult<T>(valueResult, message);
 
     public void LogMessage() =>

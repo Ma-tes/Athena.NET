@@ -1,4 +1,6 @@
-﻿using Athena.NET.Lexing;
+﻿using Athena.NET.ExceptionResult;
+using Athena.NET.ExceptionResult.Interfaces;
+using Athena.NET.Lexing;
 using Athena.NET.Lexing.Structures;
 using Athena.NET.Parsing.Interfaces;
 using Athena.NET.Parsing.Nodes.Data;
@@ -12,15 +14,14 @@ internal sealed class CallStatement : StatementNode
     public override TokenIndentificator NodeToken { get; } =
         TokenIndentificator.DefinitionCall;
 
-    public override NodeResult<INode> CreateStatementResult(ReadOnlySpan<Token> tokens, int tokenIndex) =>
+    public override IResultProvider<INode> CreateStatementResult(ReadOnlySpan<Token> tokens, int tokenIndex) =>
         base.CreateStatementResult(tokens, tokenIndex + 2);
 
-    protected override bool TryParseLeftNode([NotNullWhen(true)] out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens)
+    protected override IResultProvider<INode> CreateParseLeftNode(ReadOnlySpan<Token> tokens)
     {
-        nodeResult = tokens.TryGetIndexOfToken(out int identifierIndex, TokenIndentificator.Identifier) ?
-            new SuccessulNodeResult<INode>(new IdentifierNode(tokens[identifierIndex].Data)) :
-            new ErrorNodeResult<INode>("Identifier wasn't found");
-        return nodeResult is SuccessulNodeResult<INode>;
+        return tokens.TryGetIndexOfToken(out int identifierIndex, TokenIndentificator.Identifier) ?
+            SuccessfulResult<INode>.Create<ParsingResult>(new IdentifierNode(tokens[identifierIndex].Data), identifierIndex) :
+            ErrorResult<INode>.Create("Identifier wasn't found");
     }
 
     protected override bool TryParseRigthNode([NotNullWhen(true)] out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens)
