@@ -23,9 +23,13 @@ internal abstract class StatementNode : INode
         ReadOnlySpan<Token> leftTokens = tokens[..tokenIndex];
         ReadOnlySpan<Token> rightTokens = tokens[(tokenIndex + 1)..];
 
-        if (!TryParseLeftNode(out IResultProvider<INode> leftResult, leftTokens) && leftResult is not null)
+        IResultProvider<INode> leftNodeResult = ExecuteParseLeftNode(leftTokens);
+        IResultProvider<INode> rigthNodeResult = ExecuteParseRigthNode(leftTokens);
+
+
+        if (ExecuteParseLeftNode(out IResultProvider<INode> leftResult, leftTokens) is ErrorResult<INode>)
             return new ErrorResult<INode>(leftResult.Message);
-        if (!TryParseRigthNode(out IResultProvider<INode> rightResult, rightTokens) && rightResult is not null)
+        if (ExecuteParseRigthNode(out IResultProvider<INode> rightResult, rightTokens) && rightResult is not null)
             return new ErrorResult<INode>(rightResult.Message);
 
         ChildNodes = new(leftResult!.Node!, rightResult!.Node!);
@@ -41,7 +45,7 @@ internal abstract class StatementNode : INode
     /// be equal to<see cref="SuccessfulResult{T}"/> or <see cref="ErrorResult{T}"/>,
     /// with related type of <see cref="INode"/>.
     /// </returns>
-    protected virtual IResultProvider<INode> CreateParseLeftNode(ReadOnlySpan<Token> tokens) => null!;
+    protected virtual IResultProvider<INode> ExecuteParseLeftNode(ReadOnlySpan<Token> tokens) => null!;
 
     /// <summary>
     /// Provides parsing a rigth portion of statement <paramref name="tokens"/>.
@@ -52,22 +56,28 @@ internal abstract class StatementNode : INode
     /// be equal to<see cref="SuccessfulResult{T}"/> or <see cref="ErrorResult{T}"/>,
     /// with related type of <see cref="INode"/>.
     /// </returns>
-    protected virtual IResultProvider<INode> CreateParseRigthNode(ReadOnlySpan<Token> tokens) => null!;
+    protected virtual IResultProvider<INode> ExecuteParseRigthNode(ReadOnlySpan<Token> tokens) => null!;
 
     /// <summary>
     /// Tries to get data from related <paramref name="tokens"/>,
     /// that must be ended by <see cref="TokenIndentificator.Semicolon"/>.
     /// </summary>
-    protected bool TryGetNodeData([NotNullWhen(true)] out IResultProvider<INode> nodeResult, ReadOnlySpan<Token> tokens)
+    protected IResultProvider<INode> GetRelativeDataNodeResult(ReadOnlySpan<Token> tokens)
     {
         int semicolonIndex = tokens.IndexOfToken(TokenIndentificator.Semicolon);
-        if (OperatorHelper.TryGetOperatorResult(out nodeResult, tokens[..semicolonIndex]))
-            return true;
+        if (OperatorHelper.TryGetOperatorResult(out IResultProvider<INode> nodeResult, tokens[..semicolonIndex]))
+            return nodeResult;
 
         INode? resultNode = tokens[..semicolonIndex].GetDataNode();
-        nodeResult = resultNode is not null ?
-            new SuccessulNodeResult<INode>(resultNode) :
-            new ErrorNodeResult<INode>("Any related node could be created from current tokens");
-        return resultNode is not null;
+        return resultNode is not null ?
+            SuccessfulResult<INode>.Create<ParsingResult>(resultNode, semicolonIndex) :
+            ErrorResult<INode>.Create("Any related node could be created from current tokens");
+    }
+
+    private bool TryGetStatementErrorResult([NotNullWhen(false)]out ErrorResult<INode> returnResult,
+        IResultProvider<INode> leftNode, IResultProvider<INode> rigthNode)
+    {
+        //TODO: Create relative and future proof solutions,
+        //which would inlude the overall reimplmentation.
     }
 }

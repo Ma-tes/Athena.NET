@@ -17,21 +17,21 @@ internal sealed class CallStatement : StatementNode
     public override IResultProvider<INode> CreateStatementResult(ReadOnlySpan<Token> tokens, int tokenIndex) =>
         base.CreateStatementResult(tokens, tokenIndex + 2);
 
-    protected override IResultProvider<INode> CreateParseLeftNode(ReadOnlySpan<Token> tokens)
+    protected override IResultProvider<INode> ExecuteParseLeftNode(ReadOnlySpan<Token> tokens)
     {
         return tokens.TryGetIndexOfToken(out int identifierIndex, TokenIndentificator.Identifier) ?
-            SuccessfulResult<INode>.Create<ParsingResult>(new IdentifierNode(tokens[identifierIndex].Data), identifierIndex) :
+            SuccessfulResult<INode>.Create<ParsingResult>(
+                new IdentifierNode(tokens[identifierIndex].Data), identifierIndex) :
             ErrorResult<INode>.Create("Identifier wasn't found");
     }
 
-    protected override bool TryParseRigthNode([NotNullWhen(true)] out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens)
+    protected override IResultProvider<INode> ExecuteParseRigthNode(ReadOnlySpan<Token> tokens)
     {
         int semicolonIndex = tokens.IndexOfToken(TokenIndentificator.Semicolon);
         ReadOnlyMemory<INode> argumentNodes = GetArgumentsNodes(tokens[..semicolonIndex]);
 
         var definitionCallNode = new DefinitionCallNode(argumentNodes);
-        nodeResult = new SuccessulNodeResult<INode>(definitionCallNode);
-        return true;
+        return SuccessfulResult<INode>.Create<ParsingResult>(definitionCallNode, semicolonIndex);
     }
 
     private static ReadOnlyMemory<INode> GetArgumentsNodes(ReadOnlySpan<Token> argumentsTokens)

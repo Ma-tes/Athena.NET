@@ -14,12 +14,12 @@ public sealed class SuccessfulResult<T> : IResultProvider<T>
 
     public static SuccessfulResult<T> Create(IResult<T> valueResult) =>
         new SuccessfulResult<T>(valueResult);
-    public static SuccessfulResult<T> Create<TResult>(T resultValue, int positionIndex) 
+    public static SuccessfulResult<T> Create<TResult>(T resultValue, int positionIndex)
         where TResult : IResult<T>
     {
         ArgumentNullException.ThrowIfNull(resultValue, "Invalid create invoke, with nullable result value");
         return new SuccessfulResult<T>(
-           (TResult)Activator.CreateInstance(typeof(TResult), new object[] {resultValue!, positionIndex })!
+           (TResult)Activator.CreateInstance(typeof(TResult), [resultValue!, positionIndex])!
         );
     }
 
