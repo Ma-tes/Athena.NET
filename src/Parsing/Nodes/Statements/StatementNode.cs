@@ -24,16 +24,13 @@ internal abstract class StatementNode : INode
         ReadOnlySpan<Token> rightTokens = tokens[(tokenIndex + 1)..];
 
         IResultProvider<INode> leftNodeResult = ExecuteParseLeftNode(leftTokens);
-        IResultProvider<INode> rigthNodeResult = ExecuteParseRigthNode(leftTokens);
+        IResultProvider<INode> rightNodeResult = ExecuteParseRigthNode(rightTokens);
 
+        if (!TryGetStatementResultValue(out INode leftNode, leftNodeResult)) return leftNodeResult;
+        if (!TryGetStatementResultValue(out INode rightNode, rightNodeResult)) return rightNodeResult;
 
-        if (ExecuteParseLeftNode(out IResultProvider<INode> leftResult, leftTokens) is ErrorResult<INode>)
-            return new ErrorResult<INode>(leftResult.Message);
-        if (ExecuteParseRigthNode(out IResultProvider<INode> rightResult, rightTokens) && rightResult is not null)
-            return new ErrorResult<INode>(rightResult.Message);
-
-        ChildNodes = new(leftResult!.Node!, rightResult!.Node!);
-        return new SuccessulResult<INode>(this);
+        ChildNodes = new ChildrenNodes(leftNode, rightNode);
+        return SuccessfulResult<INode>.Create<ParsingResult>(this, tokenIndex);
     }
 
     /// <summary>
@@ -74,10 +71,12 @@ internal abstract class StatementNode : INode
             ErrorResult<INode>.Create("Any related node could be created from current tokens");
     }
 
-    private bool TryGetStatementErrorResult([NotNullWhen(false)]out ErrorResult<INode> returnResult,
-        IResultProvider<INode> leftNode, IResultProvider<INode> rigthNode)
+    private static bool TryGetStatementResultValue([NotNullWhen(false)]out INode returnResult,
+        IResultProvider<INode> resultProvider)
     {
-        //TODO: Create relative and future proof solutions,
-        //which would inlude the overall reimplmentation.
+        if (resultProvider is ErrorResult<INode>)
+            return NullableHelper.NullableOutValue(out returnResult);
+        returnResult = resultProvider.ValueResult.Result!;
+        return true;
     }
 }

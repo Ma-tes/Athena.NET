@@ -31,10 +31,11 @@ public static class NodeHelper
             INode? currentResultNode = currentResultProvider.ValueResult.Result;
 
             var currentResult = new ParsingResult(currentResultNode, tokenIndex);
-            returnNodes.AddResult(?
-                ErrorResult<INode>.Create(currentResult, "No valid tokens were found.") :
+            returnNodes.AddResult(currentResultNode is null ?
+                ErrorResult<INode>.Create("No valid tokens were found.", currentResult) :
                 SuccessfulResult<INode>.Create(currentResult));
-            tokenIndex += currentNodeResult.ValueResult.PositionIndex;
+
+            tokenIndex += currentResultProvider.ValueResult.PositionIndex;
         }
         return returnNodes;
     }

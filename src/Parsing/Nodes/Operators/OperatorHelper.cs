@@ -2,7 +2,6 @@
 using Athena.NET.Lexing.Structures;
 using Athena.NET.Parsing.Interfaces;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.InteropServices;
 
 namespace Athena.NET.Parsing.Nodes.Operators;
 
