@@ -1,4 +1,6 @@
-﻿using Athena.NET.Lexing;
+﻿using Athena.NET.ExceptionResult;
+using Athena.NET.ExceptionResult.Interfaces;
+using Athena.NET.Lexing;
 using Athena.NET.Lexing.Structures;
 using Athena.NET.Parsing.Interfaces;
 using Athena.NET.Parsing.Nodes.Data;
@@ -8,6 +10,8 @@ namespace Athena.NET.Parsing.Nodes.Operators;
 
 internal abstract class OperatorNode : IEvaluationNode
 {
+    private static readonly Type evaluationType = typeof(IEvaluationNode);
+
     public abstract OperatorPrecedence Precedence { get; }
     public abstract TokenIndentificator NodeToken { get; }
 
@@ -15,12 +19,12 @@ internal abstract class OperatorNode : IEvaluationNode
 
     public OperatorNode() { }
 
-    public NodeResult<INode> CreateStatementResult(ReadOnlySpan<Token> tokens, int tokenIndex)
+    public IResultProvider<INode> CreateStatementResult(ReadOnlySpan<Token> tokens, int tokenIndex) 
     {
         ChildNodes = SepareteNodes(tokens, tokenIndex);
         if (ChildNodes.LeftNode is null || ChildNodes.LeftNode is null)
-            return new ErrorNodeResult<INode>($"Parsing nodes from token {tokens[tokenIndex]} wen't wrong");
-        return new SuccessulNodeResult<INode>(this);
+            return ErrorResult<INode>.Create($"Parsing the nodes from {nameof(OperatorNode)} went wrong.");
+        return SuccessfulResult<INode>.Create<ParsingResult>(this, tokenIndex);
     }
 
     private ChildrenNodes SepareteNodes(ReadOnlySpan<Token> tokens, int nodeIndex)
@@ -29,7 +33,7 @@ internal abstract class OperatorNode : IEvaluationNode
         int semicolonIndex = tokens.IndexOfToken(TokenIndentificator.Semicolon);
         int rightLength = semicolonIndex > nodeIndex ? semicolonIndex : tokens.Length;
 
-        ReadOnlySpan<Token> rightTokens = tokens[(nodeIndex + 1)..(rightLength)];
+        ReadOnlySpan<Token> rightTokens = tokens[(nodeIndex + 1)..rightLength];
         INode leftNode = GetChildrenNode(leftTokens);
         INode rightNode = GetChildrenNode(rightTokens);
         return new(leftNode, rightNode);
@@ -88,7 +92,7 @@ internal abstract class OperatorNode : IEvaluationNode
 
     private bool TryGetEvaluateNode([NotNullWhen(true)] out IEvaluationNode evaluationNode, INode node)
     {
-        bool isEvaluate = node.GetType().IsAssignableTo(typeof(IEvaluationNode));
+        bool isEvaluate = node.GetType().IsAssignableTo(evaluationType);
         evaluationNode = isEvaluate ? (IEvaluationNode)node : null!;
         return isEvaluate;
     }

@@ -1,4 +1,6 @@
-﻿using Athena.NET.Lexing;
+﻿using Athena.NET.ExceptionResult;
+using Athena.NET.ExceptionResult.Interfaces;
+using Athena.NET.Lexing;
 using Athena.NET.Lexing.Structures;
 using Athena.NET.Parsing.Interfaces;
 using System.Diagnostics.CodeAnalysis;
@@ -24,20 +26,19 @@ internal static class OperatorHelper
         }
         return NullableHelper.NullableOutValue(out operatorNode);
     }
-
-    public static bool TryGetOperatorResult(out NodeResult<INode> operatorResult, ReadOnlySpan<Token> tokens)
+    
+    public static bool TryGetOperatorResult(out IResultProvider<INode> operatorResult, ReadOnlySpan<Token> tokens)
     {
         int operatorIndex = IndexOfOperator(tokens);
         if (operatorIndex != -1 && TryGetOperator(out OperatorNode operatorNode, tokens[operatorIndex].TokenId))
         {
             operatorResult = operatorNode.CreateStatementResult(tokens, operatorIndex);
-            return operatorResult.ResultMessage != StatementResultMessage.Error;
+            return operatorResult.TryGetRelativeResultProvider<INode, ErrorResult<INode>>(out _);
         }
-        operatorResult = new ErrorNodeResult<INode>("Any valid operator node wasn't found");
+        operatorResult = ErrorResult<INode>.Create("Any valid operator node wasn't found");
         return false;
     }
 
-    //If no operator is found, returns -1
     public static int IndexOfOperator(ReadOnlySpan<Token> tokens)
     {
         int lastOperatorWeight = 0;
@@ -46,11 +47,8 @@ internal static class OperatorHelper
         int tokensLength = tokens.Length;
         for (int i = 0; i < tokensLength; i++)
         {
-            if (tokens[i].TokenId == TokenIndentificator.OpenBrace &&
-                returnIndex != -1)
-                lastOperatorWeight += (int)OperatorPrecedence.Brace;
-            if (tokens[i].TokenId == TokenIndentificator.CloseBrace)
-                lastOperatorWeight -= (int)OperatorPrecedence.Brace;
+            if (tokens[i].TokenId == TokenIndentificator.OpenBrace && returnIndex != -1) lastOperatorWeight += (int)OperatorPrecedence.Brace;
+            if (tokens[i].TokenId == TokenIndentificator.CloseBrace) lastOperatorWeight -= (int)OperatorPrecedence.Brace;
 
             if (TryGetOperator(out OperatorNode currentNode, tokens[i].TokenId))
             {
