@@ -15,6 +15,8 @@ namespace Athena.NET.Parsing.Nodes.Statements;
 /// </summary>
 internal abstract class StatementNode : INode
 {
+    protected int OriginalTokenIndex { get; private set; }
+
     public abstract TokenIndentificator NodeToken { get; }
     public ChildrenNodes ChildNodes { get; internal set; }
 
@@ -30,6 +32,7 @@ internal abstract class StatementNode : INode
         if (!TryGetStatementResultValue(out INode rightNode, rightNodeResult)) return rightNodeResult;
 
         ChildNodes = new ChildrenNodes(leftNode, rightNode);
+        OriginalTokenIndex = tokenIndex;
         return SuccessfulResult<INode>.Create<ParsingResult>(this, tokenIndex);
     }
 

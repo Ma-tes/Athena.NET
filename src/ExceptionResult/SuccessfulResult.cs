@@ -4,6 +4,8 @@ namespace Athena.NET.ExceptionResult;
 
 public sealed class SuccessfulResult<T> : IResultProvider<T>
 {
+    public Type ProviderHolderType { get; } = typeof(SuccessfulResult<T>);
+
     public IResult<T> ValueResult { get; }
     public string? Message { get; internal set; }
 

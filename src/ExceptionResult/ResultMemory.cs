@@ -13,6 +13,7 @@ public sealed class ResultMemory<T> : IEnumerable<IResultProvider<T>>
 {
     private readonly List<IResultProvider<T>> resultValues = new();
     private Func<IResultProvider<T>, bool>? resultFlawFunction;
+
     /// <summary>
     /// Bool statement if last result is causing the entire inconsistency, of results.
     /// </summary>
@@ -53,12 +54,16 @@ public sealed class ResultMemory<T> : IEnumerable<IResultProvider<T>>
     {
         resultValues.Add(result);
         IsResultFlaw = result is ErrorResult<T>;
-
-        if (IsResultFlaw && resultFlawFunction is not null)
+        if (IsResultFlaw && resultFlawFunction is not null) 
+        {
             resultFlawFunction.Invoke((ErrorResult<T>)result);
+        }
         return IsResultFlaw;
     }
 
+    //TODO: Improve the memory leak.
+    public Span<IResultProvider<T>> AsSpan() =>
+        resultValues.ToArray().AsSpan();
     public IEnumerator<IResultProvider<T>> GetEnumerator() =>
         resultValues.GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() =>

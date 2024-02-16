@@ -14,6 +14,7 @@ internal sealed class ReturnInstruction : IInstruction<ReturnStatement>
     {
         MemoryData returnDefinitionData = DefinitionHelper.GetDefinitionReturnData(writer.CurrentDefinitionData, writer);
         INode returnChildrenRightNode = node.ChildNodes.RightNode;
+        return false;
     }
 
     public bool InterpretInstruction(ReadOnlySpan<uint> instructions, VirtualMachine writer) =>

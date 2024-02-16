@@ -1,4 +1,6 @@
-﻿using Athena.NET.Lexing;
+﻿using Athena.NET.ExceptionResult;
+using Athena.NET.ExceptionResult.Interfaces;
+using Athena.NET.Lexing;
 using Athena.NET.Lexing.Structures;
 using Athena.NET.Parsing.Interfaces;
 using Athena.NET.Parsing.Nodes.Operators;
@@ -11,24 +13,22 @@ internal sealed class IfStatement : BodyStatement
     public override TokenIndentificator NodeToken { get; } =
         TokenIndentificator.If;
 
-    protected override bool TryParseLeftNode(out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens)
+    protected override IResultProvider<INode> ExecuteParseLeftNode(ReadOnlySpan<Token> tokens)
     {
         int logicalOperatorIndex = OperatorHelper.IndexOfOperator(tokens);
         if (OperatorHelper.TryGetOperator(out OperatorNode currentNode, tokens[logicalOperatorIndex].TokenId))
         {
             if (currentNode is LogicalOperator logicalOperator)
             {
-                nodeResult = logicalOperator.CreateStatementResult(tokens, logicalOperatorIndex);
-                if (nodeResult.ResultMessage != StatementResultMessage.Error)
+                var operatorResult = logicalOperator.CreateStatementResult(tokens, logicalOperatorIndex);
+                if (operatorResult.TryGetRelativeResultProvider<INode, SuccessfulResult<INode>>(out _))
                 {
                     logicalOperator.Evaluate();
-                    return true;
+                    return operatorResult;
                 }
-                nodeResult = new ErrorNodeResult<INode>("Calculation of logical operator cannot be evaluated");
-                return false;
+                return ErrorResult<INode>.CreateNullResult("Calculation of logical operator cannot be evaluated", logicalOperatorIndex);
             }
         }
-        nodeResult = new ErrorNodeResult<INode>("No logical operator was found");
-        return false;
+        return ErrorResult<INode>.CreateNullResult("No logical operator was found", logicalOperatorIndex);
     }
 }

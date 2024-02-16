@@ -1,8 +1,9 @@
-﻿using Athena.NET.Lexing;
+﻿using Athena.NET.ExceptionResult;
+using Athena.NET.ExceptionResult.Interfaces;
+using Athena.NET.Lexing;
 using Athena.NET.Lexing.Structures;
 using Athena.NET.Parsing.Interfaces;
 using Athena.NET.Parsing.Nodes.Data;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Athena.NET.Parsing.Nodes.Statements.Body;
 
@@ -22,24 +23,27 @@ internal abstract class BodyStatement : StatementNode
     /// </summary>
     public int BodyLength { get; private set; }
 
-    public sealed override NodeResult<INode> CreateStatementResult(ReadOnlySpan<Token> tokens, int tokenIndex)
+    public sealed override IResultProvider<INode> CreateStatementResult(ReadOnlySpan<Token> tokens, int tokenIndex)
     {
         int invokerIndex = tokens[tokenIndex..].IndexOfToken(invokerToken);
+
         int returnTokenIndex = invokerIndex == -1 ? tokenIndex : tokenIndex + invokerIndex;
         tabulatorCount = GetTabulatorCount(tokens[..returnTokenIndex]) + 1;
 
         return base.CreateStatementResult(tokens, returnTokenIndex);
     }
 
-    protected sealed override bool TryParseRigthNode([NotNullWhen(true)] out NodeResult<INode> nodeResult, ReadOnlySpan<Token> tokens)
+    protected sealed override IResultProvider<INode> ExecuteParseRigthNode(ReadOnlySpan<Token> tokens)
     {
         ReadOnlySpan<Token> bodyTokens = GetBodyTokens(tokens);
         BodyLength = bodyTokens.Length;
-        ReadOnlyMemory<INode> bodyNodes = bodyTokens.CreateNodes();
 
-        var bodyNode = new BodyNode(bodyNodes);
-        nodeResult = new SuccessulNodeResult<INode>(bodyNode);
-        return true;
+        ResultMemory<INode> relativeBodyNodesResults = bodyTokens.CreateNodes();
+        if(relativeBodyNodesResults.IsResultFlaw)
+            return ErrorResult<INode>.CreateNullResult("Cannot parse the pre-compilied body nodes in relative statement.", OriginalTokenIndex);
+
+        BodyNode currentBodyNode = BodyNode.CreateResultBodyNode(relativeBodyNodesResults.AsSpan());
+        return SuccessfulResult<INode>.Create<ParsingResult>(currentBodyNode, OriginalTokenIndex);
     }
 
     //TODO: Make sure that sepration is relative to

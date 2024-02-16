@@ -9,7 +9,7 @@ public enum ResultType
 
 public interface IResult<T>
 {
-    public T? Result { get; }
+    public T Result { get; }
     public ResultType Type { get; }
     public int PositionIndex { get; }
 }

@@ -15,7 +15,7 @@ namespace Athena.NET.Parsing.Nodes;
 public static class NodeHelper
 {
     private static readonly ErrorResult<INode> unknownNodeResult =
-        new ErrorResult<INode>(null!, "No valid tokens were found.");
+        ErrorResult<INode>.Create("No valid tokens were found.", null!);
     private static ReadOnlySpan<INode> nodeInstances => GetNodeInstances<INode>().ToArray();
 
     private static readonly Type tokenIdentificatorType = typeof(TokenIndentificator);
@@ -25,7 +25,7 @@ public static class NodeHelper
     {
         int tokenIndex = 0;
         var returnNodes = new ResultMemory<INode>();
-        while (returnNodes.IsResultFlaw)
+        while (!returnNodes.IsResultFlaw)
         {
             IResultProvider<INode> currentResultProvider = GetFirstNode(tokens[tokenIndex..]);
             INode? currentResultNode = currentResultProvider.ValueResult.Result;
@@ -50,12 +50,13 @@ public static class NodeHelper
                 int nodeIndex = tokens.IndexOfToken(result.NodeToken);
                 result.CreateStatementResult(tokens, nodeIndex);
 
-                return result is BodyStatement bodyStatement ?
+                int relativeNodeIndex =  result is BodyStatement bodyStatement ?
                     bodyStatement.BodyLength + tokens.IndexOfToken(TokenIndentificator.Invoker) :
-                        i + (tokens[i..].IndexOfToken(TokenIndentificator.EndLine));
+                        i + tokens[i..].IndexOfToken(TokenIndentificator.EndLine);
+                return SuccessfulResult<INode>.Create<ParsingResult>(result, relativeNodeIndex);
             }
         }
-        return ErrorResult<INode>.Create(null!, "No specific node token was found.");
+        return unknownNodeResult;
     }
 
     //Value -1 means that wasn't found
@@ -98,7 +99,7 @@ public static class NodeHelper
         for (int i = 0; i < typesLength; i++)
         {
             Type currentType = assemblytypes[i];
-            if ((currentType.IsAssignableTo(parentNodeType) && !currentType.IsAbstract)
+            if (currentType.IsAssignableTo(parentNodeType) && !currentType.IsAbstract
                 && !IsDataNode(currentType))
                 yield return (T)Activator.CreateInstance(currentType)!;
         }

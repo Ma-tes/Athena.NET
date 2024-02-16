@@ -1,7 +1,9 @@
 ﻿using Athena.NET.Compilation;
 using Athena.NET.Compilation.Instructions;
 using Athena.NET.Compilation.Interpreter;
+using Athena.NET.ExceptionResult.Interfaces;
 using Athena.NET.Lexing.LexicalAnalysis;
+using Athena.NET.Parsing.Interfaces;
 using Athena.NET.Parsing.Nodes;
 using System.Diagnostics.CodeAnalysis;
 
@@ -14,10 +16,10 @@ using (var tokenReader = new TokenReader
 {
     var tokens = await tokenReader.ReadTokensAsync();
     var nodes = tokens.Span.CreateNodes();
- 
-    using (var instructionWriter = new InstructionWriter(nodes.Span))
+
+    using (var instructionWriter = new InstructionWriter(GetRelativeNodes(nodes.AsSpan())))
     {
-        instructionWriter.CreateInstructions(nodes.Span);
+        instructionWriter.CreateInstructions(GetRelativeNodes(nodes.AsSpan()));
 #if DEBUG
         WriteInstructions(instructionWriter.InstructionList.Span);
 #endif
@@ -26,6 +28,17 @@ using (var tokenReader = new TokenReader
     }
 }
 Console.ReadLine();
+
+//TODO: This is temporary solution, which is
+//going to be fixed with proper exception holder.
+static ReadOnlySpan<INode> GetRelativeNodes(Span<IResultProvider<INode>> resultValues)
+{
+    Span<INode> returnNodes = new INode[resultValues.Length];
+
+    int valuesLength = resultValues.Length;
+    for (int i = 0; i < valuesLength; i++) { returnNodes[i] = resultValues[i].ValueResult.Result; }
+    return returnNodes;
+}
 
 static void WriteInstructions(Span<uint> instructionsSpan)
 {

@@ -141,7 +141,7 @@ public sealed class InstructionWriter : IDisposable
                  definitionIdentificator != MainDefinitionIdentificator ? 5 : 0;
             currentDefinitionsSpan[i] = new DefinitionData(
                     definitionIdentificator,
-                    (definitionMemoryDataLength * 6), definitionBodyLenght,
+                    definitionMemoryDataLength * 6, definitionBodyLenght,
                     GetArgumentsMemoryData(leftDefinitionNode.NodeData),
                     (BodyNode)nodes[currentDefinitionIndex].ChildNodes.RightNode, default
                 );

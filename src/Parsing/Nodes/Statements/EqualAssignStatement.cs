@@ -26,5 +26,5 @@ internal sealed class EqualAssignStatement : StatementNode
     }
 
     protected override IResultProvider<INode> ExecuteParseRigthNode(ReadOnlySpan<Token> tokens) =>
-        TryGetNodeData(out nodeResult, tokens);
+        GetRelativeDataNodeResult(tokens);
 }
