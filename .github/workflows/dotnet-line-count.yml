@@ -16,6 +16,6 @@ jobs:
         id: badge
         with:
           debug: true
-          directory: ./src
+          directory: ./
           badge: ./assets/line-count-badge.svg
           patterns: "*.cs"
