@@ -8,7 +8,8 @@ Athena often given the epithet Pallas, is an ancient Greek goddess associated wi
   
   ![GitHub Repo stars](https://img.shields.io/github/stars/Ma-tes/Athena.NET)
   ![GitHub commit activity](https://img.shields.io/github/commit-activity/t/Ma-tes/Athena.NET)
-  ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Ma-tes/Athena.NET/dotnet-build-test.yml)
+  [![Scc Count Badge](https://sloc.xyz/github/Ma-tes/Athena.NET/)](https://github.com/Ma-tes/Athena.NET/)
+  [![.NET Build/Test](https://github.com/Ma-tes/Athena.NET/actions/workflows/dotnet-build-test.yml/badge.svg)](https://github.com/Ma-tes/Athena.NET/actions/workflows/dotnet-build-test.yml)
   
 </div>
 
