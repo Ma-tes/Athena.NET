@@ -1,0 +1,23 @@
+name: .NET Line Count
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Lines of Code Badge
+        uses: shadowmoose/GHA-LoC-Badge@1.0.0
+        id: badge
+        with:
+          debug: true
+          directory: ./src/
+          badge: ./assets/line-count-badge.scg
+          patterns: "*.cs"
+          
+            
+    
