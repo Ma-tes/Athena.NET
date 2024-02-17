@@ -11,14 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Lines of Code Badge
-        uses: shadowmoose/GHA-LoC-Badge@1.0.0
+      - name: LOC Badge
+        uses: DeathSy/GHA-LoC-Badge@1.0.3
         id: badge
         with:
           debug: true
           directory: ./src
           badge: ./assets/line-count-badge.svg
           patterns: "*.cs"
-          
-            
-    
