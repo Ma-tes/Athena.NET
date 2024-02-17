@@ -1,6 +1,7 @@
 def Main() ->
 	int firstValue = 83;
 	int secondValue = 38;
+
   if(firstValue > secondValue) ->
     ::PrintTwoValues(firstValue, secondValue);
 
