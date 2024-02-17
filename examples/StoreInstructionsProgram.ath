@@ -1,7 +1,9 @@
 def Main() ->
 	int firstValue = 83;
 	int secondValue = 38;
-	::PrintTwoValues(firstValue, secondValue);
+  if(firstValue > secondValue) ->
+    ::PrintTwoValues(firstValue, secondValue);
+
 	::PrintValue(firstValue);
 	::PrintValue(secondValue);
 	print (firstValue + secondValue);

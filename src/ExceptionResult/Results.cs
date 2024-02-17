@@ -9,7 +9,7 @@ public sealed record class LexingResult(Token Result, int PositionIndex) : IResu
     public ResultType Type => ResultType.Lexing;
 }
 
-public sealed record class ParsingResult(INode? Result, int PositionIndex) : IResult<INode>
+public sealed record class ParsingResult(INode Result, int PositionIndex) : IResult<INode>
 {
     public ResultType Type => ResultType.Parsing;
 }
