@@ -12,7 +12,7 @@
             "program": "${workspaceFolder}/bin/Debug/net6.0/Athena.NET.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
-            "console": "internalConsole",
+            "console": "externalTerminal",
             "stopAtEntry": false
         },
         {

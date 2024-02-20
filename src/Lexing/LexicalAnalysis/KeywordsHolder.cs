@@ -30,6 +30,7 @@ internal static class KeywordsHolder
             new (TokenIndentificator.DefinitionReturn, "::="),
             new (TokenIndentificator.Separator, ","),
 
+            new (TokenIndentificator.EndLine, "\n", true),
             new (TokenIndentificator.EndLine, "\0", true),
             //TODO: Refactor
             new (TokenIndentificator.EndLine, "\0n", true)
@@ -40,6 +41,7 @@ internal static class KeywordsHolder
                           .ToCharArray())
             },
             new (TokenIndentificator.Tabulator, "\t", true),
+            new (TokenIndentificator.Tabulator, "  ", true),
             new (TokenIndentificator.Whitespace, " ", true),
             new (TokenIndentificator.Semicolon, ";", true),
 

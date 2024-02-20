@@ -10,7 +10,8 @@ using System.Diagnostics.CodeAnalysis;
 //This is here for simple debugging
 //and should be changed in the future
 string solutionPath = Environment.CurrentDirectory[..Environment.CurrentDirectory.LastIndexOf("src")];
-string examplePath = Path.Join(solutionPath, "examples", "StoreInstructionsProgram.ath");
+string examplePath = Path.Join(solutionPath, "examples", "CallProgram.ath");
+Console.WriteLine(examplePath);
 using (var tokenReader = new TokenReader
     (File.Open(examplePath, FileMode.Open)))
 {

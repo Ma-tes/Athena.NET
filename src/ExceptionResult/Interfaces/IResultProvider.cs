@@ -6,7 +6,7 @@ public interface IResultProvider<T>
 {
     public Type ProviderHolderType { get; }
 
-    public IResult<T> ValueResult { get; }
+    public IResult<T>? ValueResult { get; }
     public string? Message { get; }
 
     public void LogMessage();

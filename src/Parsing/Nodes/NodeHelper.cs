@@ -23,19 +23,24 @@ public static class NodeHelper
 
     public static ResultMemory<INode> CreateNodes(this ReadOnlySpan<Token> tokens)
     {
+        int finalTokenIndex = tokens.Length - 1;
         int tokenIndex = 0;
+
+        //TODO: Make this functionality reverse, without
+        //using the specific index.
         var returnNodes = new ResultMemory<INode>();
-        while (!returnNodes.IsResultFlaw)
+        while (!returnNodes.IsResultFlaw && tokenIndex != finalTokenIndex)
         {
             IResultProvider<INode> currentResultProvider = GetFirstNode(tokens[tokenIndex..]);
-            INode? currentResultNode = currentResultProvider.ValueResult.Result;
+            INode? currentResultNode = currentResultProvider.ValueResult is not null ?
+                currentResultProvider.ValueResult.Result : null;
 
-            var currentResult = new ParsingResult(currentResultNode, tokenIndex);
+            var currentResult = new ParsingResult(currentResultNode!, tokenIndex);
             returnNodes.AddResult(currentResultNode is null ?
                 ErrorResult<INode>.Create("No valid tokens were found.", currentResult) :
                 SuccessfulResult<INode>.Create(currentResult));
 
-            tokenIndex += currentResultProvider.ValueResult.PositionIndex;
+            tokenIndex += currentResultProvider.ValueResult!.PositionIndex;
         }
         return returnNodes;
     }
@@ -47,9 +52,10 @@ public static class NodeHelper
         {
             if (TryGetNodeInstance(out INode result, tokens[i]))
             {
+                //Potentional wrong offsets, by related token.
                 int nodeIndex = tokens.IndexOfToken(result.NodeToken);
                 result.CreateStatementResult(tokens, nodeIndex);
-
+ 
                 int relativeNodeIndex =  result is BodyStatement bodyStatement ?
                     bodyStatement.BodyLength + tokens.IndexOfToken(TokenIndentificator.Invoker) :
                         i + tokens[i..].IndexOfToken(TokenIndentificator.EndLine);
