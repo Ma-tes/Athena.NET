@@ -23,24 +23,24 @@ public static class NodeHelper
 
     public static ResultMemory<INode> CreateNodes(this ReadOnlySpan<Token> tokens)
     {
-        int finalTokenIndex = tokens.Length - 1;
-        int tokenIndex = 0;
-
-        //TODO: Make this functionality reverse, without
-        //using the specific index.
         var returnNodes = new ResultMemory<INode>();
-        while (!returnNodes.IsResultFlaw && tokenIndex != finalTokenIndex)
+        IResultProvider<INode> currentResultNode = GetFirstNode(tokens);
+        if(currentResultNode is null)
         {
-            IResultProvider<INode> currentResultProvider = GetFirstNode(tokens[tokenIndex..]);
-            INode? currentResultNode = currentResultProvider.ValueResult is not null ?
-                currentResultProvider.ValueResult.Result : null;
+            returnNodes.AddResult(unknownNodeResult);
+            return returnNodes;
+        }
 
-            var currentResult = new ParsingResult(currentResultNode!, tokenIndex);
-            returnNodes.AddResult(currentResultNode is null ?
-                ErrorResult<INode>.Create("No valid tokens were found.", currentResult) :
-                SuccessfulResult<INode>.Create(currentResult));
+        int tokenIndex = 0;
+        while (!returnNodes.IsResultFlaw && currentResultNode.ValueResult is not null)
+        {
+            IResult<INode> relativeNodeResult = currentResultNode.ValueResult;
+            var currentResult = new ParsingResult(relativeNodeResult.Result, tokenIndex);
 
-            tokenIndex += currentResultProvider.ValueResult!.PositionIndex;
+            returnNodes.AddResult(SuccessfulResult<INode>.Create(currentResult));
+            tokenIndex += relativeNodeResult.PositionIndex;
+
+            currentResultNode = GetFirstNode(tokens[tokenIndex..]);
         }
         return returnNodes;
     }
