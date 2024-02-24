@@ -19,7 +19,7 @@ internal abstract class OperatorNode : IEvaluationNode
 
     public OperatorNode() { }
 
-    public IResultProvider<INode> CreateStatementResult(ReadOnlySpan<Token> tokens, int tokenIndex) 
+    public IResultProvider<INode> CreateStatementResult(ReadOnlySpan<Token> tokens, int tokenIndex)
     {
         ChildNodes = SepareteNodes(tokens, tokenIndex);
         if (ChildNodes.LeftNode is null || ChildNodes.LeftNode is null)
@@ -44,7 +44,7 @@ internal abstract class OperatorNode : IEvaluationNode
         int operatorIndex = OperatorHelper.IndexOfOperator(tokens);
         if (operatorIndex == -1)
         {
-            if (tokens.TryGetIndexOfToken(out int valueIndex, TokenIndentificator.Int))
+            if (!tokens.TryGetIndexOfToken(out int valueIndex, TokenIndentificator.Int))
             {
                 int idetifierIndex = tokens.IndexOfToken(TokenIndentificator.Identifier);
                 var idetifierNode = new IdentifierNode(tokens[idetifierIndex].Data);

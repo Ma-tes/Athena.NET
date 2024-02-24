@@ -1,9 +1,8 @@
 def Main() ->
   int currentIndex = 83;
   print currentIndex;
- 
+  ::PrintSumOperator(80, 3);
 
 
-
-
-
+def PrintSumOperator(int firstValue, int secondValue) ->
+  print firstValue + secondValue;

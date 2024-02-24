@@ -105,21 +105,18 @@ public sealed class InstructionWriter : IDisposable
         if(TryGetDefinitionData(out DefinitionData mainDefinitionData, MainDefinitionIdentificator))
             MainDefinitionData = mainDefinitionData;
 
-        ReadOnlySpan<int> definitionOrderIndexes = InstructionDefinitionOrder.Span;
         int nodesLength = nodes.Length;
         for (int i = 0; i < nodesLength; i++)
         {
-            int definitionIndex = InstructionDefinitionOrder.Length != 0 && !definitionStatements.IsEmpty
-                ? definitionOrderIndexes[i] : i;
-            CurrentDefinitionData = InstructionDefinitionData.Span[definitionIndex];
-            if (!TryGetEmitInstruction(nodes[definitionIndex]))
+            int relativeIndex = TrySetCurrentDefinitionData(i, InstructionDefinitionData.Span, definitionStatements);
+            if (!TryGetEmitInstruction(nodes[relativeIndex]))
                 throw new Exception("Instruction wasn't completed or found");
         }
     }
 
     /// <summary>
     /// Tries to get <see cref="DefinitionData"/> from <paramref name="nodes"/>,
-    /// which are pre-calculated for future instruction use
+    /// which are pre-calculated for future instruction use.
     /// </summary>
     private ReadOnlyMemory<DefinitionData> GetDefinitionsData(ReadOnlySpan<INode> nodes)
     {
@@ -167,7 +164,7 @@ public sealed class InstructionWriter : IDisposable
 
             currentDefinitionData.DefinitionIndex += definitionInstructionCount;
             currentDefinitionData.DefinitionLength += definitionBodyLength;
-            definitionInstructionCount += (currentDefinitionData.DefinitionLength + argumentsIntructionLength);
+            definitionInstructionCount += currentDefinitionData.DefinitionLength + argumentsIntructionLength;
         }
         return definitionsData;
     }
@@ -291,6 +288,18 @@ public sealed class InstructionWriter : IDisposable
         InstructionList.AddRange((uint)registerCode,
             (uint)memoryData.Size,
             (uint)memoryData.Offset);
+    }
+
+    private int TrySetCurrentDefinitionData(int index, ReadOnlySpan<DefinitionData> definitionData,
+        ReadOnlySpan<DefinitionStatement> definitionStatements)
+    {
+        if(InstructionDefinitionOrder.Length != 0 && !definitionStatements.IsEmpty)
+        {
+            int orderIndex = InstructionDefinitionOrder.Span[index];
+            CurrentDefinitionData = definitionData[orderIndex];
+            return orderIndex;
+        }
+        return index;
     }
 
     /// <inheritdoc/>

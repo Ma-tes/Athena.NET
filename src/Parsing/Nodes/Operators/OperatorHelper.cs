@@ -33,7 +33,7 @@ internal static class OperatorHelper
         if (operatorIndex != -1 && TryGetOperator(out OperatorNode operatorNode, tokens[operatorIndex].TokenId))
         {
             operatorResult = operatorNode.CreateStatementResult(tokens, operatorIndex);
-            return operatorResult.TryGetRelativeResultProvider<INode, ErrorResult<INode>>(out _);
+            return operatorResult.TryGetRelativeResultProvider<INode, SuccessfulResult<INode>>(out _);
         }
         operatorResult = ErrorResult<INode>.Create("Any valid operator node wasn't found");
         return false;

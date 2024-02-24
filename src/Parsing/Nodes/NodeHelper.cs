@@ -31,16 +31,16 @@ public static class NodeHelper
             return returnNodes;
         }
 
-        int tokenIndex = 0;
+        int finalTokenIndex = 0;
         while (!returnNodes.IsResultFlaw && currentResultNode.ValueResult is not null)
         {
             IResult<INode> relativeNodeResult = currentResultNode.ValueResult;
-            var currentResult = new ParsingResult(relativeNodeResult.Result, tokenIndex);
+            var currentResult = new ParsingResult(relativeNodeResult.Result, finalTokenIndex);
 
             returnNodes.AddResult(SuccessfulResult<INode>.Create(currentResult));
-            tokenIndex += relativeNodeResult.PositionIndex;
+            finalTokenIndex += relativeNodeResult.PositionIndex;
 
-            currentResultNode = GetFirstNode(tokens[tokenIndex..]);
+            currentResultNode = GetFirstNode(tokens[finalTokenIndex..]);
         }
         return returnNodes;
     }
