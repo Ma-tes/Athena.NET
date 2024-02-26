@@ -1,8 +1,10 @@
 def Main() ->
   int currentIndex = 83;
   print currentIndex;
-  ::PrintSumOperator(80, 3);
+  ::PrintInteration(1);
 
 
-def PrintSumOperator(int firstValue, int secondValue) ->
-  print firstValue + secondValue;
+def PrintInteration(int value) ->
+  print value;
+  int currentValue = value + 1;
+  ::PrintInteration(currentValue);
