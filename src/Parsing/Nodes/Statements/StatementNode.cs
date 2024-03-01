@@ -79,8 +79,8 @@ internal abstract class StatementNode : INode
     {
         if (resultProvider is ErrorResult<INode>)
             return NullableHelper.NullableOutValue(out returnResult);
-        returnResult = resultProvider.ValueResult! is not null ?
-            resultProvider.ValueResult.Result : null;
+        returnResult = resultProvider.ValueResult is not null ?
+            resultProvider.ValueResult.Result : null!;
         return true;
     }
 }
