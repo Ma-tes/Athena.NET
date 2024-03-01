@@ -11,8 +11,6 @@ namespace Athena.NET.Compilation.Interpretation;
 /// </summary>
 internal sealed class RegisterMemory : IDisposable
 {
-    //TODO: Consider more sustainable usage of related memory,
-    //
     private readonly NativeMemoryList<ulong> registerMemoryList = new();
     private readonly NativeMemoryList<ulong> offsetIndexList = new();
 
@@ -25,14 +23,15 @@ internal sealed class RegisterMemory : IDisposable
     /// Size of a single element in memory.
     /// </summary>
     public int RegisterSize { get; }
+
     /// <summary>
     /// Last added <see cref="RegisterData"/> into
     /// a <see cref="NativeMemoryList{T}"/>.
     /// </summary>
-    public RegisterData LastRegisterData { get; private set; } =
-        new(0, 0);
-    public RegisterData previousRegisterData { get; private set; } =
-        new(0, 0);
+    public RegisterData LastRegisterData { get; private set; } = new(0, 0);
+
+    //TODO: Remove the allocation, of specific RegisterData holder.
+    public RegisterData PreviousRegisterData { get; private set; } = new(0, 0);
 
     public RegisterMemory(OperatorCodes registerCode, Type type)
     {
@@ -58,7 +57,7 @@ internal sealed class RegisterMemory : IDisposable
             AddRegisterData(offsetIndexList, 0, new((uint)registerData.Offset, 0), (ulong)registerData.Offset);
 
         AddRegisterData(offsetIndexList, LastRegisterData.Offset, new((uint)registerData.Offset, 0), (ulong)CalculateOffsetIndex(value) << RegisterSize);
-        previousRegisterData = registerData;
+        PreviousRegisterData = registerData;
     }
 
     //TODO: Make generic
@@ -97,7 +96,7 @@ internal sealed class RegisterMemory : IDisposable
 
         int returnData = (int)GetRegisterValue(registerMemoryList.Span[registerIndex], currentOffset, registerData.Size);
         int offsetIndex = (int)GetRegisterValue(offsetIndexList.Span[registerIndex], currentOffset + RegisterSize, 4);
-        return (ulong)(dynamic)(returnData - returnData * 2 * offsetIndex);
+        return (ulong)(dynamic)(returnData - (2 * returnData * offsetIndex));
     }
 
     //TODO: Try to avoid using for loop statement
@@ -111,7 +110,7 @@ internal sealed class RegisterMemory : IDisposable
         for (int i = 0; i < offsetRegisterCount; i++)
         {
             ulong currentRegisterIndex = offsetIndexList.Span[i];
-            int currentRelativeOffset = (int)GetRegisterValue(currentRegisterIndex, 0, RegisterSize);
+            int currentRelativeOffset = (int)GetRegisterValue(currentRegisterIndex, registerData.Offset, RegisterSize);
 
             int registerDifference = registerData.Offset - currentRelativeOffset;
             if (registerDifference == 0 || registerDifference < RegisterSize)
@@ -132,7 +131,7 @@ internal sealed class RegisterMemory : IDisposable
         if (registerMemory.Count == 0 || registerData.Size == RegisterSize
             || offsetDifference >= RegisterSize)
         {
-            int previousOffsetDifference = registerData.Offset - previousRegisterData.Offset;
+            int previousOffsetDifference = registerData.Offset - PreviousRegisterData.Offset;
             int registerOffsetIndex = previousOffsetDifference <= RegisterSize ? 1 : (previousOffsetDifference / RegisterSize) + 1;
             for (int i = 0; i < registerOffsetIndex; i++) { registerMemory.Add(default); } //TODO: Find a better solution
 
